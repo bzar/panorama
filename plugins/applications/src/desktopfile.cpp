@@ -2,6 +2,7 @@
 #include <QCryptographicHash>
 #include <QTemporaryFile>
 #include <QResource>
+#include <QDateTime>
 
 class DesktopFilePrivate
 {
@@ -29,9 +30,7 @@ Application DesktopFile::readToApplication()
     PANORAMA_PRIVATE(DesktopFile);
     Application result;
     result.clockspeed = 0;
-
     const QMap<QString, QVariant> entries = priv->parseDesktop(priv->file);
-
     //Should we not load this?
     if(!entries["Type"].toString().contains("Application") || //Not an app
        entries["Hidden"].toBool() || //Should be hidden in menus

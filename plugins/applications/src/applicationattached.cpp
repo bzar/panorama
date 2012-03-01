@@ -15,6 +15,7 @@ extern "C"
 #include <QDir>
 #include <QProcess>
 #include <QDebug>
+#include <QDateTime>
 
 AppAccumulator *_applicationattached_accumulator = 0;
 #define _accumulator _applicationattached_accumulator
@@ -39,8 +40,8 @@ ApplicationsAttached::ApplicationsAttached(QObject *parent) :
         connect(_accumulator, SIGNAL(finishedInitialLoad()),
                 _model, SLOT(invalidateData()));
         //XXX Is this needed??
-        connect(_model, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
-                this, SIGNAL(listChanged()));
+        /*connect(_model, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+                this, SIGNAL(listChanged()));*/
 
         QStringList paths;
 
@@ -61,7 +62,6 @@ ApplicationsAttached::ApplicationsAttached(QObject *parent) :
 
         paths.append((QStringList() << QDir::root().filePath("usr") << "share" << "applications").join(QDir::separator()));
         paths.append((QStringList() << QDir::homePath() << ".local" << "share" << "applications").join(QDir::separator()));
-
 #ifdef Q_OS_UNIX
         //Check whether some paths contain home directory references à la "~/foo/" or "~david/foo"
         QStringList absolutePaths;
@@ -71,10 +71,9 @@ ApplicationsAttached::ApplicationsAttached(QObject *parent) :
             wordexp(path.toLocal8Bit(), &result, 0);
             absolutePaths << QDir(QString::fromLocal8Bit(result.we_wordv[0])).absolutePath();
         }
-
-        _accumulator->loadFrom(absolutePaths);
+        _accumulator->loadFrom(absolutePaths, true);
 #else
-        _accumulator->loadFrom(paths);
+        _accumulator->loadFrom(paths, true);
 #endif
     }
 }

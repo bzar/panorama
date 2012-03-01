@@ -1082,4 +1082,36 @@ PanoramaUI {
             ui.milky.events.copyingFile.connect(createAddStatusMessageFunction("Copying file..."));
         }
     }
+
+    Rectangle {
+        id: developmentVersionNotification
+        color: "#111"
+        anchors.fill: parent
+        z: 2048
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: parent.visible = false
+        }
+
+        Text {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.margins: 24
+            font.pixelSize: 20
+            wrapMode: Text.WordWrap
+            color: "#eee"
+            text: "This is a development snapshot of Consolidation UI. It may not reflect the final version, and some functionality may be missing, erratic, illogical, dangerous or very (very!) slow. You are using this UI at your own risk to get a glimpse of the current state of Panorama and Consolidation UI and should not use it for anything important. Clear?"
+        }
+
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom:parent.bottom
+            font.pixelSize: 24
+            anchors.margins: 24
+            color: "#fff"
+            text: "Click to proceed, press F12 to quit"
+        }
+    }
 }

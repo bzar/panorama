@@ -14,7 +14,7 @@ Item {
         id: ui
         section: "panorama"
         key: "ui"
-        defaultValue: "Test"
+        defaultValue: "Consolidation"
     }
     Setting {
         id: fullscreen

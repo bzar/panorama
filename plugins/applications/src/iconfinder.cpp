@@ -7,7 +7,7 @@
 #include <QtCore/QLibrary>
 #include <QtCore/QSettings>
 #include <QtCore/QTextStream>
-
+#include <QDateTime>
 #ifdef Q_WS_X11
 class IconTheme
 {
@@ -59,8 +59,9 @@ QString IconFinder::findIcon(const QString &name, const QString &fallback)
     foreach(int size, iconSizes)
     {
         icon = iconLoaderInstance()->findIcon(size, name + png);
-        if(!icon.isNull())
+        if(!icon.isNull()) {
             return icon;
+        }
     }
 #endif
     Q_UNUSED(name);
@@ -169,7 +170,12 @@ void IconLoaderImplementation::lookupIconTheme() const
     QStringList kdeDirs = QFile::decodeName(getenv("KDEDIRS")).split(QLatin1Char(':'));
     Q_FOREACH (const QString dirName, kdeDirs)
             dataDirs.append(QLatin1Char(':') + dirName + QLatin1String("/share"));
-    iconDirs = dataDirs.split(QLatin1Char(':'));
+
+    iconDirs.clear();
+    foreach(QString iconDir, dataDirs.split(QLatin1Char(':'))) {
+        if(QDir(iconDir).exists())
+            iconDirs.append(iconDir);
+    }
 
     QFileInfo fileInfo(QLatin1String("/usr/share/icons/default.kde"));
     QDir dir(fileInfo.canonicalFilePath());
@@ -228,28 +234,30 @@ QString IconLoaderImplementation::findIconHelper(int size, const QString &themeN
     if (!themeName.isEmpty()) {
         visited << themeName;
         IconTheme theme = themeList.value(themeName);
-
         if (!theme.isValid()) {
             theme = parseIndexFile(themeName);
             themeList.insert(themeName, theme);
         }
-
         if (!theme.isValid())
             return QString();
 
         QList <QString> subDirs = theme.dirList().values(size);
 
+        QString fileNameFormat = QString("%3/%4icons/%1/%5/%2").arg(themeName).arg(iconName);
         for ( int i = 0 ; i < iconDirs.size() ; ++i) {
+            QString fileNameFormat2 = fileNameFormat
+                    .arg(iconDirs[i])
+                    .arg(iconDirs[i].startsWith(QDir::homePath()) ? "." : "");
             for ( int j = 0 ; j < subDirs.size() ; ++j) {
-                QString contentDir = (iconDirs[i].startsWith(QDir::homePath())) ?
-                                     QLatin1String("/.icons/") : QLatin1String("/icons/");
-                QString fileName = iconDirs[i] + contentDir + themeName + QLatin1Char('/') + subDirs[j] + QLatin1Char('/') + iconName;
+                QString fileName = fileNameFormat2.arg(subDirs[j]);
                 QFile file(fileName);
                 if (file.exists())
                     result = fileName;
                 if (!result.isNull())
                     break;
             }
+            if (!result.isNull())
+                break;
         }
 
         if (result.isNull()) {
@@ -261,6 +269,8 @@ QString IconLoaderImplementation::findIconHelper(int size, const QString &themeN
                     result = findIconHelper(size, parentTheme, iconName, visited);
             }
         }
+
+
     }
     return result;
 }

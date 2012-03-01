@@ -59,6 +59,7 @@ void AppAccumulator::loadFrom(const QStringList &searchpaths, const bool initial
 {
     PANORAMA_PRIVATE(AppAccumulator);
     //Scan all search paths
+
     foreach(const QString &path, searchpaths)
     {
         const QDir dir(path);
@@ -66,7 +67,6 @@ void AppAccumulator::loadFrom(const QStringList &searchpaths, const bool initial
         {
             const QString desktopFile(dir.filePath(file));
             priv->addViaDesktopFile(desktopFile, initial);
-
             priv->currentFileInfos[path] +=
                     AppAccumulatorPrivate::FileInfo(file, QFileInfo(desktopFile).lastModified());
         }
@@ -178,8 +178,10 @@ void AppAccumulatorPrivate::addViaDesktopFile(const QString &f, const bool initi
 {
     PANORAMA_PUBLIC(AppAccumulator);
     if(shouldAddThisApp(f))
-    {
+    {        
+        //qint64 t = QDateTime::currentMSecsSinceEpoch();
         Application result = DesktopFile(f).readToApplication();
+        //qDebug() << "  * readToApplication " << QDateTime::currentMSecsSinceEpoch() - t;
         if(!result.name.isEmpty() && !result.id.isEmpty())
         {
             //Enables us to filter out applications without categories
