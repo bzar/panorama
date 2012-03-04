@@ -14,7 +14,7 @@ Item {
         id: ui
         section: "panorama"
         key: "ui"
-        defaultValue: "Consolidation"
+        defaultValue: "PNDManager"
     }
     Setting {
         id: fullscreen
