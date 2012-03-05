@@ -15,10 +15,17 @@ GridView {
   }
 
   function openCurrent() {
-    var view = stack.push(packageView, {pnd: packages[currentIndex]});
+    var view = stack.push(packageView, {"pnd": packages[currentIndex], "viewTitle": packages[currentIndex].title});
+
+    // QtQuick 1.0 compatibility
+    if(view.pnd === null) {
+      view.pnd = packages[currentIndex]
+      view.viewTitle = packages[currentIndex].title
+    }
+
   }
 
-  cellWidth: width / columns - 1
+  cellWidth: width / columns - width%columns
   cellHeight: 64
   delegate: Rectangle {
     height: packageList.cellHeight
@@ -33,7 +40,7 @@ GridView {
     MouseArea {
       anchors.fill: parent
       hoverEnabled: true
-      onEntered: categoryList.currentIndex = index;
+      onEntered: packageList.currentIndex = index;
       onClicked: {
         packageList.currentIndex = index;
         packageList.openCurrent();

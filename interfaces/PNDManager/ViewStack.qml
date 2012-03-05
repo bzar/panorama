@@ -5,8 +5,11 @@ Item {
   property int currentIndex: views.length - 1
   property QtObject current: views[views.length - 1]
   property QtObject previous: views[views.length > 1 ? views.length - 2 : 0]
+  property bool active: false
   visible: false
   anchors.fill: parent
+
+  signal activate()
 
   NumberAnimation {
     id: pushMoveIn
@@ -57,6 +60,10 @@ Item {
       popMoveIn.target = previous;
       popMoveIn.start();
     }
+  }
+
+  function getViewTitle() {
+    return current.viewTitle
   }
 
   Item {

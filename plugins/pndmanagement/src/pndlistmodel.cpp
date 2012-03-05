@@ -69,7 +69,7 @@ QVariant PNDListModel::data(const QModelIndex& index, int role) const
     case Installed: var.setValue(package->getInstalled()); break;
     case BytesDownloaded: var.setValue(package->getBytesDownloaded()); break;
     case BytesToDownload: var.setValue(package->getBytesToDownload()); break;
-    case Upgrade: var.setValue(!package->getUpgradeCandidate().isNull()); break;
+    case Upgrade: var.setValue(!package->getUpgradeCandidate()->isNull()); break;
     default: var.setValue(QVariant()); break;
   }
   

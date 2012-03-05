@@ -12,7 +12,7 @@ View {
         color: "white"
         PackageList {
           id: packageList
-            packages: pndManager !== null && categories !== null ? pndManager.getPackagesFromCategory(categories) : null
+          packages: pndManager !== null ? pndManager.getPackagesFromCategory(categories) : []
         }
     }
 

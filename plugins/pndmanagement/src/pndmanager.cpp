@@ -154,6 +154,7 @@ void PNDManager::updatePackages()
     }
   }
 
+  qDebug() << "Found" << packages.count() << "packages";
   emit packagesChanged(packages);
 }
 

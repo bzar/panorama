@@ -3,17 +3,19 @@ import Qt 4.7
 View {
   property QtObject pndManager
 
+  viewTitle: "Categories"
+
   Keys.forwardTo: categoryList
   ListModel {
     id: categories
-    ListElement{ title: "Media"; categoryFilter: "Audio|Video|AudioVideo|Graphics" }
-    ListElement{ title: "Developer"; categoryFilter: "Development" }
-    ListElement{ title: "Educational"; categoryFilter: "Education" }
-    ListElement{ title: "Games"; categoryFilter: "Game" }
-    ListElement{ title: "Network"; categoryFilter: "Network" }
-    ListElement{ title: "Office"; categoryFilter: "Office" }
-    ListElement{ title: "System"; categoryFilter: "Settings|System" }
-    ListElement{ title: "Utilities"; categoryFilter: "Utility" }
+    ListElement{ title: "Media"; filter: "Audio|Video|AudioVideo|Graphics" }
+    ListElement{ title: "Developer"; filter: "Development" }
+    ListElement{ title: "Educational"; filter: "Education" }
+    ListElement{ title: "Games"; filter: "Game" }
+    ListElement{ title: "Network"; filter: "Network" }
+    ListElement{ title: "Office"; filter: "Office" }
+    ListElement{ title: "System"; filter: "Settings|System" }
+    ListElement{ title: "Utilities"; filter: "Utility" }
   }
 
   Component {
@@ -34,14 +36,24 @@ View {
       anchors.fill: parent
 
       function openCurrent() {
-        var view = stack.push(categoryView, {pndManager: pndManager, categories: currentItem.filter});
+        console.log("pndManager = " + pndManager);
+        var view = stack.push(categoryView, {"pndManager": pndManager, "categories": currentItem.categoryFilter, "viewTitle": currentItem.categoryTitle});
+
+        // QtQuick 1.0 compatiblity
+        if(view.pndManager === null) {
+          view.pndManager = pndManager
+          view.categories = currentItem.categoryFilter
+          view.viewTitle = currentItem.categoryTitle
+        }
+
       }
 
-      cellWidth: width/columns
+      cellWidth: width/columns - width%columns
       cellHeight: height/(model.count/columns)
 
       delegate: Rectangle {
-        property string filter: categoryFilter
+        property string categoryFilter: filter
+        property string categoryTitle: title
         width: categoryList.cellWidth
         height: categoryList.cellHeight
         color: Qt.hsla(parseFloat(index)/categoryList.count, 0.5, GridView.isCurrentItem ? 0.7 : 0.5, 1.0)
