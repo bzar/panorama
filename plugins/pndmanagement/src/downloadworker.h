@@ -27,6 +27,7 @@ signals:
 private:
   QPndman::Handle* handle;
   bool downloadStarted;
+  QTimer timer;
 };
 
 class DownloadWorkerSingletonThread;
@@ -56,6 +57,7 @@ class DownloadWorkerSingletonThread : public QThread
   Q_OBJECT
 public:
   DownloadWorkerSingletonThread(QObject* parent = 0);
+  ~DownloadWorkerSingletonThread();
   void run();
   DownloadWorkerSingleton* getSingleton() const;
 private:

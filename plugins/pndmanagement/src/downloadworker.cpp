@@ -2,16 +2,20 @@
 #include <QDebug>
 #include <QApplication>
 
-DownloadWorker::DownloadWorker(QPndman::Handle* handle) : handle(handle), downloadStarted(false)
+DownloadWorker::DownloadWorker(QPndman::Handle* handle) : handle(handle), downloadStarted(false), timer()
 {
-  connect(DownloadWorkerSingleton::instance(), SIGNAL(update()), this, SLOT(process()), Qt::QueuedConnection);
+  //connect(DownloadWorkerSingleton::instance(), SIGNAL(update()), this, SLOT(process()), Qt::QueuedConnection);
   connect(DownloadWorkerSingleton::instance(), SIGNAL(error()), this, SLOT(emitError()), Qt::QueuedConnection);
+  timer.setInterval(500);
+  timer.setSingleShot(false);
+  connect(&timer, SIGNAL(timeout()), this, SLOT(process()));
 }
 
 void DownloadWorker::start()
 {
   qDebug() << "DownloadWorker::start";
   QMetaObject::invokeMethod(DownloadWorkerSingleton::instance(), "start", Qt::QueuedConnection);
+  timer.start();
 }
   
 void DownloadWorker::process()
@@ -43,7 +47,7 @@ DownloadWorkerSingleton *DownloadWorkerSingleton::instance()
   if(thread == 0)
   {
     thread = new DownloadWorkerSingletonThread(QApplication::instance());
-    thread->start();
+    thread->start(QThread::LowPriority);
     while(thread->getSingleton() == 0) {
       QThread::yieldCurrentThread();
     }
@@ -86,7 +90,11 @@ void DownloadWorkerSingleton::process()
 
 DownloadWorkerSingletonThread::DownloadWorkerSingletonThread(QObject *parent) : QThread(parent), singleton(0)
 {
-  connect(QApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(terminate()), Qt::QueuedConnection);
+  connect(QApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(terminate()));
+}
+
+DownloadWorkerSingletonThread::~DownloadWorkerSingletonThread()
+{
 }
 
 void DownloadWorkerSingletonThread::run()
