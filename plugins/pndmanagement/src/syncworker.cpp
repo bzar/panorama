@@ -2,7 +2,7 @@
 
 SyncWorker::SyncWorker(QPndman::SyncHandle* handle) : handle(handle), timer()
 {
-  timer.setInterval(100);
+  timer.setInterval(200);
   timer.setSingleShot(false);
   connect(&timer, SIGNAL(timeout()), this, SLOT(process()));
 }

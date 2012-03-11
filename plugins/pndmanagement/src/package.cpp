@@ -1,19 +1,21 @@
 #include "package.h"
+#include "pndmanager.h"
 
-Package::Package(QPndman::Package const& p, bool installed, QObject* parent):
-  QPndman::Package(p), installed(installed), bytesDownloaded(installed ? 1 : 0), bytesToDownload(1)
+Package::Package(PNDManager* manager, QPndman::Package const& p, bool installed, QObject* parent):
+  QPndman::Package(p), manager(manager), installed(installed), bytesDownloaded(installed ? 1 : 0), bytesToDownload(1)
 {
   setParent(parent);
+  connect(this, SIGNAL(upgradeCandidateChanged(Package*)), this, SIGNAL(hasUpgradeChanged()));
 }
 
 Package::Package(QObject* parent) : QPndman::Package(parent), installed(false), bytesDownloaded(0), bytesToDownload(0)
 {
-
+  connect(this, SIGNAL(upgradeCandidateChanged(Package*)), this, SIGNAL(hasUpgradeChanged()));
 }
 
 Package::Package(const Package& other) : QPndman::Package(other), installed(other.installed), bytesDownloaded(other.bytesDownloaded), bytesToDownload(other.bytesToDownload)
 {
-
+  connect(this, SIGNAL(upgradeCandidateChanged(Package*)), this, SIGNAL(hasUpgradeChanged()));
 }
 
 Package& Package::operator=(const Package& other)
@@ -39,8 +41,19 @@ qint64 Package::getBytesToDownload() const
   return bytesToDownload;
 }
 
+bool Package::getHasUpgrade() const
+{
+  return !getUpgradeCandidate()->isNull();
+}
+
+bool Package::getIsDownloading() const
+{
+  return bytesDownloaded > 0 && bytesDownloaded != bytesToDownload;
+}
+
 void Package::setInstalled()
 {
+  setBytesDownloaded(bytesToDownload);
   setInstalled(true);
 }
 
@@ -71,6 +84,28 @@ void Package::setBytesToDownload(qint64 value)
   }
 }
 
+void Package::install(QObject *device, QString location)
+{
+  QPndman::Enum::InstallLocation installLocation = QPndman::Enum::DesktopAndMenu;
+  if(location == "Desktop") {
+    installLocation = QPndman::Enum::Desktop;
+  } else if(location == "Menu") {
+    installLocation = QPndman::Enum::Menu;
+  }
+  QPndman::Device* dev = qobject_cast<QPndman::Device*>(device);
+  manager->install(this, dev, installLocation);
+}
+
+void Package::remove()
+{
+  manager->remove(this);
+}
+
+void Package::upgrade()
+{
+ manager->upgrade(this);
+}
+
 void Package::updateFrom(QPndman::Package package)
 {
   setPndmanPackage(package.getPndmanPackage());
@@ -91,4 +126,10 @@ void Package::updateFrom(QPndman::Package package)
   setTitles(package.getTitles());
   setDescriptions(package.getDescriptions());
   setCategories(package.getCategories());
+  setUpgradeCandidate(package.getUpgradeCandidate());
+}
+
+QPndman::UpgradeHandle* Package::upgradePackage(bool force)
+{
+  return QPndman::Package::upgrade(force);
 }

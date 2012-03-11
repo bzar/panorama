@@ -1,10 +1,12 @@
-import Qt 4.7
+import QtQuick 1.1
 
 Item {
     id: button
     property color color: "lightgrey"
     property string label: "Button!"
+    property string sublabel: ""
     property alias pressed: mouseArea.pressed
+    property alias hovered: mouseArea.hover
     property alias font: labelText.font
     property alias textColor: labelText.color
     property alias enabled: mouseArea.enabled
@@ -22,9 +24,9 @@ Item {
         anchors.fill: parent
 
         gradient: Gradient {
-            GradientStop { position: 0.0; color: Qt.darker(button.color, pressed ? 1.6 : 1.0 ) }
-            GradientStop { position: pressed ? 0.2 : 0.8; color: Qt.darker(button.color, pressed ? 1.4 : 1.2) }
-            GradientStop { position: 1.0; color: Qt.darker(button.color, pressed ? 1.2 : 1.4) }
+            GradientStop { position: 0.0; color: Qt.darker(button.color, pressed ? 1.6 : hovered ? 0.8 : 1.0 ) }
+            GradientStop { position: pressed ? 0.2 : 0.8; color: Qt.darker(button.color, pressed ? 1.4 : hovered ? 1.0 : 1.2) }
+            GradientStop { position: 1.0; color: Qt.darker(button.color, pressed ? 1.2 : hovered ? 1.6 : 1.4) }
         }
 
         clip: true
@@ -57,18 +59,30 @@ Item {
                 }
             }
 
-            Text {
-                id: labelText
-                font.pixelSize: 18
-                text: button.label
-                anchors.verticalCenter: parent.verticalCenter
+            Column {
+              anchors.verticalCenter: parent.verticalCenter
+              Text {
+                  id: labelText
+                  font.pixelSize: 18
+                  text: button.label
+              }
+              Text {
+                id: sublabelText
+                font.pixelSize: 10
+                text: button.sublabel
+
+              }
             }
         }
 
         MouseArea {
             id: mouseArea
+            property bool hover: false
             anchors.fill: parent
+            hoverEnabled: true
             onClicked: button.clicked()
+            onEntered: hover = true
+            onExited: hover = false
         }
 
         Rectangle {

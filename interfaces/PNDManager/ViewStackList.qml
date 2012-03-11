@@ -1,4 +1,4 @@
-import Qt 4.7
+import QtQuick 1.1
 
 Item {
   default property alias viewStacks: viewStackContainer.children
@@ -33,11 +33,11 @@ Item {
   }
 
   function next() {
-    show((viewStacks.length + currentIndex - 1) % viewStacks.length);
+    show((currentIndex + 1) % viewStacks.length);
   }
 
   function prev() {
-    show((currentIndex + 1) % viewStacks.length);
+    show((viewStacks.length + currentIndex - 1) % viewStacks.length);
   }
 
   Component.onCompleted: show(0)

@@ -1,28 +1,22 @@
-import Qt 4.7
+import QtQuick 1.1
 
 GridView {
   id: packageList
+  property QtObject pndManager
   property variant packages
   property int columns: 2
   anchors.fill: parent
   model: packages
+  boundsBehavior: GridView.DragOverBounds
 
-  Component {
-    id: packageView
-    PackageView {
-
-    }
-  }
+  Component { id: packageView; PackageView {} }
 
   function openCurrent() {
-    var view = stack.push(packageView, {"pnd": packages[currentIndex], "viewTitle": packages[currentIndex].title});
-
-    // QtQuick 1.0 compatibility
-    if(view.pnd === null) {
-      view.pnd = packages[currentIndex]
-      view.viewTitle = packages[currentIndex].title
-    }
-
+    var view = stack.push(packageView, {
+                            "pnd": packages[currentIndex],
+                            "viewTitle": packages[currentIndex].title,
+                            "pndManager": pndManager
+                          });
   }
 
   cellWidth: width / columns - width%columns
@@ -46,6 +40,16 @@ GridView {
         packageList.openCurrent();
       }
     }
+  }
+
+  Rectangle {
+    width: 16
+    height: packageList.height * packageList.height / packageList.contentHeight
+    anchors.right: parent.right
+    y: (packageList.height - height) * packageList.contentY / (packageList.contentHeight - packageList.height)
+    color: "#111"
+    visible: packageList.moving
+    z: 1
   }
 
   Keys.onReturnPressed: openCurrent()

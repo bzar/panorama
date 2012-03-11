@@ -25,9 +25,14 @@ PNDManager::~PNDManager()
   tmpDevice->saveRepositories();
 }
 
-QList< QPndman::Device* > PNDManager::getDevices()
+QList< QObject* > PNDManager::getDevices()
 {
-  return devices;
+  QList< QObject* > result;
+  foreach(QPndman::Device* device, devices)
+  {
+    result << device;
+  }
+  return result;
 }
 
 QList< Package* > PNDManager::getPackages()
@@ -35,39 +40,11 @@ QList< Package* > PNDManager::getPackages()
   return packages;
 }
 
-QList<QObject*> PNDManager::getPackagesQObject()
+PNDFilter* PNDManager::getPackagesQObject()
 {
-  QList<QObject*> result;
-  foreach(Package* p, packages)
-  {
-    result << p;
-  }
-  return result;
+  return new PNDFilter(packages);
 }
 
-QList<QObject*> PNDManager::getPackagesFromCategory(QString categoryFilter)
-{
-  QRegExp re(categoryFilter);
-  QList<QObject*> result;
-  foreach(Package* p, packages)
-  {
-    foreach(QPndman::Category category, p->getCategories())
-    {
-      if(re.exactMatch(category.getMain()))
-      {
-        result << p;
-        break;
-      }
-    }
-
-  }
-  return result;
-}
-
-PNDListModel* PNDManager::getList()
-{
-  return new PNDListModel(this);
-}
 
 void PNDManager::crawl()
 {
@@ -75,10 +52,14 @@ void PNDManager::crawl()
   emit crawling();
   foreach(QPndman::Device* device, devices)
   {
+    qDebug() << "Crawling" << device->getDevice();
     device->crawl();
   }
+  qDebug() << "Updating remote repository";
   repository->update();
+  qDebug() << "Updating local repository";
   localRepository->update();
+  qDebug() << "Updating package list";
   updatePackages();
   emit crawlDone();
 }
@@ -138,7 +119,7 @@ void PNDManager::updatePackages()
   {
     if(!packagesById.contains(p.getId()))
     {
-      Package* package = new Package(p, true, this);
+      Package* package = new Package(this, p, true, this);
       packagesById.insert(package->getId(), package);
       packages << package;
     }
@@ -148,17 +129,17 @@ void PNDManager::updatePackages()
   {
     if(!packagesById.contains(p.getId()))
     {
-      Package* package = new Package(p, false, this);
+      Package* package = new Package(this, p, false, this);
       packagesById.insert(package->getId(), package);
       packages << package;
     }
   }
 
   qDebug() << "Found" << packages.count() << "packages";
-  emit packagesChanged(packages);
+  emit packagesChanged();
 }
 
-void PNDManager::install(Package* package, QPndman::Device* device, QPndman::InstallLocation location)
+void PNDManager::install(Package* package, QPndman::Device* device, QPndman::Enum::InstallLocation location)
 {
   qDebug() << "PNDManager::install";
   QPndman::InstallHandle* handle = device->install(*package, location);
@@ -169,12 +150,13 @@ void PNDManager::install(Package* package, QPndman::Device* device, QPndman::Ins
   }
   DownloadWorker* worker = new DownloadWorker(handle);
   handle->setParent(worker);
-  connect(handle, SIGNAL(bytesDownloadedChanged(qint64)), package, SIGNAL(bytesDownloadedChanged(qint64)));
-  connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), package, SIGNAL(bytesToDownloadChanged(qint64)));
+  connect(handle, SIGNAL(bytesDownloadedChanged(qint64)), package, SLOT(setBytesDownloaded(qint64)));
+  connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), package, SLOT(setBytesToDownload(qint64)));
   connect(handle, SIGNAL(done()), package, SLOT(setInstalled()));
   connect(handle, SIGNAL(done()), this, SLOT(crawl()));
+  connect(worker, SIGNAL(started(QPndman::Handle*)), this, SIGNAL(packagesChanged()));
   worker->start();
-  emit installing(package, handle);
+  emit installing(package);
 }
 
 void PNDManager::remove(Package* package)
@@ -201,7 +183,7 @@ void PNDManager::remove(Package* package)
 void PNDManager::upgrade(Package* package)
 {
   qDebug() << "PNDManager::upgrade";
-  QPndman::UpgradeHandle* handle = package->upgrade();
+  QPndman::UpgradeHandle* handle = package->upgradePackage(false);
   if(!handle)
   {
     emit(error(QString("Error upgrading %1").arg(package->getTitle())));
@@ -209,9 +191,11 @@ void PNDManager::upgrade(Package* package)
   }
   DownloadWorker* worker = new DownloadWorker(handle);
   handle->setParent(worker);
-  connect(handle, SIGNAL(bytesDownloadedChanged(qint64)), package, SIGNAL(bytesDownloadedChanged(qint64)));
-  connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), package, SIGNAL(bytesToDownloadChanged(qint64)));
+  connect(handle, SIGNAL(bytesDownloadedChanged(qint64)), package, SLOT(setBytesDownloaded(qint64)));
+  connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), package, SLOT(setBytesToDownload(qint64)));
+  connect(handle, SIGNAL(done()), package, SLOT(setInstalled()));
   connect(handle, SIGNAL(done()), this, SLOT(crawl()));
+  connect(worker, SIGNAL(started(QPndman::Handle*)), this, SIGNAL(packagesChanged()));
   worker->start();
-  emit upgrading(package, handle);
+  emit upgrading(package);
 }

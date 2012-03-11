@@ -1,4 +1,5 @@
-import Qt 4.7
+import QtQuick 1.1
+import Panorama.Pandora 1.0
 
 View {
   property QtObject pndManager
@@ -18,12 +19,7 @@ View {
     ListElement{ title: "Utilities"; filter: "Utility" }
   }
 
-  Component {
-    id: categoryView
-    CategoryView {
-
-    }
-  }
+  Component { id: categoryView; CategoryView {} }
 
   Rectangle {
     anchors.fill: parent
@@ -34,18 +30,10 @@ View {
       property int columns: 2
       model: categories
       anchors.fill: parent
+      boundsBehavior: GridView.StopAtBounds
 
       function openCurrent() {
-        console.log("pndManager = " + pndManager);
-        var view = stack.push(categoryView, {"pndManager": pndManager, "categories": currentItem.categoryFilter, "viewTitle": currentItem.categoryTitle});
-
-        // QtQuick 1.0 compatiblity
-        if(view.pndManager === null) {
-          view.pndManager = pndManager
-          view.categories = currentItem.categoryFilter
-          view.viewTitle = currentItem.categoryTitle
-        }
-
+        stack.push(categoryView, {"pndManager": pndManager, "categories": currentItem.categoryFilter, "viewTitle": currentItem.categoryTitle});
       }
 
       cellWidth: width/columns - width%columns
@@ -84,6 +72,11 @@ View {
       }
 
       Keys.onReturnPressed: openCurrent()
+      Pandora.onPressed: {
+        event.accepted = true;
+        if(event.key === Pandora.ButtonB) openCurrent();
+        else event.accepted = false;
+      }
     }
   }
 

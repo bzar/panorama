@@ -1,11 +1,12 @@
-import Qt 4.7
+import QtQuick 1.1
 
 Item {
   default property alias views: viewContainer.children
-  property int currentIndex: views.length - 1
-  property QtObject current: views[views.length - 1]
-  property QtObject previous: views[views.length > 1 ? views.length - 2 : 0]
+  property int currentIndex: 0
+  property QtObject current: views[currentIndex]
+  property QtObject previous: views[currentIndex ? currentIndex - 1 : currentIndex]
   property bool active: false
+  property bool atRootView: currentIndex == 0
   visible: false
   anchors.fill: parent
 
@@ -50,6 +51,7 @@ Item {
     var next = viewComponent.createObject(viewContainer, properties);
     pushMoveIn.target = next;
     pushMoveIn.start();
+    currentIndex += 1;
     return next;
   }
 
@@ -59,11 +61,15 @@ Item {
       popMoveOut.start();
       popMoveIn.target = previous;
       popMoveIn.start();
+      currentIndex -= 1;
     }
   }
 
   function getViewTitle() {
-    return current.viewTitle
+    if(atRootView)
+      return current.viewTitle
+    else
+      return previous.viewTitle + " > " + current.viewTitle
   }
 
   Item {

@@ -1,7 +1,8 @@
-import Qt 4.7
+import QtQuick 1.1
 import Panorama.Settings 1.0
 import Panorama.UI 1.0
 import Panorama.PNDManagement 1.0
+import Panorama.Pandora 1.0
 
 PanoramaUI {
   id: ui
@@ -10,9 +11,36 @@ PanoramaUI {
   author: "B-ZaR"
   anchors.fill: parent
 
+  function init() {
+    pndManager.crawl();
+  }
+
+  Timer {
+     interval: 100
+     repeat: false
+     running: true
+     onTriggered: ui.init()
+  }
+
   PNDManager {
     id: pndManager
-    Component.onCompleted: { crawl(); sync(); }
+    onSyncDone: syncCompleteNotification.show()
+  }
+
+  Pandora.onPressed: {
+    event.accepted = true;
+    if(event.key === Pandora.ButtonX)           views.current.pop();
+    else if(event.key === Pandora.TriggerL)     views.prev();
+    else if(event.key === Pandora.TriggerR)     views.next();
+    else if(event.key === Pandora.ButtonStart)  bottomBar.reload();
+    else event.accepted = false;
+  }
+
+  Notification {
+    id: syncCompleteNotification
+    text: "Sync complete"
+    anchors.centerIn: parent
+    z: 2
   }
 
   TopBar {
@@ -32,14 +60,6 @@ PanoramaUI {
     anchors.left: parent.left
     anchors.right: parent.right
 
-    Keys.onPressed: {
-      if(event.key === Qt.Key_PageDown) {
-        next()
-      } else if(event.key === Qt.Key_PageUp) {
-        prev()
-      }
-    }
-
     ViewStack {
       id: categoriesStack
       onActivate: views.activate(categoriesStack)
@@ -52,7 +72,7 @@ PanoramaUI {
       id: installedStack
       onActivate: views.activate(installedStack)
       InstalledView {
-
+        pndManager: pndManager
       }
     }
 
@@ -72,6 +92,8 @@ PanoramaUI {
     anchors.right: parent.right
     height: 64
     z: 1
+
+    backArrowVisible: !views.current.atRootView
 
     IconButton {
       normalImage: "img/home_32x32.png"
@@ -102,5 +124,6 @@ PanoramaUI {
     }
 
     onBack: views.current.pop()
+    onReload: { pndManager.sync(); pndManager.crawl(); }
   }
 }
