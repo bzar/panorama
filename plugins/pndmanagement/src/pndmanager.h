@@ -7,32 +7,32 @@
 #include "qtpndman.h"
 #include "package.h"
 #include "pndfilter.h"
+#include <QDeclarativeListProperty>
 
 class PNDManager : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(PNDFilter* packages READ getPackagesQObject NOTIFY packagesChanged)
-  Q_PROPERTY(QList<QObject*> devices READ getDevices NOTIFY devicesChanged)
+  Q_PROPERTY(PNDFilter* packages READ getPackages NOTIFY packagesChanged)
+  Q_PROPERTY(QDeclarativeListProperty<QPndman::Device> devices READ getDevices NOTIFY devicesChanged)
 public:
   PNDManager(QObject* parent = 0);
   ~PNDManager();
 
-  Q_INVOKABLE QList<QObject*> getDevices();
-  Q_INVOKABLE QList<Package*> getPackages();
-  Q_INVOKABLE PNDFilter* getPackagesQObject();
+  QDeclarativeListProperty<QPndman::Device> getDevices();
+  int deviceCount() const;
+  QPndman::Device* getDevice(int) const;
+
+  PNDFilter* getPackages();
+
+  QPndman::Context* getContext() const;
 
 public slots:
   void crawl();
   void sync();
-  void install(Package* package, QPndman::Device* device, QPndman::Enum::InstallLocation location);
-  void remove(Package* package);
-  void upgrade(Package* package);
   
 signals:
   void packagesChanged();
   void devicesChanged();
-  void installing(Package* package);
-  void upgrading(Package* package);
   void error(QString);
   void syncing(QPndman::SyncHandle* handle);
   void syncDone();

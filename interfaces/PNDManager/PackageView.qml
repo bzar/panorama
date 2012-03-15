@@ -49,8 +49,8 @@ View {
         onClicked: pnd.remove()
       }
       Button {
-        label: "Upgrade (" + Utils.prettySize(pnd.upgradeCandidate.size) + ")"
-        //sublabel: pnd.version.toString() + " -> " + pnd.upgradeCandidate.version.toString()
+        label: !pnd.upgradeCandidate ? "" : "Upgrade (" + Utils.prettySize(pnd.upgradeCandidate.size) + ")"
+        sublabel: !pnd.upgradeCandidate ? "" : pnd.version.toString() + " -> " + pnd.upgradeCandidate.version.toString()
         color: "#6992D7"
         width: 256
         height: 64

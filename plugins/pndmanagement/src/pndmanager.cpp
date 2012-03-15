@@ -1,6 +1,5 @@
 #include "pndmanager.h"
 #include "syncworker.h"
-#include "downloadworker.h"
 
 #include <QDebug>
 
@@ -25,24 +24,29 @@ PNDManager::~PNDManager()
   tmpDevice->saveRepositories();
 }
 
-QList< QObject* > PNDManager::getDevices()
+QDeclarativeListProperty<QPndman::Device> PNDManager::getDevices()
 {
-  QList< QObject* > result;
-  foreach(QPndman::Device* device, devices)
-  {
-    result << device;
-  }
-  return result;
+  return QDeclarativeListProperty<QPndman::Device>(this, devices);
 }
 
-QList< Package* > PNDManager::getPackages()
+int PNDManager::deviceCount() const
 {
-  return packages;
+  return devices.count();
 }
 
-PNDFilter* PNDManager::getPackagesQObject()
+QPndman::Device *PNDManager::getDevice(int i) const
+{
+  return devices.at(i);
+}
+
+PNDFilter* PNDManager::getPackages()
 {
   return new PNDFilter(packages);
+}
+
+QPndman::Context* PNDManager::getContext() const
+{
+  return context;
 }
 
 
@@ -80,19 +84,19 @@ void PNDManager::sync()
 void PNDManager::updatePackages()
 {
   qDebug() << "PNDManager::updatePackages";
-  QList<QPndman::Package> installedPackages = localRepository->getPackages();
-  QList<QPndman::Package> remotePackages = repository->getPackages();
+  QList<QPndman::Package*> installedPackages = localRepository->getPackages();
+  QList<QPndman::Package*> remotePackages = repository->getPackages();
 
-  QMap<QString, QPndman::Package> installed;
-  foreach(QPndman::Package p, installedPackages)
+  QMap<QString, QPndman::Package*> installed;
+  foreach(QPndman::Package* p, installedPackages)
   {
-    installed.insert(p.getId(), p);
+    installed.insert(p->getId(), p);
   }
 
-  QMap<QString, QPndman::Package> remote;
-  foreach(QPndman::Package p, remotePackages)
+  QMap<QString, QPndman::Package*> remote;
+  foreach(QPndman::Package* p, remotePackages)
   {
-    remote.insert(p.getId(), p);
+    remote.insert(p->getId(), p);
   }
 
   QMutableListIterator<Package*> i(packages);
@@ -104,20 +108,20 @@ void PNDManager::updatePackages()
     if(isInInstalled || remote.contains(p->getId()))
     {
       p->setInstalled(isInInstalled);
-      QPndman::Package package = isInInstalled ? installed.value(p->getId()) : remote.value(p->getId());
+      QPndman::Package* package = isInInstalled ? installed.value(p->getId()) : remote.value(p->getId());
       p->updateFrom(package);
       packagesById.insert(p->getId(), p);
     }
     else
     {
       i.remove();
-      delete p;
+      p->deleteLater();
     }
   }
 
-  foreach(QPndman::Package p, installedPackages)
+  foreach(QPndman::Package* p, installedPackages)
   {
-    if(!packagesById.contains(p.getId()))
+    if(!packagesById.contains(p->getId()))
     {
       Package* package = new Package(this, p, true, this);
       packagesById.insert(package->getId(), package);
@@ -125,9 +129,9 @@ void PNDManager::updatePackages()
     }
   }
 
-  foreach(QPndman::Package p, remotePackages)
+  foreach(QPndman::Package* p, remotePackages)
   {
-    if(!packagesById.contains(p.getId()))
+    if(!packagesById.contains(p->getId()))
     {
       Package* package = new Package(this, p, false, this);
       packagesById.insert(package->getId(), package);
@@ -139,63 +143,3 @@ void PNDManager::updatePackages()
   emit packagesChanged();
 }
 
-void PNDManager::install(Package* package, QPndman::Device* device, QPndman::Enum::InstallLocation location)
-{
-  qDebug() << "PNDManager::install";
-  QPndman::InstallHandle* handle = device->install(*package, location);
-  if(!handle)
-  {
-    emit(error(QString("Error installing %1").arg(package->getTitle())));
-    return;
-  }
-  DownloadWorker* worker = new DownloadWorker(handle);
-  handle->setParent(worker);
-  connect(handle, SIGNAL(bytesDownloadedChanged(qint64)), package, SLOT(setBytesDownloaded(qint64)));
-  connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), package, SLOT(setBytesToDownload(qint64)));
-  connect(handle, SIGNAL(done()), package, SLOT(setInstalled()));
-  connect(handle, SIGNAL(done()), this, SLOT(crawl()));
-  connect(worker, SIGNAL(started(QPndman::Handle*)), this, SIGNAL(packagesChanged()));
-  worker->start();
-  emit installing(package);
-}
-
-void PNDManager::remove(Package* package)
-{
-  qDebug() << "PNDManager::remove";
-  foreach(QPndman::Device* device, devices)
-  {
-    if(device->getDevice() == package->getDevice())
-    {
-      if(device->remove(*package))
-      {
-        package->setBytesDownloaded(0);
-        package->setInstalled(false);
-        crawl();
-      }
-      else
-      {
-        emit error("Error removing pnd");
-      }
-    }
-  }
-}
-
-void PNDManager::upgrade(Package* package)
-{
-  qDebug() << "PNDManager::upgrade";
-  QPndman::UpgradeHandle* handle = package->upgradePackage(false);
-  if(!handle)
-  {
-    emit(error(QString("Error upgrading %1").arg(package->getTitle())));
-    return;
-  }
-  DownloadWorker* worker = new DownloadWorker(handle);
-  handle->setParent(worker);
-  connect(handle, SIGNAL(bytesDownloadedChanged(qint64)), package, SLOT(setBytesDownloaded(qint64)));
-  connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), package, SLOT(setBytesToDownload(qint64)));
-  connect(handle, SIGNAL(done()), package, SLOT(setInstalled()));
-  connect(handle, SIGNAL(done()), this, SLOT(crawl()));
-  connect(worker, SIGNAL(started(QPndman::Handle*)), this, SIGNAL(packagesChanged()));
-  worker->start();
-  emit upgrading(package);
-}

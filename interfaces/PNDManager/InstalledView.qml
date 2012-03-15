@@ -70,6 +70,7 @@ View {
           delegate: SectionItem {
             width: content.width
             text: modelData.title ? modelData.title : modelData.id
+            icon: modelData.icon
             onClicked: showPackage(modelData)
 
             Rectangle {
@@ -143,6 +144,7 @@ View {
           delegate: SectionItem {
             width: content.width
             text: modelData.title ? modelData.title : modelData.id
+            icon: modelData.icon
             onClicked: showPackage(modelData)
           }
         }
@@ -160,6 +162,7 @@ View {
           delegate: SectionItem {
             width: content.width
             text: modelData.title ? modelData.title : modelData.id
+            icon: modelData.icon
             onClicked: showPackage(modelData)
           }
         }

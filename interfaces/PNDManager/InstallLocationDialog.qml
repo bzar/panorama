@@ -11,7 +11,7 @@ View {
     anchors.fill: parent
 
     ListView {
-      id: device
+      id: deviceList
 
       property int selected: 0
       property int maxTextWidth: 0
@@ -31,22 +31,22 @@ View {
 
 
       delegate: Rectangle {
-        property bool selected: index === device.selected
+        property bool selected: index === deviceList.selected
         property bool hover: false
 
         anchors.horizontalCenter: parent.horizontalCenter
-        width: device.maxTextWidth + 32
+        width: deviceList.maxTextWidth + 32
         height: deviceText.paintedHeight + 16
         radius: 8
         color: selected ? "#555" : hover ? "#ccc" : "transparent"
 
         Text {
           id: deviceText
-          text: modelData.mount
+          text: mount
           color: selected ? "white" : "black"
           font.pixelSize: 20
           anchors.centerIn: parent
-          Component.onCompleted: device.maxTextWidth = Math.max(paintedWidth, device.maxTextWidth)
+          Component.onCompleted: {deviceList.maxTextWidth = Math.max(paintedWidth, deviceList.maxTextWidth); console.log(deviceList.maxTextWidth);}
         }
 
         MouseArea {
@@ -55,7 +55,7 @@ View {
           hoverEnabled: true
           onEntered: parent.hover = true
           onExited: parent.hover = false
-          onClicked: device.selected = index
+          onClicked: deviceList.selected = index
         }
       }
     }
@@ -120,7 +120,7 @@ View {
       label: "Install"
       color: "#69D772"
       onClicked: {
-        pnd.install(device.selectedItem(), location.selectedItem());
+        pnd.install(deviceList.selectedItem(), location.selectedItem());
         stack.pop();
       }
     }

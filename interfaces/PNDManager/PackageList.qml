@@ -24,12 +24,17 @@ GridView {
   delegate: Rectangle {
     height: packageList.cellHeight
     width: packageList.cellWidth
-    Text { text: modelData.title; }
-
     color: Qt.hsla(parseFloat(index)/packageList.count, 0.5, GridView.isCurrentItem ? 0.7 : 0.5, 1.0)
     border.width: GridView.isCurrentItem ? 2 : 0
     border.color: Qt.hsla(parseFloat(index)/packageList.count, 0.5, 0.9, 1.0)
     z: GridView.isCurrentItem ? 2 : 1
+
+    Text { text: modelData.title; }
+
+    Image {
+      source: modelData.icon
+      asynchronous: true
+    }
 
     MouseArea {
       anchors.fill: parent
