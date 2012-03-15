@@ -14,6 +14,8 @@ class PNDManager : public QObject
   Q_OBJECT
   Q_PROPERTY(PNDFilter* packages READ getPackages NOTIFY packagesChanged)
   Q_PROPERTY(QDeclarativeListProperty<QPndman::Device> devices READ getDevices NOTIFY devicesChanged)
+
+  Q_ENUMS(QPndman::Enum::InstallLocation QPndman::Enum::Operation QPndman::Version::Type)
 public:
   PNDManager(QObject* parent = 0);
   ~PNDManager();

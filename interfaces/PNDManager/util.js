@@ -43,3 +43,6 @@ function prettySize(size) {
   return prettySizeValue(size) + " " + prettySizeUnit(size);
 }
 
+function versionString(version) {
+  return version.major + "." + version.minor + "." + version.release + "." + version.build;
+}

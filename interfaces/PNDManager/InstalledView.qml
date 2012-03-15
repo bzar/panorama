@@ -1,5 +1,7 @@
 import QtQuick 1.1
 
+import Panorama.PNDManagement 1.0
+
 import "util.js" as Utils
 
 View {
@@ -45,6 +47,27 @@ View {
         id: itemsColumn
         height: childrenRect.height
         width: parent.width
+
+        Item {
+          width: parent.width
+          height: upgradeAllButton.height + 16
+          visible: upgradable.visible
+          Button {
+            id: upgradeAllButton
+            label: "Upgrade all"
+            color: "#6992D7"
+            width: 256
+            height: 64
+            radius: 8
+            onClicked: {
+              var pnds = upgradableRepeater.model;
+              for(var i = 0; i < pnds.length; ++i) {
+                pnds[i].upgrade();
+              }
+            }
+            anchors.centerIn: parent
+          }
+        }
 
         SectionHeader {
           id: downloading
@@ -117,25 +140,6 @@ View {
           text: "Upgradable"
           width: parent.width
           visible: upgradableRepeater.model.length > 0
-
-          Button {
-            label: "Upgrade all"
-            color: "#6992D7"
-            width: 128
-            height: 24
-            radius: 4
-            onClicked: {
-              var pnds = upgradableRepeater.model;
-              for(var i = 0; i < pnds.length; ++i) {
-                pnds[i].upgrade();
-              }
-            }
-
-            anchors.margins: 4
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-          }
-
         }
         Repeater {
           id: upgradableRepeater
@@ -144,8 +148,14 @@ View {
           delegate: SectionItem {
             width: content.width
             text: modelData.title ? modelData.title : modelData.id
-            icon: modelData.icon
+            //icon: modelData.icon
             onClicked: showPackage(modelData)
+
+            Text {
+              id: versionText
+              text: Utils.versionString(modelData.version) + " → " + Utils.versionString(modelData.upgradeCandidate.version) + "    (" + Utils.prettySize(modelData.upgradeCandidate.size) + ")"
+              font.pixelSize: 14
+            }
           }
         }
 
@@ -162,7 +172,7 @@ View {
           delegate: SectionItem {
             width: content.width
             text: modelData.title ? modelData.title : modelData.id
-            icon: modelData.icon
+            //icon: modelData.icon
             onClicked: showPackage(modelData)
           }
         }
