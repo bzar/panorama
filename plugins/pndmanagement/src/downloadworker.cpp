@@ -4,7 +4,6 @@
 
 DownloadWorker::DownloadWorker(QPndman::Handle* handle) : handle(handle), downloadStarted(false), timer()
 {
-  //connect(DownloadWorkerSingleton::instance(), SIGNAL(update()), this, SLOT(process()), Qt::QueuedConnection);
   connect(DownloadWorkerSingleton::instance(), SIGNAL(error()), this, SLOT(emitError()), Qt::QueuedConnection);
   timer.setInterval(500);
   timer.setSingleShot(false);
@@ -90,7 +89,7 @@ void DownloadWorkerSingleton::process()
 
 DownloadWorkerSingletonThread::DownloadWorkerSingletonThread(QObject *parent) : QThread(parent), singleton(0)
 {
-  connect(QApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(terminate()));
+  connect(QApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(quit()));
 }
 
 DownloadWorkerSingletonThread::~DownloadWorkerSingletonThread()

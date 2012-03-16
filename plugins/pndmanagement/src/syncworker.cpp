@@ -1,31 +1,112 @@
 #include "syncworker.h"
 
-SyncWorker::SyncWorker(QPndman::SyncHandle* handle) : handle(handle), timer()
+#include <QApplication>
+#include <QDebug>
+
+SyncWorker::SyncWorker(QPndman::SyncHandle* handle) : handle(handle), syncStarted(false), timer()
 {
-  timer.setInterval(200);
+  //connect(SyncWorkerSingleton::instance(), SIGNAL(update()), this, SLOT(process()), Qt::QueuedConnection);
+  connect(SyncWorkerSingleton::instance(), SIGNAL(error()), this, SLOT(emitError()), Qt::QueuedConnection);
+  timer.setInterval(500);
   timer.setSingleShot(false);
   connect(&timer, SIGNAL(timeout()), this, SLOT(process()));
 }
 
 void SyncWorker::start()
 {
+  qDebug() << "SyncWorker::start";
+  QMetaObject::invokeMethod(SyncWorkerSingleton::instance(), "start", Qt::QueuedConnection);
   timer.start();
 }
-  
+
 void SyncWorker::process()
 {
-  int status = handle->sync();
   handle->update();
-  
-  if(status == 0 && handle->getDone())
+
+  if(!syncStarted && handle->getBytesDownloaded() > 0)
   {
+    syncStarted = true;
+    emit started(handle);
+  }
+  if(handle->getDone())
+  {
+    qDebug() << "SyncWorker::process -> ready";
     emit ready(handle);
     deleteLater();
   }
+}
+
+void SyncWorker::emitError()
+{
+  emit error(handle);
+}
+
+SyncWorkerSingletonThread* SyncWorkerSingleton::thread = 0;
+
+SyncWorkerSingleton *SyncWorkerSingleton::instance()
+{
+  if(thread == 0)
+  {
+    thread = new SyncWorkerSingletonThread(QApplication::instance());
+    thread->start(QThread::LowPriority);
+    while(thread->getSingleton() == 0) {
+      QThread::yieldCurrentThread();
+    }
+  }
+  return thread->getSingleton();
+}
+
+SyncWorkerSingleton::~SyncWorkerSingleton()
+{
+}
+
+void SyncWorkerSingleton::start()
+{
+  timer.start();
+}
+
+SyncWorkerSingleton::SyncWorkerSingleton(QObject *parent) : QObject(parent), timer()
+{
+  qDebug() << "SyncWorkerSingleton::SyncWorkerSingleton";
+  timer.setInterval(100);
+  timer.setSingleShot(false);
+  connect(&timer, SIGNAL(timeout()), this, SLOT(process()));
+}
+
+void SyncWorkerSingleton::process()
+{
+  int status = QPndman::SyncHandle::sync();
+  emit update();
+  if(status == 0)
+  {
+    timer.stop();
+  }
   else if(status <= 0)
   {
-    emit error(handle);
-    deleteLater();
+    timer.stop();
+    emit error();
   }
 }
-  
+
+
+SyncWorkerSingletonThread::SyncWorkerSingletonThread(QObject *parent) : QThread(parent), singleton(0)
+{
+  connect(QApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(quit()));
+}
+
+SyncWorkerSingletonThread::~SyncWorkerSingletonThread()
+{
+}
+
+void SyncWorkerSingletonThread::run()
+{
+  singleton = new SyncWorkerSingleton();
+  exec();
+  delete singleton;
+  singleton = 0;
+}
+
+SyncWorkerSingleton *SyncWorkerSingletonThread::getSingleton() const
+{
+  return singleton;
+}

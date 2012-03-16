@@ -1,5 +1,5 @@
 import QtQuick 1.1
-import Panorama.Pandora 1.0
+//import Panorama.Pandora 1.0
 
 View {
     id: view
@@ -24,11 +24,11 @@ View {
       }
     }
 
-    Pandora.onPressed: {
+    /*Pandora.onPressed: {
       event.accepted = true;
       if(event.key === Pandora.ButtonB) packageList.openCurrent();
       else event.accepted = false;
-    }
+    }*/
 
 }
 

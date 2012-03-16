@@ -1,5 +1,5 @@
 import QtQuick 1.1
-import Panorama.Pandora 1.0
+//import Panorama.Pandora 1.0
 
 View {
   property QtObject pndManager
@@ -72,11 +72,11 @@ View {
       }
 
       Keys.onReturnPressed: openCurrent()
-      Pandora.onPressed: {
+      /*Pandora.onPressed: {
         event.accepted = true;
         if(event.key === Pandora.ButtonB) openCurrent();
         else event.accepted = false;
-      }
+      }*/
     }
   }
 

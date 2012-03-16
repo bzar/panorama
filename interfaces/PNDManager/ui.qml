@@ -2,7 +2,7 @@ import QtQuick 1.1
 import Panorama.Settings 1.0
 import Panorama.UI 1.0
 import Panorama.PNDManagement 1.0
-import Panorama.Pandora 1.0
+//import Panorama.Pandora 1.0
 
 PanoramaUI {
   id: ui
@@ -24,17 +24,21 @@ PanoramaUI {
 
   PNDManager {
     id: pndManager
-    onSyncDone: syncCompleteNotification.show()
+    onSyncing: bottomBar.syncing = true
+    onSyncDone: {
+      bottomBar.syncing = false
+      syncCompleteNotification.show()
+    }
   }
 
-  Pandora.onPressed: {
+  /*Pandora.onPressed: {
     event.accepted = true;
     if(event.key === Pandora.ButtonX)           views.current.pop();
     else if(event.key === Pandora.TriggerL)     views.prev();
     else if(event.key === Pandora.TriggerR)     views.next();
     else if(event.key === Pandora.ButtonStart)  bottomBar.reload();
     else event.accepted = false;
-  }
+  }*/
 
   Notification {
     id: syncCompleteNotification

@@ -5,6 +5,7 @@ Rectangle {
 
   default property alias icons: iconRow.children
   property alias backArrowVisible: backArrow.visible
+  property bool syncing: false
   color: "#111"
 
   signal back()
@@ -53,6 +54,16 @@ Rectangle {
     width: height
 
     Image {
+      NumberAnimation on rotation {
+        id: syncAnimation
+        from: 0
+        to: 360
+        loops: Animation.Infinite
+        duration: 2000
+        alwaysRunToEnd: true
+        running: syncing
+      }
+
       source: reloadMouseArea.pressed || reloadMouseArea.hover ? "img/reload_alt_white_24x28.png" : "img/reload_alt_24x28.png"
       smooth: true
       anchors.margins: 16

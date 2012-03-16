@@ -1,5 +1,7 @@
 import QtQuick 1.1
 
+import "util.js" as Utils
+
 GridView {
   id: packageList
   property QtObject pndManager
@@ -21,19 +23,51 @@ GridView {
 
   cellWidth: width / columns - width%columns
   cellHeight: 64
-  delegate: Rectangle {
+  highlight: Rectangle {
+    width: packageList.cellWidth
+    height: packageList.cellHeight
+    color: "#ddd"
+    radius: 8
+    x: packageList.currentItem.x
+    y: packageList.currentItem.y
+  }
+  highlightFollowsCurrentItem: false
+
+  delegate: Item {
     height: packageList.cellHeight
     width: packageList.cellWidth
-    color: Qt.hsla(parseFloat(index)/packageList.count, 0.5, GridView.isCurrentItem ? 0.7 : 0.5, 1.0)
-    border.width: GridView.isCurrentItem ? 2 : 0
-    border.color: Qt.hsla(parseFloat(index)/packageList.count, 0.5, 0.9, 1.0)
-    z: GridView.isCurrentItem ? 2 : 1
-
-    Text { text: modelData.title; }
 
     Image {
+      id: icon
       source: modelData.icon
       asynchronous: true
+      height: 48
+      width: 48
+      fillMode: Image.PreserveAspectFit
+      sourceSize {
+        height: 48
+        width: 48
+      }
+    }
+
+    Text {
+      id: title
+      text: modelData.title
+      anchors.left: icon.right
+      anchors.right: parent.right
+      elide: Text.ElideRight
+      font.pixelSize: 16
+      font.underline: true
+      anchors.leftMargin: 8
+    }
+
+    Text {
+      text: Utils.prettySize(modelData.size)
+      anchors.left: icon.right
+      anchors.right: parent.right
+      anchors.top: title.bottom
+      font.pixelSize: 14
+      anchors.leftMargin: 8
     }
 
     MouseArea {
