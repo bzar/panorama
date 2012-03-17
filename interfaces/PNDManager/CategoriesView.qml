@@ -6,6 +6,8 @@ View {
 
   viewTitle: "Categories"
 
+  onOkButton: categoryList.openCurrent()
+
   Keys.forwardTo: categoryList
   ListModel {
     id: categories
@@ -69,18 +71,8 @@ View {
             categoryList.openCurrent();
           }
         }
-      }
-
-      Keys.onReturnPressed: openCurrent()
-      /*Pandora.onPressed: {
-        event.accepted = true;
-        if(event.key === Pandora.ButtonB) openCurrent();
-        else event.accepted = false;
-      }*/
+      }      
     }
   }
-
-
-
 }
 

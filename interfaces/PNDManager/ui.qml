@@ -31,6 +31,26 @@ PanoramaUI {
     }
   }
 
+  Keys.onPressed: {
+    if(event.key === Qt.Key_PageDown) {
+      views.current.pop()
+    } else if(event.key === Qt.Key_End) {
+      views.current.current.okButton();
+    } else if(event.key === Qt.Key_Home) {
+      views.current.current.installRemoveButton();
+    } else if(event.key === Qt.Key_PageUp) {
+      views.current.current.upgradeButton();
+    } else if(event.key === Qt.Key_1) {
+
+    } else if(event.key === Qt.Key_2) {
+      categoriesStack.activate();
+    } else if(event.key === Qt.Key_3) {
+      installedStack.activate();
+    } else if(event.key === Qt.Key_4) {
+      searchStack.activate();
+    }
+  }
+
   /*Pandora.onPressed: {
     event.accepted = true;
     if(event.key === Pandora.ButtonX)           views.current.pop();

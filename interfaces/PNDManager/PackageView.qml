@@ -9,6 +9,29 @@ View {
   Component { id: installDialog; InstallLocationDialog {} }
   Component { id: previewPictureView; PreviewPictureView {} }
 
+  Keys.forwardTo: textArea
+  onOkButton: showPreviewPictures()
+  onInstallRemoveButton: pnd.installed ? pnd.remove() : showInstallDialog()
+  onUpgradeButton: upgrade()
+
+  function showPreviewPictures() {
+    if(pnd.previewPictures.length > 0) {
+      stack.push(previewPictureView, { "previewPictures": pnd.previewPictures });
+    }
+  }
+
+  function showInstallDialog() {
+    if(!pnd.installed && !pnd.isDownloading) {
+      stack.push(installDialog, {"pndManager": pndManager, "pnd": pnd});
+    }
+  }
+
+  function upgrade() {
+    if(pnd.installed && pnd.hasUpgrade && !pnd.isDownloading) {
+      pnd.upgrade();
+    }
+  }
+
   Rectangle {
     anchors.fill: parent
     color: "white"
@@ -35,7 +58,7 @@ View {
         height: 64
         radius: 4
         visible: !pnd.installed && !pnd.isDownloading
-        onClicked: stack.push(installDialog, {"pndManager": pndManager, "pnd": pnd});
+        onClicked: showInstallDialog()
       }
       Button {
         label: "Remove"
@@ -55,7 +78,7 @@ View {
         height: 64
         radius: 4
         visible: pnd.installed && pnd.hasUpgrade && !pnd.isDownloading
-        onClicked: pnd.upgrade()
+        onClicked: upgrade()
       }
       Column {
         width: 256
@@ -230,18 +253,10 @@ View {
 
         MouseArea {
           anchors.fill: parent
-          enabled: pnd.previewPictures.length > 0
-          onClicked: stack.push(previewPictureView, { "previewPictures": pnd.previewPictures })
+          onClicked: showPreviewPictures()
         }
       }
     }
   }
-
-  Keys.onPressed: {
-      if(event.key === Qt.Key_Backspace) {
-          stack.pop()
-      }
-  }
-
 }
 

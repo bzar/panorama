@@ -1,10 +1,17 @@
 import QtQuick 1.1
-import Panorama.PNDManagement 1.0
 
 View {
   viewTitle: "Select install location"
   property QtObject pnd
   property QtObject pndManager
+
+  onOkButton: install()
+  Keys.forwardTo: [deviceList, location]
+
+  function install() {
+    pnd.install(deviceList.currentItem.device, location.selectedItem());
+    stack.pop();
+  }
 
   Rectangle {
     color: "white"
@@ -16,10 +23,6 @@ View {
       property int selected: 0
       property int maxTextWidth: 0
 
-      function selectedItem() {
-        return model[selected];
-      }
-
       anchors.top: parent.top
       anchors.left: parent.left
       anchors.right: parent.right
@@ -28,17 +31,27 @@ View {
       clip: true
       model: pndManager.devices
       spacing: 4
+      highlightFollowsCurrentItem: false
 
+      highlight : Rectangle {
+        color: "#555"
+        radius: 8
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: deviceList.maxTextWidth + 16
+        height: deviceList.currentItem.height
+        y: deviceList.currentItem.y
+      }
 
       delegate: Rectangle {
-        property bool selected: index === deviceList.selected
+        property bool selected: index === deviceList.currentIndex
         property bool hover: false
+        property QtObject device: modelData
 
         anchors.horizontalCenter: parent.horizontalCenter
         width: deviceList.maxTextWidth + 32
         height: deviceText.paintedHeight + 16
         radius: 8
-        color: selected ? "#555" : hover ? "#ccc" : "transparent"
+        color: hover ? "#ccc" : "transparent"
 
         Text {
           id: deviceText
@@ -55,7 +68,7 @@ View {
           hoverEnabled: true
           onEntered: parent.hover = true
           onExited: parent.hover = false
-          onClicked: deviceList.selected = index
+          onClicked: deviceList.currentIndex = index
         }
       }
     }
@@ -67,13 +80,18 @@ View {
 
       function selectedItem() {
         if(options[selected] === "Desktop") {
+          console.log("selected desktop");
           return "Desktop";
         } else if(options[selected] === "Menu") {
           return "Menu";
         } else {
+          console.log("selected both");
           return "DesktopAndMenu";
         }
       }
+
+      Keys.onLeftPressed: selected = Math.max(0, selected - 1)
+      Keys.onRightPressed: selected = Math.min(options.length - 1, selected + 1)
 
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.bottom: installButton.top
@@ -119,10 +137,7 @@ View {
       radius: 4
       label: "Install"
       color: "#69D772"
-      onClicked: {
-        pnd.install(deviceList.selectedItem(), location.selectedItem());
-        stack.pop();
-      }
+      onClicked: install()
     }
   }
 }

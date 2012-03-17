@@ -90,6 +90,4 @@ GridView {
     visible: packageList.moving
     z: 1
   }
-
-  Keys.onReturnPressed: openCurrent()
 }

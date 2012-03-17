@@ -1,7 +1,5 @@
 import QtQuick 1.1
 
-import Panorama.PNDManagement 1.0
-
 import "util.js" as Utils
 
 View {
@@ -9,8 +7,19 @@ View {
 
   property QtObject pndManager
 
+  onUpgradeButton: upgradeAll()
+
   function showPackage(pnd) {
     stack.push(packageView, { "pnd": pnd, "viewTitle": pnd.title, "pndManager": pndManager });
+  }
+
+  function upgradeAll() {
+    if(upgradableRepeater.model.length > 0) {
+      var pnds = upgradableRepeater.model;
+      for(var i = 0; i < pnds.length; ++i) {
+        pnds[i].upgrade();
+      }
+    }
   }
 
   Component { id: packageView; PackageView {} }
@@ -59,12 +68,7 @@ View {
             width: 256
             height: 64
             radius: 8
-            onClicked: {
-              var pnds = upgradableRepeater.model;
-              for(var i = 0; i < pnds.length; ++i) {
-                pnds[i].upgrade();
-              }
-            }
+            onClicked: upgradeAll()
             anchors.centerIn: parent
           }
         }
