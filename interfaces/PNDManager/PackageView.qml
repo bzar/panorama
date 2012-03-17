@@ -6,12 +6,8 @@ View {
   property QtObject pnd
   property QtObject pndManager
 
-  Component {
-    id: installDialog
-    InstallLocationDialog {
-
-    }
-  }
+  Component { id: installDialog; InstallLocationDialog {} }
+  Component { id: previewPictureView; PreviewPictureView {} }
 
   Rectangle {
     anchors.fill: parent
@@ -222,6 +218,7 @@ View {
         source: pnd.previewPictures.length > 0 ? pnd.previewPictures[0].src : ""
         asynchronous: true
         fillMode: Image.PreserveAspectFit
+        smooth: true
 
         Text {
             anchors.centerIn: parent
@@ -229,6 +226,12 @@ View {
             text: image.source != "" ? parseInt(image.progress * 100) + "%" : "No preview"
             font.pixelSize: 24
             color: "#777"
+        }
+
+        MouseArea {
+          anchors.fill: parent
+          enabled: pnd.previewPictures.length > 0
+          onClicked: stack.push(previewPictureView, { "previewPictures": pnd.previewPictures })
         }
       }
     }

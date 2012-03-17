@@ -11,6 +11,8 @@ Rectangle {
   signal back()
   signal reload()
 
+  MouseArea { anchors.fill: parent; onPressed: mouse.accepted = true; }
+
   Row {
     id: iconRow
     anchors.horizontalCenter: parent.horizontalCenter
@@ -80,5 +82,4 @@ Rectangle {
       onClicked: bar.reload()
     }
   }
-
 }

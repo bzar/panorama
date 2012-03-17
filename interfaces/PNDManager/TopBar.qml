@@ -4,6 +4,8 @@ Rectangle {
   id: bar
   property string title
 
+  MouseArea { anchors.fill: parent; onPressed: mouse.accepted = true; }
+
   color: "#111"
 
   Text {
