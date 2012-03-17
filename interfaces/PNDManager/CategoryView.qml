@@ -1,5 +1,4 @@
 import QtQuick 1.1
-//import Panorama.Pandora 1.0
 
 View {
   id: view

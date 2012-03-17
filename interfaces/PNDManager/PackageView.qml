@@ -145,6 +145,28 @@ View {
       contentWidth: width
       clip: true
 
+      NumberAnimation {
+        id: scrollAnimation
+        target: textArea;
+        property: "contentY"
+        duration: 200;
+        easing.type: Easing.InOutQuad
+      }
+
+      Keys.onDownPressed: {
+        if(contentHeight > height) {
+          scrollAnimation.to = Math.min(contentHeight - height, contentY + height/2);
+          scrollAnimation.start();
+        }
+      }
+
+      Keys.onUpPressed: {
+        if(contentHeight > height) {
+          scrollAnimation.to = Math.max(0, contentY - height/2);
+          scrollAnimation.start();
+        }
+      }
+
       Column {
         id: textAreaContents
         anchors.left: parent.left
@@ -168,6 +190,8 @@ View {
               height: 48
               width: 48
             }
+            anchors.top: parent.top
+            anchors.topMargin: 4
           }
 
           Column {
@@ -228,16 +252,27 @@ View {
     }
 
     Rectangle {
+      height: 1
+      color: "#eee"
+      anchors.bottom: imageArea.top
+      anchors.left: imageArea.left
+      anchors.right: imageArea.right
+    }
+
+    Rectangle {
+      id: imageArea
       anchors.top: buttons.bottom
       anchors.bottom: parent.bottom
       anchors.left: parent.horizontalCenter
       anchors.right: parent.right
       anchors.margins: 16
-      color: "#ccc"
+      color: "transparent" // "#ccc"
 
       Image {
         id: image
         anchors.fill: parent
+        anchors.bottomMargin: 4
+        anchors.topMargin: 4
         source: pnd.previewPictures.length > 0 ? pnd.previewPictures[0].src : ""
         asynchronous: true
         fillMode: Image.PreserveAspectFit
@@ -257,6 +292,15 @@ View {
         }
       }
     }
+
+    Rectangle {
+      height: 1
+      color: "#eee"
+      anchors.top: imageArea.bottom
+      anchors.left: imageArea.left
+      anchors.right: imageArea.right
+    }
+
   }
 }
 
