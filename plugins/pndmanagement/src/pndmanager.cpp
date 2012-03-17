@@ -76,7 +76,7 @@ void PNDManager::sync()
   SyncWorker* worker = new SyncWorker(handle);
   handle->setParent(worker);
   connect(worker, SIGNAL(ready(QPndman::SyncHandle*)), repository, SLOT(update()));
-  connect(worker, SIGNAL(ready(QPndman::SyncHandle*)), this, SLOT(updatePackages()));
+  connect(worker, SIGNAL(ready(QPndman::SyncHandle*)), this, SLOT(crawl()));
   connect(worker, SIGNAL(ready(QPndman::SyncHandle*)), this, SIGNAL(syncDone()));
   worker->start();
 }

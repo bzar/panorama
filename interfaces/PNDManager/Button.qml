@@ -3,8 +3,8 @@ import QtQuick 1.1
 Item {
     id: button
     property color color: "lightgrey"
-    property string label: "Button!"
-    property string sublabel: ""
+    property alias label: labelText.text
+    property alias sublabel: sublabelText.text
     property alias pressed: mouseArea.pressed
     property alias hovered: mouseArea.hover
     property alias font: labelText.font
@@ -12,7 +12,6 @@ Item {
     property alias enabled: mouseArea.enabled
     property alias radius: rectangle.radius
     property alias border: rectangle.border
-    property alias controlHint: controlHintText.text
 
     signal clicked();
 
@@ -31,48 +30,20 @@ Item {
 
         clip: true
 
-        Row {
-            anchors.centerIn: parent
-            width: childrenRect.width
-            height: parent.height
-            spacing: 4
-            Rectangle {
-                id: controlHintCircle
-                anchors.verticalCenter: parent.verticalCenter
-                height: 16
-                width: height
-                radius: height/2
-                color: "transparent"
-                visible: controlHintText.text != ""
-                border {
-                    width: 1
-                    color: controlHintText.color
-                }
-
-                Text {
-                    id: controlHintText
-                    anchors.centerIn: parent
-                    anchors.horizontalCenterOffset: 1
-                    text: ""
-                    font.pixelSize: 12
-                    color: "#333"
-                }
-            }
-
-            Column {
-              anchors.verticalCenter: parent.verticalCenter
-              Text {
-                  id: labelText
-                  font.pixelSize: 18
-                  text: button.label
-              }
-              Text {
-                id: sublabelText
-                font.pixelSize: 10
-                text: button.sublabel
-
-              }
-            }
+        Column {
+          anchors.centerIn: parent
+          Text {
+              id: labelText
+              font.pixelSize: 18
+              text: button.label
+              anchors.horizontalCenter: parent.horizontalCenter
+          }
+          Text {
+            id: sublabelText
+            font.pixelSize: 12
+            text: button.sublabel
+            anchors.horizontalCenter: parent.horizontalCenter
+          }
         }
 
         MouseArea {

@@ -5,7 +5,8 @@
 
 Package::Package(PNDManager* manager, QPndman::Package* p, bool installed, QObject* parent):
   QObject(parent), manager(manager), package(p), id(p->getId()),
-  installed(installed), bytesDownloaded(installed ? 1 : 0), bytesToDownload(1)
+  installed(installed), bytesDownloaded(installed ? 1 : 0), bytesToDownload(1),
+  applicationList(), titleList(), descriptionList(), categoryList(), installedInstanceList()
 {
 }
 
@@ -61,42 +62,110 @@ QPndman::Version* Package::getVersion() const
 {
   return !package ? 0 : package->getVersion();
 }
-QList<QPndman::Application*> Package::getApplications() const
-{
-  return !package ? QList<QPndman::Application*>() : package->getApplications();
-}
-QList<QPndman::TranslatedString*> Package::getTitles() const
-{
-  return !package ? QList<QPndman::TranslatedString*>() : package->getTitles();
-}
-
 QString Package::getTitle() const
 {
   return !package ? "" : package->getTitle();
 }
 
-QList<QPndman::TranslatedString*> Package::getDescriptions() const
-{
-  return !package ? QList<QPndman::TranslatedString*>() : package->getDescriptions();
-}
 QString Package::getDescription() const
 {
   return !package ? "" : package->getDescription();
-}
-
-QList<QPndman::Category*> Package::getCategories() const
-{
-  return !package ? QList<QPndman::Category*>() : package->getCategories();
-}
-QList<QPndman::Package*> Package::getInstallInstances() const
-{
-  return !package ? QList<QPndman::Package*>() : package->getInstallInstances();
 }
 
 QPndman::Package* Package::getUpgradeCandidate() const
 {
   return !package ? 0 : package->getUpgradeCandidate();
 }
+
+QDeclarativeListProperty<QPndman::Application> Package::getApplications()
+{
+  if(applicationList.isEmpty() && package)
+    applicationList = package->getApplications();
+  qDebug() << "Application count: " << applicationList.count();
+  return QDeclarativeListProperty<QPndman::Application>(package.data(), applicationList);
+}
+QDeclarativeListProperty<QPndman::TranslatedString> Package::getTitles()
+{
+  if(titleList.isEmpty() && package)
+    titleList = package->getTitles();
+  return QDeclarativeListProperty<QPndman::TranslatedString>(package.data(), titleList);
+}
+QDeclarativeListProperty<QPndman::TranslatedString> Package::getDescriptions()
+{
+  if(descriptionList.isEmpty() && package)
+    descriptionList = package->getDescriptions();
+  return QDeclarativeListProperty<QPndman::TranslatedString>(package.data(), descriptionList);
+}
+QDeclarativeListProperty<QPndman::Category> Package::getCategories()
+{
+  if(categoryList.isEmpty() && package)
+    categoryList = package->getCategories();
+  return QDeclarativeListProperty<QPndman::Category>(package.data(), categoryList);
+}
+QDeclarativeListProperty<QPndman::PreviewPicture> Package::getPreviewPictures()
+{
+  if(previewPictureList.isEmpty() && package)
+    previewPictureList = package->getPreviewPictures();
+  return QDeclarativeListProperty<QPndman::PreviewPicture>(package.data(), previewPictureList);
+}
+QDeclarativeListProperty<QPndman::Package> Package::getInstallInstances()
+{
+  if(installedInstanceList.isEmpty() && package)
+    installedInstanceList = package->getInstallInstances();
+  return QDeclarativeListProperty<QPndman::Package>(package.data(), installedInstanceList);
+}
+
+int Package::applicationCount() const
+{
+  return package ? package->getApplications().count() : 0;
+}
+int Package::titleCount() const
+{
+  return package ? package->getTitles().count() : 0;
+}
+int Package::descriptionCount() const
+{
+  return package ? package->getDescriptions().count() : 0;
+}
+int Package::categoryCount() const
+{
+  return package ? package->getCategories().count() : 0;
+}
+int Package::previewPictureCount() const
+{
+  return package ? package->getPreviewPictures().count() : 0;
+}
+int Package::installInstanceCount() const
+{
+  return package ? package->getInstallInstances().count() : 0;
+}
+
+QPndman::Application* Package::getApplication(int i) const
+{
+  return package ? package->getApplications().at(i) : 0;
+}
+QPndman::TranslatedString* Package::getTitle(int i) const
+{
+  return package ? package->getTitles().at(i) : 0;
+}
+QPndman::TranslatedString* Package::getDescription(int i) const
+{
+  return package ? package->getDescriptions().at(i) : 0;
+}
+QPndman::Category* Package::getCategory(int i) const
+{
+  return package ? package->getCategories().at(i) : 0;
+}
+QPndman::PreviewPicture* Package::getPreviewPicture(int i) const
+{
+  return package ? package->getPreviewPictures().at(i) : 0;
+}
+QPndman::Package* Package::getInstallInstance(int i) const
+{
+  return package ? package->getInstallInstances().at(i) : 0;
+}
+
+
 
 bool Package::getInstalled() const
 {
@@ -235,6 +304,12 @@ void Package::upgrade()
 
 void Package::updateFrom(QPndman::Package* other)
 {
+  applicationList.clear();
+  titleList.clear();
+  descriptionList.clear();
+  categoryList.clear();
+  installedInstanceList.clear();
+
   QPndman::Package* old = package;
   package = other;
 

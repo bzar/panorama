@@ -5,7 +5,6 @@
 
 SyncWorker::SyncWorker(QPndman::SyncHandle* handle) : handle(handle), syncStarted(false), timer()
 {
-  //connect(SyncWorkerSingleton::instance(), SIGNAL(update()), this, SLOT(process()), Qt::QueuedConnection);
   connect(SyncWorkerSingleton::instance(), SIGNAL(error()), this, SLOT(emitError()), Qt::QueuedConnection);
   timer.setInterval(500);
   timer.setSingleShot(false);
@@ -45,7 +44,7 @@ SyncWorkerSingletonThread* SyncWorkerSingleton::thread = 0;
 
 SyncWorkerSingleton *SyncWorkerSingleton::instance()
 {
-  if(thread == 0)
+/*  if(thread == 0)
   {
     thread = new SyncWorkerSingletonThread(QApplication::instance());
     thread->start(QThread::LowPriority);
@@ -53,7 +52,9 @@ SyncWorkerSingleton *SyncWorkerSingleton::instance()
       QThread::yieldCurrentThread();
     }
   }
-  return thread->getSingleton();
+  return thread->getSingleton();*/
+  static SyncWorkerSingleton* singleton = new SyncWorkerSingleton(QApplication::instance());
+  return singleton;
 }
 
 SyncWorkerSingleton::~SyncWorkerSingleton()
@@ -76,7 +77,6 @@ SyncWorkerSingleton::SyncWorkerSingleton(QObject *parent) : QObject(parent), tim
 void SyncWorkerSingleton::process()
 {
   int status = QPndman::SyncHandle::sync();
-  emit update();
   if(status == 0)
   {
     timer.stop();

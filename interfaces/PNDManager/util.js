@@ -46,3 +46,28 @@ function prettySize(size) {
 function versionString(version) {
   return version.major + "." + version.minor + "." + version.release + "." + version.build;
 }
+
+function prettyLastUpdatedString(datetime) {
+  var now = (new Date()).getTime();
+  var then = datetime.getTime();
+
+  if(then === 0) {
+      return "unknown";
+  }
+
+  var days = Math.floor((now - then) / (1000 * 60*60*24));
+
+  if(days === 0) {
+    return "today";
+  } else if(days === 1) {
+    return "yesterday";
+  } else if(days < 2*7) {
+    return days + " days ago";
+  } else if(days < 2*30) {
+    return Math.floor(days/7) + " weeks ago";
+  } else if(days < 2*365) {
+     return Math.floor(days/30) + " months ago";
+  } else {
+    return Math.floor(days/365) + " years ago";
+  }
+}

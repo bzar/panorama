@@ -27,11 +27,13 @@ View {
     }
 
     Row {
+      id: buttons
       anchors.top: titleText.bottom
       anchors.horizontalCenter: parent.horizontalCenter
       spacing: 16
       Button {
-        label: "Install (" + Utils.prettySize(pnd.size) + ")"
+        label: "Install"
+        sublabel: Utils.prettySize(pnd.size)
         color: "#69D772"
         width: 256
         height: 64
@@ -41,6 +43,7 @@ View {
       }
       Button {
         label: "Remove"
+        sublabel: Utils.prettySize(pnd.size)
         color: "#D76D69"
         width: 256
         height: 64
@@ -49,8 +52,8 @@ View {
         onClicked: pnd.remove()
       }
       Button {
-        label: !pnd.upgradeCandidate ? "" : "Upgrade (" + Utils.prettySize(pnd.upgradeCandidate.size) + ")"
-        sublabel: !pnd.upgradeCandidate ? "" : pnd.version.toString() + " -> " + pnd.upgradeCandidate.version.toString()
+        label: "Upgrade"
+        sublabel: pnd.hasUpgrade ? Utils.versionString(pnd.version) + " → " + Utils.versionString(pnd.upgradeCandidate.version) + " (" + Utils.prettySize(pnd.upgradeCandidate.size) + ")" : ""
         color: "#6992D7"
         width: 256
         height: 64
@@ -100,6 +103,132 @@ View {
             anchors.right: parent.right
             text: " / " + parent.progress.size + " " + parent.progress.unit
           }
+        }
+      }
+    }
+
+    Rectangle {
+      height: 1
+      color: "#eee"
+      anchors.bottom: textArea.top
+      anchors.left: textArea.left
+      anchors.right: textArea.right
+    }
+
+    Flickable {
+      id: textArea
+      anchors.top: buttons.bottom
+      anchors.bottom: parent.bottom
+      anchors.left: parent.left
+      anchors.right: parent.horizontalCenter
+      anchors.margins: 16
+      contentHeight: textAreaContents.height
+      contentWidth: width
+      clip: true
+
+      Column {
+        id: textAreaContents
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: childrenRect.height
+        spacing: 16
+
+        Item {
+          anchors.left: parent.left
+          anchors.right: parent.right
+          height: childrenRect.height
+
+          Image {
+            id: icon
+            source: pnd.icon
+            asynchronous: true
+            height: 48
+            width: 48
+            fillMode: Image.PreserveAspectFit
+            sourceSize {
+              height: 48
+              width: 48
+            }
+          }
+
+          Column {
+            height: childrenRect.height
+            anchors.left: icon.right
+            anchors.right: parent.right
+            anchors.leftMargin: 8
+
+            PackageInfoText {
+              anchors.left: parent.left
+              anchors.right: parent.right
+              label: "Author:"
+              text: pnd.author.name
+            }
+
+            PackageInfoText {
+              anchors.left: parent.left
+              anchors.right: parent.right
+              label: "Rating:"
+
+              function getRating() {
+                var s = "";
+                for(var i = 0; i < Math.ceil(pnd.rating/20); ++i) {
+                  s += "★";
+                }
+                return s;
+              }
+
+              text: pnd.rating !== 0 ? getRating() : "(not rated)"
+            }
+
+            PackageInfoText {
+              anchors.left: parent.left
+              anchors.right: parent.right
+              label: "Last updated:"
+              text: Utils.prettyLastUpdatedString(pnd.modified)
+            }
+          }
+        }
+
+        Text {
+          text: pnd.description
+          anchors.left: parent.left
+          anchors.right: parent.right
+          wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+          font.pixelSize: 14
+        }
+
+      }
+    }
+
+    Rectangle {
+      height: 1
+      color: "#eee"
+      anchors.top: textArea.bottom
+      anchors.left: textArea.left
+      anchors.right: textArea.right
+    }
+
+    Rectangle {
+      anchors.top: buttons.bottom
+      anchors.bottom: parent.bottom
+      anchors.left: parent.horizontalCenter
+      anchors.right: parent.right
+      anchors.margins: 16
+      color: "#ccc"
+
+      Image {
+        id: image
+        anchors.fill: parent
+        source: pnd.previewPictures.length > 0 ? pnd.previewPictures[0].src : ""
+        asynchronous: true
+        fillMode: Image.PreserveAspectFit
+
+        Text {
+            anchors.centerIn: parent
+            opacity: image.source != "" ? (image.status != Image.Ready && image.source != "" ? 1.0 : 0.0) : 1.0
+            text: image.source != "" ? parseInt(image.progress * 100) + "%" : "No preview"
+            font.pixelSize: 24
+            color: "#777"
         }
       }
     }

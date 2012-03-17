@@ -12,6 +12,14 @@ void PNDManagementPlugin::registerTypes(const char *uri)
   qmlRegisterType<QPndman::Device>();
   qmlRegisterType<QPndman::Version>();
   qmlRegisterType<QPndman::Package>();
+  qmlRegisterType<QPndman::Author>();
+  qmlRegisterType<QPndman::PreviewPicture>();
+  qmlRegisterType<QPndman::DocumentationInfo>();
+  qmlRegisterType<QPndman::License>();
+  qmlRegisterType<QPndman::Category>();
+  qmlRegisterType<QPndman::Association>();
+  qmlRegisterType<QPndman::ExecutionInfo>();
+  qmlRegisterType<QPndman::Application>();
 }
 
 void PNDManagementPlugin::initializeEngine(QDeclarativeEngine *engine, const char *uri)

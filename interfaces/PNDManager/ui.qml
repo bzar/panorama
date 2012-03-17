@@ -128,6 +128,6 @@ PanoramaUI {
     }
 
     onBack: views.current.pop()
-    onReload: { pndManager.sync(); pndManager.crawl(); }
+    onReload: { pndManager.sync(); }
   }
 }
