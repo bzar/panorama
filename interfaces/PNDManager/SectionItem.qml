@@ -1,13 +1,16 @@
 import QtQuick 1.1
 
-Item {
+Rectangle {
   id: item
   height: 32
 
   property alias text: title.text
   property alias icon: icon.source
   default property alias additionalItems: additionalItemsContainer.children
+  property bool selected: false
   signal clicked()
+
+  color: selected ? "#ddd" : "transparent"
 
   MouseArea { anchors.fill: parent; onClicked: item.clicked() }
 

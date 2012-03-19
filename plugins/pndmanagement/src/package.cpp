@@ -38,9 +38,9 @@ QString Package::getVendor() const
 {
   return !package ? "" : package->getVendor();
 }
-QString Package::getDevice() const
+QString Package::getMount() const
 {
-  return !package ? "" : package->getDevice();
+  return !package ? "" : package->getMount();
 }
 qint64 Package::getSize() const
 {
@@ -269,7 +269,7 @@ void Package::remove()
   for(int i = 0; i < manager->deviceCount(); ++i)
   {
     QPndman::Device* device = manager->getDevice(i);
-    if(device->getDevice() == getDevice())
+    if(device->getMount() == getMount())
     {
       if(device->remove(package))
       {
@@ -309,10 +309,12 @@ void Package::updateFrom(QPndman::Package* other)
   descriptionList.clear();
   categoryList.clear();
   installedInstanceList.clear();
+  previewPictureList.clear();
 
   QPndman::Package* old = package;
   package = other;
 
   if(old && ((old->getUpgradeCandidate() != 0) != (package->getUpgradeCandidate() != 0)))
     emit hasUpgradeChanged();
+  emit installedChanged(other->getInstallInstances().count() > 0);
 }

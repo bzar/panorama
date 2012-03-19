@@ -7,49 +7,44 @@ View {
 
   Keys.forwardTo: previewList
 
-  Rectangle {
-    anchors.fill: parent
-    color: "#fff"
+  ListView {
+    id: previewList
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: parent.height * 0.9
 
-    ListView {
-      id: previewList
-      anchors.verticalCenter: parent.verticalCenter
-      anchors.left: parent.left
-      anchors.right: parent.right
-      height: parent.height * 0.9
+    orientation: ListView.Horizontal
+    snapMode: ListView.SnapToItem
+    flickDeceleration: 2500
 
-      orientation: ListView.Horizontal
-      snapMode: ListView.SnapToItem
-      flickDeceleration: 2500
+    preferredHighlightBegin: width/2 - currentItem.width/2
+    preferredHighlightEnd: width/2 + currentItem.width/2
+    highlightRangeMode: ListView.StrictlyEnforceRange
 
-      preferredHighlightBegin: width/2 - currentItem.width/2
-      preferredHighlightEnd: width/2 + currentItem.width/2
-      highlightRangeMode: ListView.StrictlyEnforceRange
+    cacheBuffer: width*4
+    spacing: 16
+    boundsBehavior: ListView.DragOverBounds
 
-      cacheBuffer: width*4
-      spacing: 16
-      boundsBehavior: ListView.DragOverBounds
+    model: previewPictures
 
-      model: previewPictures
+    delegate: Rectangle {
+      color: image.status == Image.Ready ? "#00000000" : "#eee"
+      height: previewList.height
+      width: image.status == Image.Ready ? image.width : height
 
-      delegate: Rectangle {
-        color: image.status == Image.Ready ? "#00000000" : "#eee"
-        height: previewList.height
-        width: image.status == Image.Ready ? image.width : height
+      Text {
+        anchors.centerIn: parent
+        visible: image.status != Image.Ready
+        text: parseInt(image.progress * 100) + "%"
+        font.pixelSize: 24
+      }
 
-        Text {
-          anchors.centerIn: parent
-          visible: image.status != Image.Ready
-          text: parseInt(image.progress * 100) + "%"
-          font.pixelSize: 24
-        }
-
-        Image {
-          id: image
-          source: src
-          height: parent.height
-          fillMode: Image.PreserveAspectFit
-        }
+      Image {
+        id: image
+        source: src
+        height: parent.height
+        fillMode: Image.PreserveAspectFit
       }
     }
   }

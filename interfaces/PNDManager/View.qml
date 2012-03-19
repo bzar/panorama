@@ -1,6 +1,6 @@
 import QtQuick 1.1
 
-Item {
+Rectangle {
   property QtObject stack: parent.parent
   property string viewTitle
 
@@ -10,4 +10,6 @@ Item {
 
   height: parent.height
   width: parent.width
+  clip: true
+  color: "white"
 }

@@ -56,7 +56,7 @@ void PNDManager::crawl()
   emit crawling();
   foreach(QPndman::Device* device, devices)
   {
-    qDebug() << "Crawling" << device->getDevice();
+    qDebug() << "Crawling" << device->getMount();
     device->crawl();
   }
   qDebug() << "Updating remote repository";
