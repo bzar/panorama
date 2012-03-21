@@ -98,3 +98,38 @@ PNDFilter* PNDFilter::notDownloading()
   return downloading(false);
 }
 
+bool titleAlphabeticalSorter(Package const* a, Package const* b) {
+  return a->getTitle().toLower() < b->getTitle().toLower();
+}
+
+PNDFilter *PNDFilter::sortedByTitle()
+{
+  QList<Package*> result(packages);
+  qSort(result.begin(), result.end(), titleAlphabeticalSorter);
+  return new PNDFilter(result);
+}
+
+bool lastUpdatedDateSorter(Package const* a, Package const* b) {
+  return a->getModified() > b->getModified();
+}
+
+PNDFilter *PNDFilter::sortedByLastUpdated()
+{
+  QList<Package*> result(packages);
+  qSort(result.begin(), result.end(), lastUpdatedDateSorter);
+  return new PNDFilter(result);
+}
+
+PNDFilter *PNDFilter::titleContains(const QString &s)
+{
+  QList<Package*> result;
+  foreach(Package* p, packages)
+  {
+    if(p->getTitle().contains(s, Qt::CaseInsensitive))
+    {
+      result << p;
+    }
+  }
+  return new PNDFilter(result);
+}
+

@@ -7,16 +7,16 @@ GridView {
   property QtObject pndManager
   property variant packages
   property int columns: 2
-  anchors.fill: parent
-  model: packages
+  model: packages.sortedByTitle().all()
   boundsBehavior: GridView.DragOverBounds
 
   Component { id: packageView; PackageView {} }
 
   function openCurrent() {
+    if(currentIndex < model.length)
     var view = stack.push(packageView, {
-                            "pnd": packages[currentIndex],
-                            "viewTitle": packages[currentIndex].title,
+                            "pnd": model[currentIndex],
+                            "viewTitle": model[currentIndex].title,
                             "pndManager": pndManager
                           });
   }

@@ -4,15 +4,38 @@ View {
   id: view
   property string categories
   property QtObject pndManager
-
-  Keys.forwardTo: packageList
+  property QtObject filteredPackages: pndManager.packages.inCategory(categories).notInstalled()
+  Keys.forwardTo: [packageList, ui, search]
 
   onOkButton: packageList.openCurrent()
 
   PackageList {
     id: packageList
-    packages: view.pndManager.packages.inCategory(categories).notInstalled().all()
+    packages: filteredPackages.titleContains(search.text)
     pndManager: view.pndManager
+    anchors.fill: parent
+  }
+
+  Rectangle {
+    opacity: search.text != "" ? 0.8 : 0.0
+    height: 32
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    color: "#eee"
+    border {
+      color: "#444"
+      width: 1
+    }
+
+    TextInput {
+      id: search
+      anchors.fill: parent
+      anchors.margins: 4
+      font.pixelSize: 14
+      activeFocusOnPress: false
+      onCursorPositionChanged: cursorPosition = text.length
+    }
   }
 }
 

@@ -14,6 +14,7 @@ public:
   PNDFilter& operator=(PNDFilter const& other);
 
   Q_INVOKABLE QList<QObject*> all();
+
   Q_INVOKABLE PNDFilter* inCategory(QString categoryFilter);
   Q_INVOKABLE PNDFilter* installed(bool value = true);
   Q_INVOKABLE PNDFilter* notInstalled();
@@ -21,6 +22,12 @@ public:
   Q_INVOKABLE PNDFilter* notUpgradable();
   Q_INVOKABLE PNDFilter* downloading(bool value = true);
   Q_INVOKABLE PNDFilter* notDownloading();
+
+  Q_INVOKABLE PNDFilter* sortedByTitle();
+  Q_INVOKABLE PNDFilter* sortedByLastUpdated();
+
+  Q_INVOKABLE PNDFilter* titleContains(QString const& s);
+
 private:
   QList<Package*> packages;
 };
