@@ -11,8 +11,9 @@ View {
 
   PackageList {
     id: packageList
-    packages: filteredPackages.titleContains(search.text)
+    columns: 2
     pndManager: view.pndManager
+    model: filteredPackages.titleContains(search.text).sortedByTitle().all()
     anchors.fill: parent
   }
 

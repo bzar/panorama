@@ -25,6 +25,7 @@ public:
 
   Q_INVOKABLE PNDFilter* sortedByTitle();
   Q_INVOKABLE PNDFilter* sortedByLastUpdated();
+  Q_INVOKABLE PNDFilter* sortedByRating();
 
   Q_INVOKABLE PNDFilter* titleContains(QString const& s);
 

@@ -120,6 +120,17 @@ PNDFilter *PNDFilter::sortedByLastUpdated()
   return new PNDFilter(result);
 }
 
+bool ratingSorter(Package const* a, Package const* b) {
+  return a->getRating() > b->getRating();
+}
+
+PNDFilter *PNDFilter::sortedByRating()
+{
+  QList<Package*> result(packages);
+  qSort(result.begin(), result.end(), ratingSorter);
+  return new PNDFilter(result);
+}
+
 PNDFilter *PNDFilter::titleContains(const QString &s)
 {
   QList<Package*> result;

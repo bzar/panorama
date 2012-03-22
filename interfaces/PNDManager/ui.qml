@@ -41,7 +41,7 @@ PanoramaUI {
     } else if(event.key === Qt.Key_PageUp) {
       views.current.current.upgradeButton();
     } else if(event.key === Qt.Key_1) {
-
+      homeStack.activate();
     } else if(event.key === Qt.Key_2) {
       categoriesStack.activate();
     } else if(event.key === Qt.Key_3) {
@@ -85,6 +85,13 @@ PanoramaUI {
     anchors.right: parent.right
 
     ViewStack {
+      id: homeStack
+      onActivate: views.activate(homeStack)
+      HomeView {
+        pndManager: pndManager
+      }
+    }
+    ViewStack {
       id: categoriesStack
       onActivate: views.activate(categoriesStack)
       CategoriesView {
@@ -121,9 +128,10 @@ PanoramaUI {
 
     IconButton {
       normalImage: "img/home_32x32.png"
-      highlightImage: "img/home_32x32.png"
-      highlight: false
+      highlightImage: "img/home_white_32x32.png"
+      highlight: homeStack.active
       height: parent.height
+      onClicked: homeStack.activate()
     }
     IconButton {
       normalImage: "img/list_32x28.png"

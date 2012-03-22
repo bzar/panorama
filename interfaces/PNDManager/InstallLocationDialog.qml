@@ -13,24 +13,16 @@ View {
     stack.pop();
   }
 
-  Rectangle {
-    height: 1
-    color: "#eee"
-    anchors.bottom: deviceList.top
-    anchors.horizontalCenter: deviceList.horizontalCenter
-    width: deviceList.maxTextWidth + 48
-  }
-
-  ListView {
+  StyledListView {
     id: deviceList
 
     property int selected: 0
     property int maxTextWidth: 0
 
     anchors.top: parent.top
-    anchors.left: parent.left
-    anchors.right: parent.right
+    anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: location.top
+    width: maxTextWidth + 64
     anchors.margins: 16
     clip: true
     model: pndManager.devices
@@ -75,14 +67,6 @@ View {
         onClicked: deviceList.currentIndex = index
       }
     }
-  }
-
-  Rectangle {
-    height: 1
-    color: "#eee"
-    anchors.top: deviceList.bottom
-    anchors.horizontalCenter: deviceList.horizontalCenter
-    width: deviceList.maxTextWidth + 48
   }
 
   Row {

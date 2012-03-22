@@ -31,7 +31,8 @@ public:
 public slots:
   void crawl();
   void sync();
-  
+  void updatePackages();
+
 signals:
   void packagesChanged();
   void devicesChanged();
@@ -41,8 +42,6 @@ signals:
   void crawling();
   void crawlDone();
 
-private slots:
-  void updatePackages();
   
 private:
   static QString const REPOSITORY_URL;
