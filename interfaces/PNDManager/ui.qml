@@ -32,8 +32,9 @@ PanoramaUI {
   }
 
   Keys.onPressed: {
+    event.accepted = true;
     if(event.key === Qt.Key_PageDown) {
-      views.current.pop()
+      views.current.pop();
     } else if(event.key === Qt.Key_End) {
       views.current.current.okButton();
     } else if(event.key === Qt.Key_Home) {
@@ -48,6 +49,8 @@ PanoramaUI {
       installedStack.activate();
     } else if(event.key === Qt.Key_4) {
       searchStack.activate();
+    } else {
+      event.accepted = false;
     }
   }
 

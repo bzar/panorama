@@ -89,8 +89,6 @@ View {
 
       MouseArea {
         anchors.fill: parent
-        hoverEnabled: true
-        onEntered: categoryList.currentIndex = index;
         onClicked: {
           categoryList.currentIndex = index;
           categoryList.openCurrent();

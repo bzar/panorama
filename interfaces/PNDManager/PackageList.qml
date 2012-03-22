@@ -27,8 +27,9 @@ GridView {
     height: packageList.cellHeight
     color: "#ddd"
     radius: 8
-    x: packageList.currentItem.x
-    y: packageList.currentItem.y
+    x: packageList.currentItem ? packageList.currentItem.x : 0
+    y: packageList.currentItem ? packageList.currentItem.y : 0
+    visible: packageList.currentItem !== null
   }
   highlightFollowsCurrentItem: false
 

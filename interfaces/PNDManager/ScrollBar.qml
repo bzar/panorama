@@ -12,29 +12,23 @@ Rectangle {
 
   opacity: 0.0
 
-  property bool first: true
   property int prevContentY: 0
   Connections {
     target: parent
     onMovementStarted: scrollbar.show()
     onMovementEnded: scrollbar.hide()
     onCurrentIndexChanged: {
-      if(first) {
-        first = false;
-      } else {
-        if(parent.contentY !== prevContentY) {
-          prevContentY = parent.contentY;
-          scrollbar.show();
-          scrollbar.hide();
-        }
+      if(parent.contentY !== prevContentY) {
+        prevContentY = parent.contentY;
+        scrollbar.show();
+        scrollbar.hide();
       }
     }
   }
 
   function show() {
-    if(opacity < 0.01) {
-      opacity = 1.0;
-    }
+    opacity = 1.0;
+    hideTimer.stop()
   }
 
   function hide() {

@@ -1,7 +1,6 @@
 import QtQuick 1.1
 
 ListView {
-  clip: true
   Rectangle {
     height: 1
     color: "#eee"

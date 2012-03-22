@@ -5,7 +5,7 @@ View {
   property string categories
   property QtObject pndManager
   property QtObject filteredPackages: pndManager.packages.inCategory(categories).notInstalled()
-  Keys.forwardTo: [packageList, ui, search]
+  Keys.forwardTo: packageList
 
   onOkButton: packageList.openCurrent()
 
@@ -15,11 +15,15 @@ View {
     pndManager: view.pndManager
     model: filteredPackages.titleContains(search.text).sortedByTitle().all()
     anchors.fill: parent
+
+    Keys.priority: Keys.AfterItem
+    Keys.forwardTo: [ui, search]
   }
 
   Rectangle {
-    opacity: search.text != "" ? 0.8 : 0.0
+    opacity: 0.8
     height: 32
+    anchors.bottomMargin: search.text != "" ? 0 : -(height+1)
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     anchors.right: parent.right
@@ -35,7 +39,6 @@ View {
       anchors.margins: 4
       font.pixelSize: 14
       activeFocusOnPress: false
-      onCursorPositionChanged: cursorPosition = text.length
     }
   }
 }

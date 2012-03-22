@@ -61,6 +61,7 @@ View {
       anchors.top: parent.top
       anchors.margins: 16
       font.pixelSize: 32
+      verticalAlignment: Text.AlignVCenter
     }
 
     StyledListView {
@@ -71,6 +72,7 @@ View {
       anchors.bottom: parent.bottom
       anchors.margins: 16
       spacing: 8
+      clip: true
 
       property int listIndex
       property bool active: listIndex === view.currentIndex
@@ -85,11 +87,10 @@ View {
       highlight: Rectangle {
         width: lastUpdated.width
         height: 48
-        color: "#ddd"
+        color: lastUpdated.active ? "#ddd" : "#eee"
         radius: 8
         x: lastUpdated.currentItem.x
         y: lastUpdated.currentItem.y
-        visible: lastUpdated.active
       }
 
       highlightFollowsCurrentItem: false
@@ -142,6 +143,7 @@ View {
       anchors.top: parent.top
       anchors.margins: 16
       font.pixelSize: 32
+      verticalAlignment: Text.AlignVCenter
     }
 
     StyledListView {
@@ -152,6 +154,7 @@ View {
       anchors.bottom: parent.bottom
       anchors.margins: 16
       spacing: 8
+      clip: true
 
       property int listIndex
       property bool active: listIndex === view.currentIndex
@@ -166,11 +169,10 @@ View {
       highlight: Rectangle {
         width: highestRated.width
         height: 48
-        color: "#ddd"
+        color: highestRated.active ? "#ddd" : "#eee"
         radius: 8
         x: highestRated.currentItem.x
         y: highestRated.currentItem.y
-        visible: highestRated.active
       }
 
       highlightFollowsCurrentItem: false

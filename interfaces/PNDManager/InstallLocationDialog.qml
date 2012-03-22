@@ -61,9 +61,6 @@ View {
       MouseArea {
         id: deviceMouseArea
         anchors.fill: parent
-        hoverEnabled: true
-        onEntered: parent.hover = true
-        onExited: parent.hover = false
         onClicked: deviceList.currentIndex = index
       }
     }
