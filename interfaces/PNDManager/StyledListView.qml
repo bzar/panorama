@@ -1,6 +1,7 @@
 import QtQuick 1.1
 
 ListView {
+  id: listView
   Rectangle {
     height: 1
     color: "#eee"
@@ -21,6 +22,14 @@ ListView {
 
   ScrollBar {
     id: scrollbar
+    anchors.right: parent.right
+    Connections {
+      target: listView
+      onMovementStarted: scrollbar.show()
+      onMovementEnded: scrollbar.hide()
+      onCurrentIndexChanged: scrollbar.showIfChanged(contentY)
+    }
   }
+
 }
 

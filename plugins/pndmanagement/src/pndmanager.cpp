@@ -109,7 +109,20 @@ void PNDManager::updatePackages()
     {
       p->setInstalled(isInInstalled);
       QPndman::Package* package = isInInstalled ? installed.value(p->getId()) : remote.value(p->getId());
+
       p->updateFrom(package);
+
+      // TODO: Temporary system to fetch icons from repo, replace with a QDeclarativeImageProvider system at some point
+      if(isInInstalled)
+      {
+        QPndman::Package* remotePackage = remote.value(p->getId(), 0);
+        if(remotePackage)
+        {
+          p->setOverrideIcon(remotePackage->getIcon());
+          p->setPreviewPictureList(remotePackage->getPreviewPictures());
+        }
+      }
+
       packagesById.insert(p->getId(), p);
     }
     else
@@ -124,6 +137,14 @@ void PNDManager::updatePackages()
     if(!packagesById.contains(p->getId()))
     {
       Package* package = new Package(this, p, true, this);
+
+      QPndman::Package* remotePackage = remote.value(p->getId(), 0);
+      if(remotePackage)
+      {
+        package->setOverrideIcon(remotePackage->getIcon());
+        package->setPreviewPictureList(remotePackage->getPreviewPictures());
+      }
+
       packagesById.insert(package->getId(), package);
       packages << package;
     }

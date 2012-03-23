@@ -8,23 +8,21 @@ View {
 
   property QtObject pndManager
   property int itemCount: downloadingModel.length + upgradableModel.length + installedModel.length
-  property int selected: 0
-  property int selectedItem: 0
-
+  property int currentIndex: 0
   property variant downloadingModel: []
   property variant upgradableModel: []
   property variant installedModel: []
 
-  Keys.onUpPressed: selected = Math.max(0, selected - 1);
-  Keys.onDownPressed: selected = Math.min(itemCount - 1, selected + 1);
+  Keys.onUpPressed: currentIndex = Math.max(0, currentIndex - 1);
+  Keys.onDownPressed: currentIndex = Math.min(itemCount - 1, currentIndex + 1);
   onOkButton: openSelected()
 
   Connections {
     target: pndManager
     onPackagesChanged: {
-      downloadingModel = pndManager.packages.downloading().all();
-      upgradableModel = pndManager.packages.installed().upgradable().notDownloading().all();
-      installedModel = pndManager.packages.installed().notUpgradable().notDownloading().all();
+      downloadingModel = pndManager.packages.downloading().sortedByTitle().all();
+      upgradableModel = pndManager.packages.installed().upgradable().notDownloading().sortedByTitle().all();
+      installedModel = pndManager.packages.installed().notUpgradable().notDownloading().sortedByTitle().all();
     }
   }
 
@@ -44,12 +42,12 @@ View {
   }
 
   function openSelected() {
-    if(selected < downloadingModel.length) {
-      showPackage(downloadingModel[selected]);
-    } else if(selected < downloadingModel.length + upgradableModel.length) {
-      showPackage(upgradableModel[selected - downloadingModel.length]);
-    } else if(selected < downloadingModel.length + upgradableModel.length + installedModel.length) {
-      showPackage(installedModel[selected - downloadingModel.length - upgradableModel.length]);
+    if(currentIndex < downloadingModel.length) {
+      showPackage(downloadingModel[currentIndex]);
+    } else if(currentIndex < downloadingModel.length + upgradableModel.length) {
+      showPackage(upgradableModel[currentIndex - downloadingModel.length]);
+    } else if(currentIndex < downloadingModel.length + upgradableModel.length + installedModel.length) {
+      showPackage(installedModel[currentIndex - downloadingModel.length - upgradableModel.length]);
     }
   }
 
@@ -60,16 +58,6 @@ View {
     font.pixelSize: 20
     anchors.centerIn: parent
     visible: !(installed.visible || downloading.visible || upgradable.visible)
-  }
-
-  Rectangle {
-    width: 16
-    height: content.height * content.height / content.contentHeight
-    anchors.right: parent.right
-    y: (content.height - height) * content.contentY / (content.contentHeight - content.height)
-    color: "#111"
-    visible: content.moving
-    z: 1
   }
 
   Rectangle {
@@ -100,138 +88,197 @@ View {
 
   }
 
-
-  Flickable {
-    id: content
+  Item {
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: upgradeAllButtonContainer.bottom
     anchors.bottom: parent.bottom
 
-    contentHeight: itemsColumn.height
-    contentWidth: width
-    boundsBehavior: Flickable.DragOverBounds
 
-    clip: true
-
-    function ensureIntervalVisible(a, b) {
-      var h = b - a;
-      if(a - h < contentY) {
-        contentY = a - h;
+    ScrollBar {
+      id: scrollbar
+      target: content
+      z: 3
+      anchors.right: parent.right
+      Connections {
+        target: content
+        onMovementStarted: scrollbar.show()
+        onMovementEnded: scrollbar.hide()
       }
-      if(b + h > contentY + height) {
-        contentY = b + h - height;
+      Connections {
+        target: view
+        onCurrentIndexChanged: scrollbar.showIfChanged(content.contentY)
       }
     }
 
-    Column {
-      id: itemsColumn
-      height: childrenRect.height
-      width: parent.width
+    Flickable {
+      id: content
+      anchors.fill: parent
+      contentHeight: itemsColumn.height
+      contentWidth: width
+      boundsBehavior: Flickable.DragOverBounds
 
-      SectionHeader {
-        id: downloading
-        text: "Downloading"
-        width: parent.width
-        visible: downloadingRepeater.model.length > 0
-      }
+      clip: true
 
-      Repeater {
-        id: downloadingRepeater
-        model: downloadingModel
-
-        delegate: SectionItem {
-          property int itemIndex: index
-
-          selected: view.selected === itemIndex
-          onSelectedChanged: content.ensureIntervalVisible(y, y + height)
-          width: content.width
-          text: modelData.title ? modelData.title : modelData.id
-          icon: modelData.icon
-          onClicked: { view.selected = itemIndex; openSelected(); }
-
-          Rectangle {
-            color: selected ? "#eee" : "#ddd"
-            radius: 8
-            height: 16
-            width: 128
-
-            ProgressBar {
-              anchors.left: parent.left
-              anchors.right: parent.right
-              anchors.verticalCenter: parent.verticalCenter
-              anchors.margins: 4
-              height: 8
-              radius: 4
-              color: "#333"
-              minimumValue: 0
-              maximumValue: modelData.bytesToDownload
-              value: modelData.bytesDownloaded
-            }
-          }
-          Item {
-            id: progressText
-            property variant progress: Utils.prettyProgress(modelData.bytesDownloaded, modelData.bytesToDownload)
-            width: 256
-            height: 16
-            Text {
-              text: progressText.progress.value
-              font.pixelSize: 14
-              anchors.right: totalSize.left
-            }
-            Text {
-              id: totalSize
-              text: " / " + progressText.progress.size + " " + progressText.progress.unit
-              font.pixelSize: 14
-              anchors.right: parent.right
-            }
-          }
+      function ensureIntervalVisible(a, b) {
+        var h = b - a;
+        if(a - h < contentY) {
+          contentY = a - h;
+        }
+        if(b + h > contentY + height) {
+          contentY = b + h - height;
         }
       }
 
-      SectionHeader {
-        id: upgradable
-        text: "Upgradable"
+      Column {
+        id: itemsColumn
+        height: childrenRect.height
         width: parent.width
-        visible: upgradableRepeater.model.length > 0
-      }
-      Repeater {
-        id: upgradableRepeater
-        model: upgradableModel
-        delegate: SectionItem {
-          property int itemIndex: downloadingModel.length + index
-          selected: view.selected === itemIndex
-          onSelectedChanged: content.ensureIntervalVisible(y, y + height)
-          width: content.width
-          text: modelData.title ? modelData.title : modelData.id
-          //icon: modelData.icon
-          onClicked: { view.selected = itemIndex; openSelected(); }
 
-          Text {
-            id: versionText
-            text: Utils.versionString(modelData.version) + " → " + Utils.versionString(modelData.upgradeCandidate.version) + "    (" + Utils.prettySize(modelData.upgradeCandidate.size) + ")"
-            font.pixelSize: 14
+        SectionHeader {
+          id: downloading
+          icon: "img/cloud_download_32x32.png"
+          text: "Downloading"
+          width: parent.width
+          visible: downloadingRepeater.model.length > 0
+        }
+
+        Repeater {
+          id: downloadingRepeater
+          model: downloadingModel
+
+          delegate: SectionItem {
+            property int itemIndex: index
+
+            selected: view.currentIndex === itemIndex
+            onSelectedChanged: content.ensureIntervalVisible(y, y + height)
+            width: content.width
+            text: modelData.title ? modelData.title : modelData.id
+            icon: modelData.icon
+            onClicked: { view.currentIndex = itemIndex; openSelected(); }
+
+            Row {
+              width: parent.width
+
+              Rectangle {
+                color: selected ? "#eee" : "#ddd"
+                radius: 8
+                height: 16
+                width: parent.width / parent.children.length
+
+                ProgressBar {
+                  anchors.left: parent.left
+                  anchors.right: parent.right
+                  anchors.verticalCenter: parent.verticalCenter
+                  anchors.margins: 4
+                  height: 8
+                  radius: 4
+                  color: "#333"
+                  minimumValue: 0
+                  maximumValue: modelData.bytesToDownload
+                  value: modelData.bytesDownloaded
+                }
+              }
+              Item {
+                id: progressText
+                property variant progress: Utils.prettyProgress(modelData.bytesDownloaded, modelData.bytesToDownload)
+                width: parent.width / parent.children.length
+                height: 16
+                Text {
+                  text: progressText.progress.value
+                  font.pixelSize: 14
+                  anchors.right: totalSize.left
+                }
+                Text {
+                  id: totalSize
+                  text: " / " + progressText.progress.size + " " + progressText.progress.unit
+                  font.pixelSize: 14
+                  anchors.right: parent.right
+                }
+              }
+            }
           }
         }
-      }
 
-      SectionHeader {
-        id: installed
-        text: "Installed"
-        width: parent.width
-        visible: installedRepeater.model.length > 0
-      }
-      Repeater {
-        id: installedRepeater
-        model: installedModel
-        delegate: SectionItem {
-          property int itemIndex: downloadingModel.length + upgradableModel.length + index
-          selected: view.selected === itemIndex
-          onSelectedChanged: content.ensureIntervalVisible(y, y + height)
-          width: content.width
-          text: modelData.title ? modelData.title : modelData.id
-          //icon: modelData.icon
-          onClicked: { view.selected = itemIndex; openSelected(); }
+        SectionHeader {
+          id: upgradable
+          text: "Upgradable"
+          icon: "img/arrow_up_alt1_32x32.png"
+          width: parent.width
+          visible: upgradableRepeater.model.length > 0
+        }
+        Repeater {
+          id: upgradableRepeater
+          model: upgradableModel
+          delegate: SectionItem {
+            property int itemIndex: downloadingModel.length + index
+            selected: view.currentIndex === itemIndex
+            onSelectedChanged: content.ensureIntervalVisible(y, y + height)
+            width: content.width
+            text: modelData.title ? modelData.title : modelData.id
+            icon: modelData.icon
+            onClicked: { view.currentIndex = itemIndex; openSelected(); }
+
+            Row {
+              width: parent.width
+              Text {
+                width: parent.width / parent.children.length
+                text: Utils.versionString(modelData.version) + " → " + Utils.versionString(modelData.upgradeCandidate.version)
+                font.pixelSize: 14
+              }
+              Text {
+                width: parent.width / parent.children.length
+                text: Utils.prettySize(modelData.upgradeCandidate.size)
+                font.pixelSize: 14
+              }
+              Text {
+                width: parent.width / parent.children.length
+                text: modelData.mount
+                font.pixelSize: 14
+              }
+            }
+          }
+        }
+
+        SectionHeader {
+          id: installed
+          text: "Installed"
+          icon: "img/download_darkgrey_24x32.png"
+          width: parent.width
+          visible: installedRepeater.model.length > 0
+        }
+        Repeater {
+          id: installedRepeater
+          model: installedModel
+          delegate: SectionItem {
+            property int itemIndex: downloadingModel.length + upgradableModel.length + index
+            selected: view.currentIndex === itemIndex
+            onSelectedChanged: content.ensureIntervalVisible(y, y + height)
+            width: content.width
+            text: modelData.title ? modelData.title : modelData.id
+            icon: modelData.icon
+            onClicked: { view.currentIndex = itemIndex; openSelected(); }
+
+            Row {
+              width: parent.width
+              Text {
+                width: parent.width / parent.children.length
+                text: Utils.versionString(modelData.version)
+                font.pixelSize: 14
+              }
+              Text {
+                width: parent.width / parent.children.length
+                text: Utils.prettySize(modelData.size)
+                font.pixelSize: 14
+              }
+              Text {
+                width: parent.width / parent.children.length
+                text: modelData.mount
+                font.pixelSize: 14
+              }
+            }
+
+          }
         }
       }
     }

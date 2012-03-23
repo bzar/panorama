@@ -2,7 +2,7 @@ import QtQuick 1.1
 
 Rectangle {
   id: item
-  height: 32
+  height: 48
 
   property alias text: title.text
   property alias icon: icon.source
@@ -18,8 +18,12 @@ Rectangle {
     id: icon
     asynchronous: true
     anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.margins: 8
     sourceSize.width: 32
     sourceSize.height: 32
+    width: 32
+    height: 32
   }
 
   Text {
@@ -27,6 +31,7 @@ Rectangle {
     font.pixelSize: 20
     anchors.verticalCenter: parent.verticalCenter
     anchors.left: icon.right
+    anchors.margins: 16
     width: 256
     elide: Text.ElideRight
   }
@@ -36,6 +41,7 @@ Rectangle {
     anchors.verticalCenter: parent.verticalCenter
     anchors.left: title.right
     anchors.right: parent.right
+    anchors.margins: 16
   }
 
   Rectangle {

@@ -42,7 +42,6 @@ class Package : public QObject
   Q_PROPERTY(bool isDownloading READ getIsDownloading NOTIFY bytesDownloadedChanged)
   Q_PROPERTY(qint64 bytesDownloaded READ getBytesDownloaded NOTIFY bytesDownloadedChanged)
   Q_PROPERTY(qint64 bytesToDownload READ getBytesToDownload NOTIFY bytesToDownloadChanged)
-  Q_PROPERTY(QString pndIcon READ getPNDIcon CONSTANT)
 
 public:
   Package(PNDManager* manager, QPndman::Package* p, bool installed, QObject* parent = 0);
@@ -92,13 +91,14 @@ public:
   bool getIsDownloading() const;
   void updateFrom(QPndman::Package* other);
 
+  void setOverrideIcon(QString newIcon);
+  void setPreviewPictureList(QList<QPndman::PreviewPicture*> newPreviewPictures);
+
 public slots:
   void setInstalled();
   void setInstalled(bool);
   void setBytesDownloaded(qint64);
   void setBytesToDownload(qint64);
-
-  QString getPNDIcon() const;
 
   // TODO: ugly QString, Qt 4.7 doesn't allow enums in slot parameters yet :(
   void install(QPndman::Device* device, QString installLocation);
@@ -127,6 +127,8 @@ private:
   QList<QPndman::Category*> categoryList;
   QList<QPndman::PreviewPicture*> previewPictureList;
   QList<QPndman::Package*> installedInstanceList;
+
+  QString overrideIcon;
 };
 
 #endif

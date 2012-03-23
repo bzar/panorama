@@ -3,36 +3,32 @@ import QtQuick 1.1
 
 Rectangle {
   id: scrollbar
+  property QtObject target: parent
   width: 8
-  height: parent.height * parent.height / parent.contentHeight
-  anchors.right: parent.right
-  y: (parent.height - height) * parent.contentY / (parent.contentHeight - parent.height)
+  height: target.height * target.height / target.contentHeight
+  y: (target.height - height) * target.contentY / (target.contentHeight - target.height)
   color: "#666"
   z: 1
 
   opacity: 0.0
 
-  property int prevContentY: 0
-  Connections {
-    target: parent
-    onMovementStarted: scrollbar.show()
-    onMovementEnded: scrollbar.hide()
-    onCurrentIndexChanged: {
-      if(parent.contentY !== prevContentY) {
-        prevContentY = parent.contentY;
-        scrollbar.show();
-        scrollbar.hide();
-      }
-    }
-  }
-
   function show() {
+    hideAnimation.stop();
     opacity = 1.0;
-    hideTimer.stop()
+    hideTimer.stop();
   }
 
   function hide() {
-    hideTimer.restart()
+    hideTimer.restart();
+  }
+
+  property int prevValue: 0
+  function showIfChanged(value) {
+    if(value !== prevValue) {
+      prevValue = value;
+      scrollbar.show();
+      scrollbar.hide();
+    }
   }
 
   Timer {

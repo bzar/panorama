@@ -4,7 +4,7 @@ View {
   id: view
   property string categories
   property QtObject pndManager
-  property QtObject filteredPackages: pndManager.packages.inCategory(categories).notInstalled()
+  property QtObject filteredPackages: pndManager.packages.inCategory(categories).notInstalled().sortedByTitle()
   Keys.forwardTo: packageList
 
   onOkButton: packageList.openCurrent()
@@ -13,7 +13,7 @@ View {
     id: packageList
     columns: 2
     pndManager: view.pndManager
-    model: filteredPackages.titleContains(search.text).sortedByTitle().all()
+    model: filteredPackages.titleContains(search.text).all()
     anchors.fill: parent
 
     Keys.priority: Keys.AfterItem

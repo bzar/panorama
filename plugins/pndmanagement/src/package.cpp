@@ -6,7 +6,7 @@
 Package::Package(PNDManager* manager, QPndman::Package* p, bool installed, QObject* parent):
   QObject(parent), manager(manager), package(p), id(p->getId()),
   installed(installed), bytesDownloaded(installed ? 1 : 0), bytesToDownload(1),
-  applicationList(), titleList(), descriptionList(), categoryList(), installedInstanceList()
+  applicationList(), titleList(), descriptionList(), categoryList(), installedInstanceList(), overrideIcon()
 {
 }
 
@@ -20,7 +20,14 @@ QString Package::getPath() const
 }
 QString Package::getIcon() const
 {
-  return !package ? "" : package->getIcon();
+  if(installed || !overrideIcon.isEmpty())
+  {
+    return overrideIcon;
+  }
+  else
+  {
+    return !package ? "" : package->getIcon();
+  }
 }
 QString Package::getInfo() const
 {
@@ -225,18 +232,6 @@ void Package::setBytesToDownload(qint64 value)
   }
 }
 
-QString Package::getPNDIcon() const
-{
-  if(installed)
-  {
-    return QString("image://pnd/%1::%2").arg(getPath()).arg(getIcon());
-  }
-  else
-  {
-    return QString("image://pnd/%1").arg(getIcon());
-  }
-}
-
 void Package::install(QPndman::Device* device, QString location)
 {
   QPndman::Enum::InstallLocation installLocation = QPndman::Enum::DesktopAndMenu;
@@ -317,4 +312,14 @@ void Package::updateFrom(QPndman::Package* other)
   if(old && ((old->getUpgradeCandidate() != 0) != (package->getUpgradeCandidate() != 0)))
     emit hasUpgradeChanged();
   emit installedChanged(other->getInstallInstances().count() > 0);
+}
+
+void Package::setOverrideIcon(QString newIcon)
+{
+  overrideIcon = newIcon;
+}
+
+void Package::setPreviewPictureList(QList<QPndman::PreviewPicture *> newPreviewPictures)
+{
+  previewPictureList = newPreviewPictures;
 }

@@ -51,5 +51,12 @@ GridView {
 
   ScrollBar {
     id: scrollbar
+    anchors.right: parent.right
+    Connections {
+      target: packageList
+      onMovementStarted: scrollbar.show()
+      onMovementEnded: scrollbar.hide()
+      onCurrentIndexChanged: scrollbar.showIfChanged(contentY)
+    }
   }
 }

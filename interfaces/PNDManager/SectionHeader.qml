@@ -2,11 +2,27 @@ import QtQuick 1.1
 
 Rectangle {
   property alias text: title.text
-  height: 32
+  property alias icon: icon.source
+  height: 48
   color: "#ccc"
+  Image {
+    id: icon
+    asynchronous: true
+    smooth: true
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.margins: 8
+    sourceSize.width: 32
+    sourceSize.height: 32
+    width: 32
+    height: 32
+  }
+
   Text {
     id: title
-    font.pixelSize: 24
+    font.pixelSize: 32
     anchors.verticalCenter: parent.verticalCenter
+    anchors.left: icon.right
+    anchors.margins: 16
   }
 }
