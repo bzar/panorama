@@ -15,6 +15,7 @@ View {
     anchors.top: parent.top
     height: 64
     color: "#eee"
+    z: 1
 
     Rectangle {
       id: searchBox
@@ -71,7 +72,6 @@ View {
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     columns: 2
-    clip: true
     model: null
     Keys.priority: Keys.AfterItem
     Keys.forwardTo: [ui, search]
