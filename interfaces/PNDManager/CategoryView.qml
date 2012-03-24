@@ -1,5 +1,7 @@
 import QtQuick 1.1
 
+import "util.js" as Utils
+
 View {
   id: view
   property string categories
@@ -18,6 +20,28 @@ View {
 
     Keys.priority: Keys.AfterItem
     Keys.forwardTo: [ui, search]
+
+    delegate: PackageDelegate {
+      pnd: modelData
+      height: packageList.cellHeight
+      width: packageList.cellWidth
+
+      onClicked: {
+        packageList.currentIndex = index;
+        packageList.openCurrent();
+      }
+
+      Text {
+        id: authorText
+        text: modelData.author.name
+        font.pixelSize: 14
+      }
+      Text {
+        anchors.top: authorText.bottom
+        text: Utils.prettySize(modelData.size)
+        font.pixelSize: 14
+      }
+    }
   }
 
   Rectangle {
@@ -35,7 +59,9 @@ View {
 
     TextInput {
       id: search
-      anchors.fill: parent
+      anchors.verticalCenter: parent.verticalCenter
+      anchors.left: parent.left
+      anchors.right: parent.right
       anchors.margins: 4
       font.pixelSize: 14
       activeFocusOnPress: false

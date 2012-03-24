@@ -25,7 +25,7 @@ public:
   QPndman::Device* getDevice(int) const;
 
   PNDFilter* getPackages();
-
+  Q_INVOKABLE PNDFilter* searchPackages(QString const& search);
   QPndman::Context* getContext() const;
 
 public slots:

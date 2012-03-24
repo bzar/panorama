@@ -37,6 +37,7 @@ Item {
     anchors.left: icon.right
     anchors.right: parent.right
     anchors.top: title.bottom
+    anchors.bottom: parent.bottom
     anchors.leftMargin: 8
   }
 

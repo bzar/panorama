@@ -44,6 +44,61 @@ PNDFilter* PNDManager::getPackages()
   return new PNDFilter(packages);
 }
 
+PNDFilter* PNDManager::searchPackages(const QString &search)
+{
+  QList<Package*> result;
+  foreach(Package* package, packages)
+  {
+    bool matches = false;
+
+    foreach(QPndman::TranslatedString const* title, package->getTitles())
+    {
+      if(title->getContent().contains(search, Qt::CaseInsensitive))
+      {
+        matches = true;
+        break;
+      }
+    }
+
+    if(!matches)
+    {
+      foreach(QPndman::TranslatedString const* description, package->getDescriptions())
+      {
+        if(description->getContent().contains(search, Qt::CaseInsensitive))
+        {
+          matches = true;
+          break;
+        }
+      }
+    }
+
+    if(!matches)
+    {
+      foreach(QPndman::Category const* category, package->getCategories())
+      {
+        if(category->getMain().contains(search, Qt::CaseInsensitive)
+           || category->getSub().contains(search, Qt::CaseInsensitive))
+        {
+          matches = true;
+          break;
+        }
+      }
+    }
+
+    if(!matches && package->getAuthor()->getName().contains(search, Qt::CaseInsensitive))
+    {
+      matches = true;
+    }
+
+    if(matches)
+    {
+      result << package;
+    }
+  }
+
+  return new PNDFilter(result);
+}
+
 QPndman::Context* PNDManager::getContext() const
 {
   return context;
@@ -120,6 +175,7 @@ void PNDManager::updatePackages()
         {
           p->setOverrideIcon(remotePackage->getIcon());
           p->setPreviewPictureList(remotePackage->getPreviewPictures());
+          p->setOverrideRating(remotePackage->getRating());
         }
       }
 
@@ -143,6 +199,7 @@ void PNDManager::updatePackages()
       {
         package->setOverrideIcon(remotePackage->getIcon());
         package->setPreviewPictureList(remotePackage->getPreviewPictures());
+        package->setOverrideRating(remotePackage->getRating());
       }
 
       packagesById.insert(package->getId(), package);

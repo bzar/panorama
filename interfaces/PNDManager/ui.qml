@@ -54,14 +54,18 @@ PanoramaUI {
     }
   }
 
-  /*Pandora.onPressed: {
+  /*
+  Pandora.onPressed: {
     event.accepted = true;
     if(event.key === Pandora.ButtonX)           views.current.pop();
+    else if(event.key === Pandora.ButtonB)      views.current.current.okButton();
+    else if(event.key === Pandora.ButtonA)      views.current.current.installRemoveButton();
+    else if(event.key === Pandora.ButtonY)      views.current.current.upgradeButton();
     else if(event.key === Pandora.TriggerL)     views.prev();
     else if(event.key === Pandora.TriggerR)     views.next();
     else if(event.key === Pandora.ButtonStart)  bottomBar.reload();
-    else event.accepted = false;
-  }*/
+  }
+  */
 
   Notification {
     id: syncCompleteNotification
@@ -114,7 +118,7 @@ PanoramaUI {
       id: searchStack
       onActivate: views.activate(searchStack)
       SearchView {
-
+        pndManager: pndManager
       }
     }
   }

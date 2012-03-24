@@ -6,7 +6,7 @@
 Package::Package(PNDManager* manager, QPndman::Package* p, bool installed, QObject* parent):
   QObject(parent), manager(manager), package(p), id(p->getId()),
   installed(installed), bytesDownloaded(installed ? 1 : 0), bytesToDownload(1),
-  applicationList(), titleList(), descriptionList(), categoryList(), installedInstanceList(), overrideIcon()
+  applicationList(), titleList(), descriptionList(), categoryList(), installedInstanceList(), overrideIcon(), overrideRating(0)
 {
 }
 
@@ -59,7 +59,14 @@ QDateTime Package::getModified() const
 }
 int Package::getRating() const
 {
-  return !package ? 0 : package->getRating();
+  if(overrideRating)
+  {
+    return overrideRating;
+  }
+  else
+  {
+    return !package ? 0 : package->getRating();
+  }
 }
 QPndman::Author* Package::getAuthor() const
 {
@@ -84,38 +91,65 @@ QPndman::Package* Package::getUpgradeCandidate() const
   return !package ? 0 : package->getUpgradeCandidate();
 }
 
-QDeclarativeListProperty<QPndman::Application> Package::getApplications()
+QList<QPndman::Application*> Package::getApplications() const
+{
+  return !package ? QList<QPndman::Application*>() : package->getApplications();
+}
+QList<QPndman::TranslatedString*> Package::getTitles() const
+{
+  return !package ? QList<QPndman::TranslatedString*>() : package->getTitles();
+}
+QList<QPndman::TranslatedString*> Package::getDescriptions() const
+{
+  return !package ? QList<QPndman::TranslatedString*>() : package->getDescriptions();
+}
+QList<QPndman::Category*> Package::getCategories() const
+{
+  return !package ? QList<QPndman::Category*>() : package->getCategories();
+}
+QList<QPndman::PreviewPicture*> Package::getPreviewPictures() const
+{
+  return !package ? QList<QPndman::PreviewPicture*>() : package->getPreviewPictures();
+}
+QList<QPndman::Package*> Package::getInstallInstances() const
+{
+  return !package ? QList<QPndman::Package*>() : package->getInstallInstances();
+}
+
+
+
+QDeclarativeListProperty<QPndman::Application> Package::getApplicationsProperty()
 {
   if(applicationList.isEmpty() && package)
     applicationList = package->getApplications();
   qDebug() << "Application count: " << applicationList.count();
   return QDeclarativeListProperty<QPndman::Application>(package.data(), applicationList);
 }
-QDeclarativeListProperty<QPndman::TranslatedString> Package::getTitles()
+QDeclarativeListProperty<QPndman::TranslatedString> Package::getTitlesProperty()
 {
   if(titleList.isEmpty() && package)
     titleList = package->getTitles();
   return QDeclarativeListProperty<QPndman::TranslatedString>(package.data(), titleList);
 }
-QDeclarativeListProperty<QPndman::TranslatedString> Package::getDescriptions()
+QDeclarativeListProperty<QPndman::TranslatedString> Package::getDescriptionsProperty()
 {
   if(descriptionList.isEmpty() && package)
     descriptionList = package->getDescriptions();
   return QDeclarativeListProperty<QPndman::TranslatedString>(package.data(), descriptionList);
 }
-QDeclarativeListProperty<QPndman::Category> Package::getCategories()
+QDeclarativeListProperty<QPndman::Category> Package::getCategoriesProperty()
 {
   if(categoryList.isEmpty() && package)
     categoryList = package->getCategories();
   return QDeclarativeListProperty<QPndman::Category>(package.data(), categoryList);
 }
-QDeclarativeListProperty<QPndman::PreviewPicture> Package::getPreviewPictures()
+QDeclarativeListProperty<QPndman::PreviewPicture> Package::getPreviewPicturesProperty()
 {
   if(previewPictureList.isEmpty() && package)
     previewPictureList = package->getPreviewPictures();
   return QDeclarativeListProperty<QPndman::PreviewPicture>(package.data(), previewPictureList);
 }
-QDeclarativeListProperty<QPndman::Package> Package::getInstallInstances()
+QDeclarativeListProperty<QPndman::Package> Package::getInstallInstancesProperty()
 {
   if(installedInstanceList.isEmpty() && package)
     installedInstanceList = package->getInstallInstances();
@@ -317,6 +351,11 @@ void Package::updateFrom(QPndman::Package* other)
 void Package::setOverrideIcon(QString newIcon)
 {
   overrideIcon = newIcon;
+}
+
+void Package::setOverrideRating(int newRating)
+{
+  overrideRating = newRating;
 }
 
 void Package::setPreviewPictureList(QList<QPndman::PreviewPicture *> newPreviewPictures)

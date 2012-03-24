@@ -30,9 +30,8 @@ PNDFilter* PNDFilter::inCategory(QString categoryFilter)
   QList<Package*> result;
   foreach(Package* p, packages)
   {
-    for(int i = 0; i < p->categoryCount(); ++i)
+    foreach(QPndman::Category const* category, p->getCategories())
     {
-      QPndman::Category* category = p->getCategory(i);
       if(re.exactMatch(category->getMain()))
       {
         result << p;

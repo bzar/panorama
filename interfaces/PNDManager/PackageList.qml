@@ -1,7 +1,5 @@
 import QtQuick 1.1
 
-import "util.js" as Utils
-
 GridView {
   id: packageList
   property QtObject pndManager
@@ -32,22 +30,6 @@ GridView {
     visible: packageList.currentItem !== null
   }
   highlightFollowsCurrentItem: false
-
-  delegate: PackageDelegate {
-    pnd: modelData
-    height: packageList.cellHeight
-    width: packageList.cellWidth
-
-    onClicked: {
-      packageList.currentIndex = index;
-      packageList.openCurrent();
-    }
-
-    Text {
-      text: Utils.prettySize(modelData.size)
-      font.pixelSize: 14
-    }
-  }
 
   ScrollBar {
     id: scrollbar

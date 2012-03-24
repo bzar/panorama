@@ -30,12 +30,12 @@ class Package : public QObject
   Q_PROPERTY(QString title READ getTitle CONSTANT)
   Q_PROPERTY(QString description READ getDescription CONSTANT)
   Q_PROPERTY(QPndman::Package* upgradeCandidate READ getUpgradeCandidate CONSTANT)
-  Q_PROPERTY(QDeclarativeListProperty<QPndman::Application> applications READ getApplications CONSTANT)
-  Q_PROPERTY(QDeclarativeListProperty<QPndman::TranslatedString> titles READ getTitles CONSTANT)
-  Q_PROPERTY(QDeclarativeListProperty<QPndman::TranslatedString> descriptions READ getDescriptions CONSTANT)
-  Q_PROPERTY(QDeclarativeListProperty<QPndman::Category> categories READ getCategories CONSTANT)
-  Q_PROPERTY(QDeclarativeListProperty<QPndman::PreviewPicture> previewPictures READ getPreviewPictures CONSTANT)
-  Q_PROPERTY(QDeclarativeListProperty<QPndman::Package> installInstances READ getInstallInstances CONSTANT)
+  Q_PROPERTY(QDeclarativeListProperty<QPndman::Application> applications READ getApplicationsProperty CONSTANT)
+  Q_PROPERTY(QDeclarativeListProperty<QPndman::TranslatedString> titles READ getTitlesProperty CONSTANT)
+  Q_PROPERTY(QDeclarativeListProperty<QPndman::TranslatedString> descriptions READ getDescriptionsProperty CONSTANT)
+  Q_PROPERTY(QDeclarativeListProperty<QPndman::Category> categories READ getCategoriesProperty CONSTANT)
+  Q_PROPERTY(QDeclarativeListProperty<QPndman::PreviewPicture> previewPictures READ getPreviewPicturesProperty CONSTANT)
+  Q_PROPERTY(QDeclarativeListProperty<QPndman::Package> installInstances READ getInstallInstancesProperty CONSTANT)
 
   Q_PROPERTY(bool installed READ getInstalled NOTIFY installedChanged)
   Q_PROPERTY(bool hasUpgrade READ getHasUpgrade NOTIFY hasUpgradeChanged)
@@ -63,12 +63,19 @@ public:
   QString getDescription() const;
   QPndman::Package* getUpgradeCandidate() const;
 
-  QDeclarativeListProperty<QPndman::Application> getApplications();
-  QDeclarativeListProperty<QPndman::TranslatedString> getTitles();
-  QDeclarativeListProperty<QPndman::TranslatedString> getDescriptions();
-  QDeclarativeListProperty<QPndman::Category> getCategories();
-  QDeclarativeListProperty<QPndman::PreviewPicture> getPreviewPictures();
-  QDeclarativeListProperty<QPndman::Package> getInstallInstances();
+  QList<QPndman::Application*> getApplications() const;
+  QList<QPndman::TranslatedString*> getTitles() const;
+  QList<QPndman::TranslatedString*> getDescriptions() const;
+  QList<QPndman::Category*> getCategories() const;
+  QList<QPndman::PreviewPicture*> getPreviewPictures() const;
+  QList<QPndman::Package*> getInstallInstances() const;
+
+  QDeclarativeListProperty<QPndman::Application> getApplicationsProperty();
+  QDeclarativeListProperty<QPndman::TranslatedString> getTitlesProperty();
+  QDeclarativeListProperty<QPndman::TranslatedString> getDescriptionsProperty();
+  QDeclarativeListProperty<QPndman::Category> getCategoriesProperty();
+  QDeclarativeListProperty<QPndman::PreviewPicture> getPreviewPicturesProperty();
+  QDeclarativeListProperty<QPndman::Package> getInstallInstancesProperty();
 
   int applicationCount() const;
   int titleCount() const;
@@ -92,6 +99,7 @@ public:
   void updateFrom(QPndman::Package* other);
 
   void setOverrideIcon(QString newIcon);
+  void setOverrideRating(int newRating);
   void setPreviewPictureList(QList<QPndman::PreviewPicture*> newPreviewPictures);
 
 public slots:
@@ -129,6 +137,7 @@ private:
   QList<QPndman::Package*> installedInstanceList;
 
   QString overrideIcon;
+  int overrideRating;
 };
 
 #endif
