@@ -12,6 +12,7 @@ public:
     explicit PandoraEventListenerPrivate();
     ~PandoraEventListenerPrivate();
     QSocketNotifier *notifier;
+    unsigned int prevButtons;
 };
 
 PandoraEventListener::PandoraEventListener(QObject *parent)
@@ -32,7 +33,9 @@ void PandoraEventListener::run()
     if(pnd_evdev_open(pnd_evdev_dpads))
     {
         priv->notifier = new QSocketNotifier(pnd_evdev_get_fd(pnd_evdev_dpads), QSocketNotifier::Read);
-        connect(priv->notifier, SIGNAL(activated(int)), this, SLOT(readEvent()));
+        PandoraEventReader* reader = new PandoraEventReader(priv->notifier);
+        connect(priv->notifier, SIGNAL(activated(int)), reader, SLOT(readEvent()));
+        connect(reader, SIGNAL(newEvent(int)), this, SIGNAL(newEvent(int)));
         emit isActiveChanged(true);
     }
     else
@@ -47,15 +50,10 @@ bool PandoraEventListener::isActive()
     return priv->notifier && priv->notifier->isEnabled();
 }
 
-void PandoraEventListener::readEvent()
-{
-    pnd_evdev_catchup(0);
-    emit newEvent(pnd_evdev_dpad_state(pnd_evdev_dpads));
-}
-
 PandoraEventListenerPrivate::PandoraEventListenerPrivate()
 {
     notifier = 0;
+    prevButtons = 0;
 }
 PandoraEventListenerPrivate::~PandoraEventListenerPrivate()
 {
@@ -70,3 +68,23 @@ PandoraEventListenerPrivate::~PandoraEventListenerPrivate()
         delete notifier;
     }
 }
+
+PandoraEventReader::PandoraEventReader(QObject *parent) : QObject(parent), prevButtons(0)
+{
+
+}
+
+void PandoraEventReader::readEvent()
+{
+    if(pnd_evdev_catchup(0))
+    {
+        unsigned int buttons = pnd_evdev_dpad_state(pnd_evdev_dpads);
+        if(buttons != -1 && buttons != prevButtons)
+        {
+          prevButtons = buttons;
+            emit newEvent(buttons);
+        }
+    }
+}
+
+

@@ -24,8 +24,22 @@ signals:
 protected:
     void run();
 
+};
+
+class PandoraEventReader : public QObject
+{
+  Q_OBJECT
+public:
+  explicit PandoraEventReader(QObject *parent = 0);
+
+signals:
+    void newEvent(const int state);
+
 private slots:
     void readEvent();
+
+private:
+    unsigned int prevButtons;
 };
 
 #endif // PANDORAEVENTLISTENER_H

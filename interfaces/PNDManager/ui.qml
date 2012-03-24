@@ -2,7 +2,7 @@ import QtQuick 1.1
 import Panorama.Settings 1.0
 import Panorama.UI 1.0
 import Panorama.PNDManagement 1.0
-//import Panorama.Pandora 1.0
+import Panorama.Pandora 1.0
 
 PanoramaUI {
   id: ui
@@ -32,29 +32,31 @@ PanoramaUI {
   }
 
   Keys.onPressed: {
-    event.accepted = true;
-    if(event.key === Qt.Key_PageDown) {
-      views.current.pop();
-    } else if(event.key === Qt.Key_End) {
-      views.current.current.okButton();
-    } else if(event.key === Qt.Key_Home) {
-      views.current.current.installRemoveButton();
-    } else if(event.key === Qt.Key_PageUp) {
-      views.current.current.upgradeButton();
-    } else if(event.key === Qt.Key_1) {
-      homeStack.activate();
-    } else if(event.key === Qt.Key_2) {
-      categoriesStack.activate();
-    } else if(event.key === Qt.Key_3) {
-      installedStack.activate();
-    } else if(event.key === Qt.Key_4) {
-      searchStack.activate();
-    } else {
-      event.accepted = false;
+    if(!Pandora.controlsActive) {
+      event.accepted = true;
+      if(event.key === Qt.Key_PageDown) {
+        views.current.pop();
+      } else if(event.key === Qt.Key_End) {
+        views.current.current.okButton();
+      } else if(event.key === Qt.Key_Home) {
+        views.current.current.installRemoveButton();
+      } else if(event.key === Qt.Key_PageUp) {
+        views.current.current.upgradeButton();
+      } else if(event.key === Qt.Key_1) {
+        homeStack.activate();
+      } else if(event.key === Qt.Key_2) {
+        categoriesStack.activate();
+      } else if(event.key === Qt.Key_3) {
+        installedStack.activate();
+      } else if(event.key === Qt.Key_4) {
+        searchStack.activate();
+      } else {
+        event.accepted = false;
+      }
     }
   }
 
-  /*
+
   Pandora.onPressed: {
     event.accepted = true;
     if(event.key === Pandora.ButtonX)           views.current.pop();
@@ -65,7 +67,7 @@ PanoramaUI {
     else if(event.key === Pandora.TriggerR)     views.next();
     else if(event.key === Pandora.ButtonStart)  bottomBar.reload();
   }
-  */
+
 
   Notification {
     id: syncCompleteNotification

@@ -36,7 +36,7 @@ PandoraEventSource::PandoraEventSource(QObject *parent) :
     if(!_eventListener)
     {
         _eventListener = new PandoraEventListener();
-        _eventListener->start();
+        _eventListener->start(QThread::LowPriority);
     }
     connect(_eventListener, SIGNAL(isActiveChanged(bool)),
             this, SIGNAL(isActiveChanged(bool)));
