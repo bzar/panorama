@@ -54,7 +54,7 @@ Rectangle {
   GuiHint {
     control: "game-b"
     anchors.right: parent.right
-    anchors.top: parent.top
+    anchors.verticalCenter: parent.verticalCenter
     anchors.margins: 4
     opacity: selected ? 1.0 : 0.0
   }
