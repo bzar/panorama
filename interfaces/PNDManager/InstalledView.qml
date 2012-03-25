@@ -72,6 +72,7 @@ View {
       id: upgradeAllButton
       label: "Upgrade all"
       color: "#6992D7"
+      control: "game-y"
       width: 256
       height: 64
       radius: 8

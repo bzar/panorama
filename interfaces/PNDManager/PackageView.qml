@@ -50,6 +50,7 @@ View {
     Button {
       label: "Install"
       sublabel: Utils.prettySize(pnd.size)
+      control: "game-a"
       color: "#69D772"
       width: 256
       height: 64
@@ -60,6 +61,7 @@ View {
     Button {
       label: "Remove"
       sublabel: Utils.prettySize(pnd.size)
+      control: "game-a"
       color: "#D76D69"
       width: 256
       height: 64
@@ -70,6 +72,7 @@ View {
     Button {
       label: "Upgrade"
       sublabel: pnd.hasUpgrade ? Utils.versionString(pnd.version) + " → " + Utils.versionString(pnd.upgradeCandidate.version) + " (" + Utils.prettySize(pnd.upgradeCandidate.size) + ")" : ""
+      control: "game-y"
       color: "#6992D7"
       width: 256
       height: 64
@@ -277,7 +280,7 @@ View {
 
       Text {
           anchors.centerIn: parent
-          opacity: image.source != "" ? (image.status != Image.Ready && image.source != "" ? 1.0 : 0.0) : 1.0
+          visible: image.source == "" || image.status != Image.Ready
           text: image.source != "" ? parseInt(image.progress * 100) + "%" : "No preview"
           font.pixelSize: 24
           color: "#777"
@@ -286,6 +289,37 @@ View {
       MouseArea {
         anchors.fill: parent
         onClicked: showPreviewPictures()
+      }
+
+      Rectangle {
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.margins: 8
+        visible: pnd.previewPictures.length > 0
+        height: 32
+        width: showPreviewPicturesText.paintedWidth + showPreviewPicturesIcon.width + 16
+        radius: height/4
+        color: Qt.rgba(0.8, 0.8, 0.8, 0.3)
+
+        Row {
+          anchors.centerIn: parent
+          height: 24
+          spacing: 4
+          Text {
+            id: showPreviewPicturesText
+            text: "Show more"
+            font.pixelSize: 18
+            style: Text.Outline
+            styleColor: "#111"
+            color: "#fff"
+            anchors.verticalCenter: parent.verticalCenter
+          }
+          GuiHint {
+            id: showPreviewPicturesIcon
+            control: "game-b"
+            anchors.verticalCenter: parent.verticalCenter
+          }
+        }
       }
     }
   }

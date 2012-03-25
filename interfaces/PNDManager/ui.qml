@@ -11,6 +11,20 @@ PanoramaUI {
   author: "B-ZaR"
   anchors.fill: parent
 
+  Setting {
+    id: showSplashScreen
+    defaultValue: true
+    key: "showSplashScreen"
+    section: "PNDManager"
+  }
+
+  Setting {
+    id: showHints
+    defaultValue: true
+    key: "showHints"
+    section: "PNDManager"
+  }
+
   function init() {
     pndManager.crawl();
   }
@@ -54,6 +68,11 @@ PanoramaUI {
         event.accepted = false;
       }
     }
+
+    if(event.key === Qt.Key_F1) {
+      showHints.value = !showHints.value
+      event.accepted = true;
+    }
   }
 
 
@@ -74,6 +93,14 @@ PanoramaUI {
     text: "Sync complete"
     anchors.centerIn: parent
     z: 2
+  }
+
+  HelpDialog {
+    anchors.fill: parent
+    z: 2
+    visible: showSplashScreen.value
+    onHide: visible = false
+    onDontShowAgain: showSplashScreen.value = false
   }
 
   TopBar {

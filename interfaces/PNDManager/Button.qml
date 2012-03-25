@@ -12,7 +12,7 @@ Item {
     property alias enabled: mouseArea.enabled
     property alias radius: rectangle.radius
     property alias border: rectangle.border
-
+    property alias control: guiHint.control
     signal clicked();
 
     width: 64
@@ -30,19 +30,23 @@ Item {
 
         clip: true
 
+        GuiHint {
+          id: guiHint
+          anchors.right: parent.right
+          anchors.top: parent.top
+          anchors.margins: 8
+        }
         Column {
           anchors.centerIn: parent
           Text {
               id: labelText
               font.pixelSize: 18
               text: button.label
-              anchors.horizontalCenter: parent.horizontalCenter
           }
           Text {
             id: sublabelText
             font.pixelSize: 12
             text: button.sublabel
-            anchors.horizontalCenter: parent.horizontalCenter
           }
         }
 

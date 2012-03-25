@@ -28,6 +28,13 @@ GridView {
     x: packageList.currentItem ? packageList.currentItem.x : 0
     y: packageList.currentItem ? packageList.currentItem.y : 0
     visible: packageList.currentItem !== null
+
+    GuiHint {
+      control: "game-b"
+      anchors.right: parent.right
+      anchors.top: parent.top
+      anchors.margins: 4
+    }
   }
   highlightFollowsCurrentItem: false
 

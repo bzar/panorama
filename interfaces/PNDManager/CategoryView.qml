@@ -17,6 +17,7 @@ View {
     pndManager: view.pndManager
     model: filteredPackages.titleContains(search.text).all()
     anchors.fill: parent
+    anchors.margins: 8
 
     Keys.priority: Keys.AfterItem
     Keys.forwardTo: [ui, search]

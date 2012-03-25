@@ -129,6 +129,7 @@ View {
     radius: 4
     label: "Install"
     color: "#69D772"
+    control: "game-b"
     onClicked: install()
   }
 }

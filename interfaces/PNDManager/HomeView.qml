@@ -91,6 +91,14 @@ View {
         radius: 8
         x: lastUpdated.currentItem.x
         y: lastUpdated.currentItem.y
+
+        GuiHint {
+          control: "game-b"
+          anchors.right: parent.right
+          anchors.top: parent.top
+          anchors.margins: 4
+          opacity: lastUpdated.active ? 1.0 : 0.0
+        }
       }
 
       highlightFollowsCurrentItem: false
@@ -173,6 +181,14 @@ View {
         radius: 8
         x: highestRated.currentItem.x
         y: highestRated.currentItem.y
+
+        GuiHint {
+          control: "game-b"
+          anchors.right: parent.right
+          anchors.top: parent.top
+          anchors.margins: 4
+          opacity: highestRated.active ? 1.0 : 0.0
+        }
       }
 
       highlightFollowsCurrentItem: false

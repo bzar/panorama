@@ -43,7 +43,7 @@ View {
       TextInput {
         id: search
         anchors.left: searchIcon.right
-        anchors.right: parent.right
+        anchors.right: searchHint.left
         anchors.verticalCenter: parent.verticalCenter
         anchors.margins: 4
         font.pixelSize: 20
@@ -52,6 +52,15 @@ View {
           packageList.model = pndManager.searchPackages(text).sortedByTitle().all()
           noSearchResultsText.visible = packageList.count === 0
         }
+      }
+
+      GuiHint {
+        id: searchHint
+        control: "keyboard-enter"
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        width: height
       }
     }
 
@@ -71,6 +80,7 @@ View {
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: parent.bottom
+    anchors.margins: 8
     columns: 2
     model: null
     Keys.priority: Keys.AfterItem

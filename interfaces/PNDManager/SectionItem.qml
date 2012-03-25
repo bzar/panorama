@@ -50,4 +50,12 @@ Rectangle {
     color: "#ddd"
     anchors.bottom: parent.bottom
   }
+
+  GuiHint {
+    control: "game-b"
+    anchors.right: parent.right
+    anchors.top: parent.top
+    anchors.margins: 4
+    opacity: selected ? 1.0 : 0.0
+  }
 }

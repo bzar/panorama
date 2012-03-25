@@ -21,6 +21,19 @@ Rectangle {
     width: childrenRect.width
     anchors.margins: 4
     spacing: 32
+
+  }
+  GuiHint {
+    control: "shoulder-l"
+    anchors.right: iconRow.left
+    anchors.margins: 8
+    anchors.verticalCenter: parent.verticalCenter
+  }
+  GuiHint {
+    control: "shoulder-r"
+    anchors.left: iconRow.right
+    anchors.margins: 8
+    anchors.verticalCenter: parent.verticalCenter
   }
 
 
@@ -37,6 +50,13 @@ Rectangle {
       anchors.margins: 16
       anchors.fill: parent
       fillMode: Image.PreserveAspectFit
+      GuiHint {
+        control: "game-x"
+        anchors.left: parent.right
+        anchors.margins: 8
+        anchors.verticalCenter: parent.verticalCenter
+      }
+
     }
     MouseArea {
       id: mouseArea
@@ -47,6 +67,7 @@ Rectangle {
       onExited: hover = false
       onClicked: bar.back()
     }
+
   }
 
   Item {
@@ -66,12 +87,20 @@ Rectangle {
         running: syncing
       }
 
+      id: reloadIcon
       source: reloadMouseArea.pressed || reloadMouseArea.hover ? "img/reload_alt_white_24x28.png" : "img/reload_alt_24x28.png"
       smooth: true
       anchors.margins: 16
       anchors.fill: parent
       fillMode: Image.PreserveAspectFit
     }
+    GuiHint {
+      control: "start"
+      anchors.right: reloadIcon.left
+      anchors.margins: 8
+      anchors.verticalCenter: parent.verticalCenter
+    }
+
     MouseArea {
       id: reloadMouseArea
       property bool hover: false

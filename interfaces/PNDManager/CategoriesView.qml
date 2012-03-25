@@ -48,6 +48,13 @@ View {
       radius: 8
       x: categoryList.currentItem.x
       y: categoryList.currentItem.y
+
+      GuiHint {
+        control: "game-b"
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.margins: 4
+      }
     }
 
     highlightFollowsCurrentItem: false
