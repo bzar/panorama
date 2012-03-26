@@ -112,6 +112,8 @@ public slots:
   void install(QPndman::Device* device, QString installLocation);
   void remove();
   void upgrade();
+  void cancelDownload();
+  void downloadCancelled();
 
 signals:
   void installedChanged(bool);
@@ -122,6 +124,7 @@ signals:
 private:
   PNDManager* manager;
   QPointer<QPndman::Package> package;
+  QPointer<QPndman::Handle> operationHandle;
 
   QString id;
 

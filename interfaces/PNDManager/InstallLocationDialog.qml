@@ -128,7 +128,7 @@ View {
     anchors.margins: 16
     radius: 4
     label: "Install"
-    color: "#69D772"
+    color: "#65CF6C"
     control: "game-b"
     onClicked: install()
   }

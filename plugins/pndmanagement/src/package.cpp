@@ -4,7 +4,7 @@
 #include <QDebug>
 
 Package::Package(PNDManager* manager, QPndman::Package* p, bool installed, QObject* parent):
-  QObject(parent), manager(manager), package(p), id(p->getId()),
+  QObject(parent), manager(manager), package(p), operationHandle(0), id(p->getId()),
   installed(installed), bytesDownloaded(installed ? 1 : 0), bytesToDownload(1),
   applicationList(), titleList(), descriptionList(), categoryList(), installedInstanceList(), overrideIcon(), overrideRating(0)
 {
@@ -287,6 +287,7 @@ void Package::install(QPndman::Device* device, QString location)
   connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), this, SLOT(setBytesToDownload(qint64)));
   connect(handle, SIGNAL(done()), this, SLOT(setInstalled()));
   connect(handle, SIGNAL(done()), manager, SLOT(crawl()));
+  operationHandle = handle;
   worker->start();
 }
 
@@ -328,7 +329,21 @@ void Package::upgrade()
   connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), this, SLOT(setBytesToDownload(qint64)));
   connect(handle, SIGNAL(done()), this, SLOT(setInstalled()));
   connect(handle, SIGNAL(done()), manager, SLOT(crawl()));
+  connect(handle, SIGNAL(cancelled()), this, SLOT(downloadCancelled()));
+  operationHandle = handle;
   worker->start();
+}
+
+void Package::cancelDownload()
+{
+  if(operationHandle) {
+    operationHandle->cancel();
+  }
+}
+
+void Package::downloadCancelled()
+{
+  setBytesDownloaded(0);
 }
 
 void Package::updateFrom(QPndman::Package* other)

@@ -40,7 +40,7 @@ Rectangle {
     id: additionalItemsContainer
     anchors.verticalCenter: parent.verticalCenter
     anchors.left: title.right
-    anchors.right: parent.right
+    anchors.right: hint.visible ? hint.left : parent.right
     anchors.margins: 16
   }
 
@@ -52,6 +52,7 @@ Rectangle {
   }
 
   GuiHint {
+    id: hint
     control: "game-b"
     anchors.right: parent.right
     anchors.verticalCenter: parent.verticalCenter

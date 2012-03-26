@@ -163,6 +163,7 @@ PanoramaUI {
     backArrowVisible: !views.current.atRootView
 
     IconButton {
+      id: homeIcon
       normalImage: "img/home_32x32.png"
       highlightImage: "img/home_white_32x32.png"
       highlight: homeStack.active
@@ -170,6 +171,7 @@ PanoramaUI {
       onClicked: homeStack.activate()
     }
     IconButton {
+      id: categoriesIcon
       normalImage: "img/list_32x28.png"
       highlightImage: "img/list_white_32x28.png"
       highlight: categoriesStack.active
@@ -177,6 +179,7 @@ PanoramaUI {
       onClicked: categoriesStack.activate()
     }
     IconButton {
+      id: installedIcon
       normalImage: "img/download_24x32.png"
       highlightImage: "img/download_white_24x32.png"
       highlight: installedStack.active
@@ -184,6 +187,7 @@ PanoramaUI {
       onClicked: installedStack.activate()
     }
     IconButton {
+      id: searchIcon
       normalImage: "img/magnifying_glass_32x32.png"
       highlightImage: "img/magnifying_glass_white_32x32.png"
       highlight: searchStack.active

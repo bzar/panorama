@@ -21,6 +21,7 @@ Item {
     Rectangle {
         id: rectangle
         anchors.fill: parent
+        smooth: radius != 0
 
         gradient: Gradient {
             GradientStop { position: 0.0; color: Qt.darker(button.color, pressed ? 1.6 : hovered ? 0.8 : 1.0 ) }
@@ -40,13 +41,21 @@ Item {
           anchors.centerIn: parent
           Text {
               id: labelText
-              font.pixelSize: 18
+              font.pixelSize: 20
               text: button.label
+              anchors.horizontalCenter: parent.horizontalCenter
+              style: Text.Raised
+              styleColor: "#111"
+              color: "#ddd"
           }
           Text {
             id: sublabelText
-            font.pixelSize: 12
+            font.pixelSize: 14
             text: button.sublabel
+            anchors.horizontalCenter: parent.horizontalCenter
+            style: Text.Raised
+            styleColor: "#111"
+            color: "#ddd"
           }
         }
 

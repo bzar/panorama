@@ -10,9 +10,25 @@ View {
   Component { id: previewPictureView; PreviewPictureView {} }
 
   Keys.forwardTo: textArea
-  onOkButton: showPreviewPictures()
-  onInstallRemoveButton: pnd.installed ? pnd.remove() : showInstallDialog()
-  onUpgradeButton: upgrade()
+  onOkButton: removeConfirmation.visible ? removeConfirmation.yes() : showPreviewPictures()
+  onInstallRemoveButton: {
+    if(removeConfirmation.visible)
+      removeConfirmation.no()
+    else if(pnd.isDownloading)
+      pnd.cancelDownload()
+    else if(pnd.installed)
+      removeConfirmation.show()
+    else
+      showInstallDialog()
+  }
+  onUpgradeButton: if(!removeConfirmation.visible) upgrade()
+
+  ConfirmationDialog {
+    id: removeConfirmation
+    message: "Remove " + pnd.title + "?"
+    onYes: pnd.remove()
+    z: 10
+  }
 
   function showPreviewPictures() {
     if(pnd.previewPictures.length > 0) {
@@ -51,7 +67,7 @@ View {
       label: "Install"
       sublabel: Utils.prettySize(pnd.size)
       control: "game-a"
-      color: "#69D772"
+      color: "#59B55F"
       width: 256
       height: 64
       radius: 4
@@ -67,7 +83,7 @@ View {
       height: 64
       radius: 4
       visible: pnd.installed && !pnd.isDownloading
-      onClicked: pnd.remove()
+      onClicked: removeConfirmation.show()
     }
     Button {
       label: "Upgrade"
@@ -90,6 +106,7 @@ View {
         anchors.margins: 16
       }
       Rectangle {
+        id: progressBarContainer
         anchors.left: parent.left
         anchors.right: parent.right
         color: "#ddd"
@@ -108,7 +125,27 @@ View {
           maximumValue: pnd.bytesToDownload
           value: pnd.bytesDownloaded
         }
+
+        Image {
+          source: "img/x_alt_32x32.png"
+          anchors.left: parent.right
+          anchors.verticalCenter: parent.verticalCenter
+          anchors.margins: 16
+
+          GuiHint {
+            control: "game-a"
+            anchors.left: parent.horizontalCenter
+            anchors.bottom: parent.verticalCenter
+            anchors.margins: 8
+          }
+
+          MouseArea {
+            anchors.fill: parent
+            onClicked: pnd.cancelDownload()
+          }
+        }
       }
+
       Item {
         anchors.right: parent.right
         anchors.margins: 16
@@ -144,7 +181,7 @@ View {
     contentHeight: textAreaContents.height
     contentWidth: width
     clip: true
-
+    interactive: !removeConfirmation.visible
     NumberAnimation {
       id: scrollAnimation
       target: textArea;

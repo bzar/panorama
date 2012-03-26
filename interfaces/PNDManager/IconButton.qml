@@ -18,4 +18,13 @@ Image {
     onEntered: icon.hover = true
     onExited: icon.hover = false
   }
+
+  Rectangle {
+    width: 32
+    height: 3
+    color: "#eee"
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.bottom: parent.bottom
+    visible: highlight
+  }
 }

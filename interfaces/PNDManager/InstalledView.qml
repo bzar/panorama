@@ -19,15 +19,26 @@ View {
 
   Connections {
     target: pndManager
-    onPackagesChanged: {
-      downloadingModel = pndManager.packages.downloading().sortedByTitle().all();
-      upgradableModel = pndManager.packages.installed().upgradable().notDownloading().sortedByTitle().all();
-      installedModel = pndManager.packages.installed().notUpgradable().notDownloading().sortedByTitle().all();
-    }
+    onPackagesChanged: update()
   }
 
   onUpgradeButton: upgradeAll()
+  onInstallRemoveButton: cancelDownload()
 
+  function update() {
+    downloadingModel = pndManager.packages.downloading().sortedByTitle().all();
+    upgradableModel = pndManager.packages.installed().upgradable().notDownloading().sortedByTitle().all();
+    installedModel = pndManager.packages.installed().notUpgradable().notDownloading().sortedByTitle().all();
+  }
+
+  function cancelDownload() {
+    var pnd = getSelected();
+    if(pnd.isDownloading) {
+      pnd.cancelDownload();
+      update();
+    }
+
+  }
   function showPackage(pnd) {
     stack.push(packageView, { "pnd": pnd, "viewTitle": pnd.title, "pndManager": pndManager });
   }
@@ -41,14 +52,17 @@ View {
     }
   }
 
-  function openSelected() {
+  function getSelected() {
     if(currentIndex < downloadingModel.length) {
-      showPackage(downloadingModel[currentIndex]);
+      return downloadingModel[currentIndex];
     } else if(currentIndex < downloadingModel.length + upgradableModel.length) {
-      showPackage(upgradableModel[currentIndex - downloadingModel.length]);
+      return upgradableModel[currentIndex - downloadingModel.length];
     } else if(currentIndex < downloadingModel.length + upgradableModel.length + installedModel.length) {
-      showPackage(installedModel[currentIndex - downloadingModel.length - upgradableModel.length]);
+      return installedModel[currentIndex - downloadingModel.length - upgradableModel.length];
     }
+  }
+  function openSelected() {
+    showPackage(getSelected());
   }
 
   Component { id: packageView; PackageView {} }
@@ -179,7 +193,32 @@ View {
                   maximumValue: modelData.bytesToDownload
                   value: modelData.bytesDownloaded
                 }
+                Image {
+                  source: "img/x_alt_32x32.png"
+                  width: 16
+                  height: 16
+                  smooth: true
+                  anchors.left: parent.right
+                  anchors.verticalCenter: parent.verticalCenter
+                  anchors.margins: 16
+
+                  GuiHint {
+                    control: "game-a"
+                    anchors.left: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    height: parent.height
+                    width: parent.width
+                    anchors.margins: 4
+                  }
+
+                  MouseArea {
+                    anchors.fill: parent
+                    onClicked: cancelDownload()
+                  }
+                }
               }
+
+
               Item {
                 id: progressText
                 property variant progress: Utils.prettyProgress(modelData.bytesDownloaded, modelData.bytesToDownload)
