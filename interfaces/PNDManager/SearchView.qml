@@ -1,6 +1,7 @@
 import QtQuick 1.1
 
 View {
+  id: view
   viewTitle: "Search"
 
   property QtObject pndManager
@@ -76,6 +77,7 @@ View {
 
   PackageList {
     id: packageList
+    pndManager: view.pndManager
     anchors.top: searchContainer.bottom
     anchors.left: parent.left
     anchors.right: parent.right
@@ -98,20 +100,7 @@ View {
 
       Text {
         id: categoriesText
-        property variant categories: modelData.categories
-        function getCategories() {
-          var result = [];
-          for(var i = 0; i < categories.length; ++i) {
-            if(result.indexOf(categories[i].main) === -1) {
-              result.push(categories[i].main);
-            }
-            result.push(categories[i].sub);
-          }
-
-          return result.join(", ");
-        }
-
-        text: getCategories()
+        text: pndUtils.createCategoryString(modelData) //getCategories()
         font.pixelSize: 14
       }
 

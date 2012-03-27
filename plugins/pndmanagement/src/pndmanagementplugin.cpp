@@ -2,11 +2,13 @@
 #include "pndmanager.h"
 #include "pndfilter.h"
 #include "package.h"
+#include "pndutils.h"
 //#include "pnddeclarativeimageprovider.h"
 
 void PNDManagementPlugin::registerTypes(const char *uri)
 {
   qmlRegisterType<PNDManager>(uri, 1, 0, "PNDManager");
+  qmlRegisterType<PNDUtils>(uri, 1, 0, "PNDUtils");
   qmlRegisterType<Package>();
   qmlRegisterType<PNDFilter>();
   qmlRegisterType<QPndman::Device>();

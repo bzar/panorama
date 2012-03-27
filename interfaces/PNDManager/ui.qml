@@ -45,6 +45,8 @@ PanoramaUI {
     }
   }
 
+  PNDUtils { id: pndUtils }
+
   Keys.onPressed: {
     if(!Pandora.controlsActive) {
       event.accepted = true;
