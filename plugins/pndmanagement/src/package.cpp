@@ -280,14 +280,15 @@ void Package::install(QPndman::Device* device, QString location)
   {
     return;
   }
+  manager->addCommitableDevice(device);
   DownloadWorker* worker = new DownloadWorker(handle);
   handle->setParent(worker);
   connect(worker, SIGNAL(started(QPndman::Handle*)), manager, SIGNAL(packagesChanged()));
   connect(handle, SIGNAL(bytesDownloadedChanged(qint64)), this, SLOT(setBytesDownloaded(qint64)));
   connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), this, SLOT(setBytesToDownload(qint64)));
   connect(handle, SIGNAL(done()), this, SLOT(setInstalled()));
-  connect(handle, SIGNAL(cancelled()), this, SLOT(downloadCancelled()));
   connect(handle, SIGNAL(done()), manager, SLOT(crawl()));
+  connect(handle, SIGNAL(cancelled()), this, SLOT(downloadCancelled()));
   operationHandle = handle;
   worker->start();
 }

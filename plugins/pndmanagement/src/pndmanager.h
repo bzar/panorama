@@ -27,11 +27,13 @@ public:
   PNDFilter* getPackages();
   Q_INVOKABLE PNDFilter* searchPackages(QString const& search);
   QPndman::Context* getContext() const;
+  void addCommitableDevice(QPndman::Device* device);
 
 public slots:
   void crawl();
   void sync();
   void updatePackages();
+  void saveRepositories();
 
 signals:
   void packagesChanged();
@@ -49,11 +51,11 @@ private:
   QPndman::Context* context;
   QPndman::Repository* repository;
   QPndman::LocalRepository* localRepository;
-  QPndman::Device* tmpDevice;
 
   QList<Package*> packages;
   QMap<QString, Package*> packagesById;
   QList<QPndman::Device*> devices;
+  QList<QPndman::Device*> commitableDevices;
 };
 
 #endif

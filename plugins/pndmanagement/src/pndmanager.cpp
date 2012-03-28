@@ -4,24 +4,29 @@
 #include <QDebug>
 
 QString const PNDManager::REPOSITORY_URL("http://repo.openpandora.org/includes/get_data.php");
-//QString const PNDManager::REPOSITORY_URL("http://ewmedia/repo.json");
 
 PNDManager::PNDManager(QObject* parent) : QObject(parent), 
   context(new QPndman::Context(this)),
   repository(new QPndman::Repository(context, REPOSITORY_URL)),
   localRepository(new QPndman::LocalRepository(context)),
-  tmpDevice(new QPndman::Device(context, "/tmp")),
-  packages(), packagesById(), devices()
+  packages(), packagesById(), devices(), commitableDevices()
 {
-  repository->loadFrom(tmpDevice);
-  localRepository->loadFrom(tmpDevice);
-  devices << tmpDevice;
   devices.append(QPndman::Device::detectDevices(context));
+  foreach(QPndman::Device* device, devices)
+  {
+    bool canRead = false;
+    canRead |= repository->loadFrom(device);
+    canRead |= localRepository->loadFrom(device);
+    if(canRead)
+    {
+      commitableDevices << device;
+    }
+  }
 }
 
 PNDManager::~PNDManager()
 {
-  tmpDevice->saveRepositories();
+  saveRepositories();
 }
 
 QDeclarativeListProperty<QPndman::Device> PNDManager::getDevices()
@@ -102,6 +107,14 @@ PNDFilter* PNDManager::searchPackages(const QString &search)
 QPndman::Context* PNDManager::getContext() const
 {
   return context;
+}
+
+void PNDManager::addCommitableDevice(QPndman::Device *device)
+{
+  if(!commitableDevices.contains(device))
+  {
+    commitableDevices << device;
+  }
 }
 
 
@@ -218,6 +231,14 @@ void PNDManager::updatePackages()
   }
 
   qDebug() << "Found" << packages.count() << "packages";
+  saveRepositories();
   emit packagesChanged();
 }
 
+void PNDManager::saveRepositories()
+{
+  foreach(QPndman::Device* device, commitableDevices)
+  {
+    device->saveRepositories();
+  }
+}
