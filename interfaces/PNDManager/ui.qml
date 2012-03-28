@@ -113,6 +113,8 @@ PanoramaUI {
     height: 32
     title: views.getViewTitle()
     z: 1
+    showCloseButton: fullscreen.value
+    onCloseButtonClicked: runtime.quit()
   }
 
   ViewStackList {

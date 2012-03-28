@@ -20,6 +20,7 @@ public:
 signals:
     void isActiveWindowChanged(bool value);
     void fullscreenRequested(bool value);
+    void quit();
 
 private:
     bool _isActiveWindow;

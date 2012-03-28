@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     rootContext()->setContextProperty("runtime", &_runtimeObject);
     connect(&_runtimeObject, SIGNAL(fullscreenRequested(bool)),
             this, SLOT(setFullscreen(bool)));
+    connect(&_runtimeObject, SIGNAL(quit()), this, SLOT(close()));
 
 #ifdef ENABLE_OPENGL
     setViewport(new QGLWidget());

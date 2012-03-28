@@ -286,6 +286,7 @@ void Package::install(QPndman::Device* device, QString location)
   connect(handle, SIGNAL(bytesDownloadedChanged(qint64)), this, SLOT(setBytesDownloaded(qint64)));
   connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), this, SLOT(setBytesToDownload(qint64)));
   connect(handle, SIGNAL(done()), this, SLOT(setInstalled()));
+  connect(handle, SIGNAL(cancelled()), this, SLOT(downloadCancelled()));
   connect(handle, SIGNAL(done()), manager, SLOT(crawl()));
   operationHandle = handle;
   worker->start();
