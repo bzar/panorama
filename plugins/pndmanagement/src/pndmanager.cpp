@@ -237,6 +237,34 @@ void PNDManager::updatePackages()
 
 void PNDManager::saveRepositories()
 {
+  if(commitableDevices.empty())
+  {
+    QSet<QString> mounts;
+    foreach(Package* package, packages)
+    {
+      if(!package->getInstalled())
+        continue;
+
+      QString const mount = package->getMount();
+      if(!mounts.contains(mount))
+      {
+        mounts.insert(mount);
+
+        foreach(QPndman::Device* device, devices)
+        {
+          if(device->getMount() == mount)
+          {
+            commitableDevices.append(device);
+            break;
+          }
+        }
+
+        // If seen all devices, break
+        if(mounts.count() == devices.count())
+          break;
+      }
+    }
+  }
   foreach(QPndman::Device* device, commitableDevices)
   {
     device->saveRepositories();
