@@ -132,6 +132,9 @@ PNDFilter *PNDFilter::sortedByRating()
 
 PNDFilter *PNDFilter::titleContains(const QString &s)
 {
+  if(s.isEmpty() || s.isNull())
+    return this;
+
   QList<Package*> result;
   foreach(Package* p, packages)
   {
