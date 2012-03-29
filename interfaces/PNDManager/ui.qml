@@ -25,6 +25,18 @@ PanoramaUI {
     section: "PNDManager"
   }
 
+  Setting {
+      id: mouseCursorVisible
+      section: "PNDManager"
+      key: "mouseCursorVisible"
+      defaultValue: false
+      onValueChanged: runtime.mouseCursorVisible = value
+      Component.onCompleted: runtime.mouseCursorVisible = value
+  }
+
+
+
+
   function init() {
     pndManager.crawl();
   }

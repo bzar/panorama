@@ -15,6 +15,9 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(setFullscreen(bool)));
     connect(&_runtimeObject, SIGNAL(quit()), this, SLOT(close()));
 
+    connect(&_runtimeObject, SIGNAL(mouseCursorVisibleChanged(bool)),
+            this, SLOT(showMouseCursor(bool)));
+
 #ifdef ENABLE_OPENGL
     setViewport(new QGLWidget());
 #endif
@@ -61,5 +64,17 @@ void MainWindow::setFullscreen(bool fullscreen)
     if(fullscreen)
         setWindowState(windowState() | Qt::WindowFullScreen);
     else
-        setWindowState(windowState() & ~Qt::WindowFullScreen);
+      setWindowState(windowState() & ~Qt::WindowFullScreen);
+}
+
+void MainWindow::showMouseCursor(bool value)
+{
+  if(value)
+  {
+    QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+  }
+  else
+  {
+    QApplication::setOverrideCursor(QCursor(Qt::BlankCursor));
+  }
 }

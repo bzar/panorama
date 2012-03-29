@@ -9,14 +9,13 @@ View {
   property QtObject pndManager
   property int itemCount: downloadingModel.length + upgradableModel.length + installedModel.length
   property int currentIndex: 0
-  property variant downloadingModel: []
-  property variant upgradableModel: []
-  property variant installedModel: []
 
   Keys.onUpPressed: currentIndex = Math.max(0, currentIndex - 1);
   Keys.onDownPressed: currentIndex = Math.min(itemCount - 1, currentIndex + 1);
   onOkButton: openSelected()
 
+  Keys.priority: Keys.AfterItem
+  Keys.forwardTo: [ui, search]
   Connections {
     target: pndManager
     onPackagesChanged: update()
@@ -25,10 +24,23 @@ View {
   onUpgradeButton: upgradeAll()
   onInstallRemoveButton: cancelDownload()
 
+  function getDownloadingModelPrefilter() { return pndManager.packages.downloading().sortedByTitle() }
+  function getUpgradableModelPrefilter() { return pndManager.packages.installed().upgradable().notDownloading().sortedByTitle() }
+  function getInstalledModelPrefilter() { return pndManager.packages.installed().notUpgradable().notDownloading().sortedByTitle() }
+
+  property QtObject downloadingModelPrefilter: getDownloadingModelPrefilter()
+  property QtObject upgradableModelPrefilter: getUpgradableModelPrefilter()
+  property QtObject installedModelPrefilter: getInstalledModelPrefilter()
+
+  property variant downloadingModel: downloadingModelPrefilter.titleContains(search.text).all()
+  property variant upgradableModel: upgradableModelPrefilter.titleContains(search.text).all()
+  property variant installedModel: installedModelPrefilter.titleContains(search.text).all()
+
+
   function update() {
-    downloadingModel = pndManager.packages.downloading().sortedByTitle().all();
-    upgradableModel = pndManager.packages.installed().upgradable().notDownloading().sortedByTitle().all();
-    installedModel = pndManager.packages.installed().notUpgradable().notDownloading().sortedByTitle().all();
+    downloadingModelPrefilter = getDownloadingModelPrefilter();
+    upgradableModelPrefilter = getUpgradableModelPrefilter();
+    installedModelPrefilter = getInstalledModelPrefilter();
   }
 
   function cancelDownload() {
@@ -321,6 +333,30 @@ View {
           }
         }
       }
+    }
+  }
+
+  Rectangle {
+    opacity: 0.8
+    height: 32
+    anchors.bottomMargin: search.text != "" ? 0 : -(height+1)
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    color: "#eee"
+    border {
+      color: "#444"
+      width: 1
+    }
+
+    TextInput {
+      id: search
+      anchors.verticalCenter: parent.verticalCenter
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.margins: 4
+      font.pixelSize: 14
+      activeFocusOnPress: false
     }
   }
 }

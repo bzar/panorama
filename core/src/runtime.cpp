@@ -1,7 +1,7 @@
 #include "runtime.h"
 
 Runtime::Runtime(QObject *parent) :
-        QObject(parent), _isActiveWindow(false)
+  QObject(parent), _isActiveWindow(false), _mouseCursorVisible(true)
 {
 }
 
@@ -16,6 +16,20 @@ void Runtime::setIsActiveWindow(bool const value)
     {
         _isActiveWindow = value;
         emit isActiveWindowChanged(value);
+    }
+}
+
+bool Runtime::mouseCursorVisible() const
+{
+    return _mouseCursorVisible;
+}
+
+void Runtime::setMouseCursorVisible(bool const value)
+{
+    if(_mouseCursorVisible != value)
+    {
+        _mouseCursorVisible = value;
+        emit mouseCursorVisibleChanged(value);
     }
 }
 

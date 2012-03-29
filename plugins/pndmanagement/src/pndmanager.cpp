@@ -176,9 +176,12 @@ void PNDManager::updatePackages()
     if(isInInstalled || remote.contains(p->getId()))
     {
       p->setInstalled(isInInstalled);
-      QPndman::Package* package = isInInstalled ? installed.value(p->getId()) : remote.value(p->getId());
+      QPndman::Package* package = isInInstalled ? installed.value(p->getId(), 0) : remote.value(p->getId(), 0);
 
-      p->updateFrom(package);
+      if(package)
+      {
+        p->updateFrom(package);
+      }
 
       // TODO: Temporary system to fetch icons from repo, replace with a QDeclarativeImageProvider system at some point
       if(isInInstalled)

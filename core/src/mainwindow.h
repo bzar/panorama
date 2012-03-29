@@ -28,6 +28,7 @@ protected:
 
 private slots:
     void setFullscreen(bool fullscreen);
+    void showMouseCursor(bool value);
 
 private:
     Runtime _runtimeObject;
