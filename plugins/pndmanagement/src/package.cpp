@@ -288,7 +288,7 @@ void Package::install(QPndman::Device* device, QString location)
   connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), this, SLOT(setBytesToDownload(qint64)));
   connect(handle, SIGNAL(done()), this, SLOT(setInstalled()));
   connect(handle, SIGNAL(done()), manager, SLOT(crawl()));
-  connect(handle, SIGNAL(cancelled()), this, SLOT(downloadCancelled()));
+  connect(handle, SIGNAL(cancelled()), this, SLOT(handleDownloadCancelled()));
   operationHandle = handle;
   worker->start();
 }
@@ -331,7 +331,7 @@ void Package::upgrade()
   connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), this, SLOT(setBytesToDownload(qint64)));
   connect(handle, SIGNAL(done()), this, SLOT(setInstalled()));
   connect(handle, SIGNAL(done()), manager, SLOT(crawl()));
-  connect(handle, SIGNAL(cancelled()), this, SLOT(downloadCancelled()));
+  connect(handle, SIGNAL(cancelled()), this, SLOT(handleDownloadCancelled()));
   operationHandle = handle;
   worker->start();
 }
@@ -343,9 +343,10 @@ void Package::cancelDownload()
   }
 }
 
-void Package::downloadCancelled()
+void Package::handleDownloadCancelled()
 {
   setBytesDownloaded(0);
+  emit downloadCancelled();
 }
 
 void Package::updateFrom(QPndman::Package* other)

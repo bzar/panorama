@@ -113,14 +113,15 @@ public slots:
   void remove();
   void upgrade();
   void cancelDownload();
-  void downloadCancelled();
+  void handleDownloadCancelled();
 
 signals:
   void installedChanged(bool);
   void bytesDownloadedChanged(qint64);
   void bytesToDownloadChanged(qint64);
   void hasUpgradeChanged();
-  
+  void downloadCancelled();
+
 private:
   PNDManager* manager;
   QPointer<QPndman::Package> package;

@@ -193,6 +193,11 @@ View {
                 height: 16
                 width: parent.width / parent.children.length
 
+                Connections {
+                  target: modelData
+                  onDownloadCancelled: view.update()
+                }
+
                 ProgressBar {
                   anchors.left: parent.left
                   anchors.right: parent.right
