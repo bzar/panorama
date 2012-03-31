@@ -7,6 +7,7 @@ Item {
   property QtObject previous: views[currentIndex ? currentIndex - 1 : currentIndex]
   property bool active: false
   property bool atRootView: currentIndex == 0
+  property bool isAnimating: pushMoveIn.running || pushMoveOut.running || popMoveIn.running || popMoveOut.running
   visible: false
   anchors.fill: parent
 
@@ -56,7 +57,7 @@ Item {
   }
 
   function pop() {
-    if(currentIndex > 0) {
+    if(currentIndex > 0 && !isAnimating) {
       popMoveOut.target = current;
       popMoveOut.start();
       popMoveIn.target = previous;
