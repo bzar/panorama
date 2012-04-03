@@ -1,6 +1,7 @@
 import QtQuick 1.1
 
 import "util.js" as Utils
+import "theme.js" as Theme
 
 View {
   property QtObject pnd
@@ -43,6 +44,7 @@ View {
   }
 
   function upgrade() {
+    console.log(pnd.installed + " " + pnd.hasUpgrade + " " + pnd.isDownloading)
     if(pnd.installed && pnd.hasUpgrade && !pnd.isDownloading) {
       pnd.upgrade();
     }
@@ -67,7 +69,7 @@ View {
       label: "Install"
       sublabel: Utils.prettySize(pnd.size)
       control: "game-a"
-      color: "#59B55F"
+      color: Theme.colors.install
       width: 256
       height: 64
       radius: 4
@@ -78,7 +80,7 @@ View {
       label: "Remove"
       sublabel: Utils.prettySize(pnd.size)
       control: "game-a"
-      color: "#D76D69"
+      color: Theme.colors.remove
       width: 256
       height: 64
       radius: 4
@@ -89,7 +91,7 @@ View {
       label: "Upgrade"
       sublabel: pnd.hasUpgrade ? Utils.versionString(pnd.version) + " → " + Utils.versionString(pnd.upgradeCandidate.version) + " (" + Utils.prettySize(pnd.upgradeCandidate.size) + ")" : ""
       control: "game-y"
-      color: "#6992D7"
+      color: Theme.colors.upgrade
       width: 256
       height: 64
       radius: 4
@@ -220,6 +222,7 @@ View {
           id: icon
           source: pnd.icon
           asynchronous: true
+          smooth: true
           height: 48
           width: 48
           fillMode: Image.PreserveAspectFit
@@ -296,14 +299,13 @@ View {
     anchors.right: imageArea.right
   }
 
-  Rectangle {
+  Item {
     id: imageArea
     anchors.top: buttons.bottom
     anchors.bottom: parent.bottom
     anchors.left: parent.horizontalCenter
     anchors.right: parent.right
     anchors.margins: 16
-    color: "transparent" // "#ccc"
 
     Image {
       id: image

@@ -65,9 +65,17 @@ PanoramaUI {
       if(event.key === Qt.Key_PageDown) {
         views.current.pop();
       } else if(event.key === Qt.Key_End) {
-        views.current.current.okButton();
+        if(splashScreen.visible) {
+          splashScreen.hide();
+        } else {
+          views.current.current.okButton();
+        }
       } else if(event.key === Qt.Key_Home) {
-        views.current.current.installRemoveButton();
+        if(splashScreen.visible) {
+          splashScreen.dontShowAgain();
+        } else {
+          views.current.current.installRemoveButton();
+        }
       } else if(event.key === Qt.Key_PageUp) {
         views.current.current.upgradeButton();
       } else if(event.key === Qt.Key_1) {
@@ -93,8 +101,20 @@ PanoramaUI {
   Pandora.onPressed: {
     event.accepted = true;
     if(event.key === Pandora.ButtonX)           views.current.pop();
-    else if(event.key === Pandora.ButtonB)      views.current.current.okButton();
-    else if(event.key === Pandora.ButtonA)      views.current.current.installRemoveButton();
+    else if(event.key === Pandora.ButtonB) {
+      if(splashScreen.visible) {
+        splashScreen.hide();
+      } else {
+        views.current.current.okButton();
+      }
+    }
+    else if(event.key === Pandora.ButtonA) {
+      if(splashScreen.visible) {
+        splashScreen.dontShowAgain();
+      } else {
+        views.current.current.installRemoveButton();
+      }
+    }
     else if(event.key === Pandora.ButtonY)      views.current.current.upgradeButton();
     else if(event.key === Pandora.TriggerL)     views.prev();
     else if(event.key === Pandora.TriggerR)     views.next();
@@ -110,6 +130,7 @@ PanoramaUI {
   }
 
   HelpDialog {
+    id: splashScreen
     anchors.fill: parent
     z: 2
     visible: showSplashScreen.value

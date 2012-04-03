@@ -1,6 +1,7 @@
 import QtQuick 1.1
 
 import "util.js" as Utils
+import "theme.js" as Theme
 
 View {
   id: view
@@ -97,7 +98,7 @@ View {
     Button {
       id: upgradeAllButton
       label: "Upgrade all"
-      color: "#6992D7"
+      color: Theme.colors.upgrade
       control: "game-y"
       width: 256
       height: 64

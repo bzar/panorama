@@ -1,4 +1,5 @@
 import QtQuick 1.1
+import "theme.js" as Theme
 
 View {
   viewTitle: "Select install location"
@@ -128,7 +129,7 @@ View {
     anchors.margins: 16
     radius: 4
     label: "Install"
-    color: "#65CF6C"
+    color: Theme.colors.install
     control: "game-b"
     onClicked: install()
   }

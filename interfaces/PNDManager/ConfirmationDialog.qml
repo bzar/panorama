@@ -1,5 +1,7 @@
 import QtQuick 1.1
 
+import "theme.js" as Theme
+
 Rectangle {
   id: dialog
   property alias message: label.text
@@ -46,7 +48,7 @@ Rectangle {
         Button {
           label: "No"
           control: "game-a"
-          color: "#D76D69"
+          color: Theme.colors.no
           onClicked: dialog.no()
           width: 256
           height: 64
@@ -54,7 +56,7 @@ Rectangle {
         }
         Button {
           label: "Yes"
-          color: "#65CF6C"
+          color: Theme.colors.yes
           control: "game-b"
           onClicked: dialog.yes()
           width: 256
