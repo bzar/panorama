@@ -7,6 +7,7 @@ Rectangle {
   signal okButton()
   signal installRemoveButton()
   signal upgradeButton()
+  signal selectButton()
 
   height: parent.height
   width: parent.width

@@ -59,6 +59,7 @@ Rectangle {
         ControlHelp { control: "game-x"; label: "Back" }
         ControlHelp { control: "game-y"; label: "Upgrade, upgrade all" }
         ControlHelp { control: "shoulder-r"; label: "Change mode right" }
+        ControlHelp { control: "select"; label: "Change package sorting" }
       }
 
     }

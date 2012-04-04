@@ -14,6 +14,7 @@ Item {
     asynchronous: true
     height: 48
     width: 48
+    x: 8
     fillMode: Image.PreserveAspectFit
     sourceSize {
       height: 48

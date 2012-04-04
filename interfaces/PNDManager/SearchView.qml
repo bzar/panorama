@@ -100,14 +100,7 @@ View {
 
       Text {
         id: categoriesText
-        text: pndUtils.createCategoryString(modelData) //getCategories()
-        font.pixelSize: 14
-      }
-
-      Text {
-        id: authorText
-        anchors.top: categoriesText.bottom
-        text: modelData.author.name
+        text: pndUtils.createCategoryString(modelData) + "\n" + modelData.author.name
         font.pixelSize: 14
       }
 

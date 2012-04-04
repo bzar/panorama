@@ -1,26 +1,93 @@
 import QtQuick 1.1
 
 import "util.js" as Utils
+import "theme.js" as Theme
 
 View {
   id: view
   property string categories
   property QtObject pndManager
-  property QtObject filteredPackages: pndManager.packages.inCategory(categories).notInstalled().sortedByTitle()
+  property bool sortByTitle: true
+  property QtObject filteredPackages: pndManager.packages.inCategory(categories).notInstalled()
+  property QtObject filteredAndSortedPackages: sortByTitle ? filteredPackages.sortedByTitle() : filteredPackages.sortedByLastUpdated()
   Keys.forwardTo: packageList
 
   onOkButton: packageList.openCurrent()
+  onSelectButton: view.sortByTitle = !view.sortByTitle
 
   PackageList {
     id: packageList
     columns: 2
     pndManager: view.pndManager
-    model: filteredPackages.titleContains(search.text).all()
+    model: filteredAndSortedPackages.titleContains(search.text).all()
     anchors.fill: parent
-    anchors.margins: 8
 
     Keys.priority: Keys.AfterItem
     Keys.forwardTo: [ui, search]
+
+    onCurrentIndexChanged: if(currentIndex < columns) positionViewAtBeginning()
+
+    header: Item {
+      height: 64
+      width: packageList.width
+      Row {
+        spacing: 32
+        anchors.centerIn: parent
+
+        Text {
+          text: "Sorting:"
+          anchors.verticalCenter: parent.verticalCenter
+          font.pixelSize: 16
+        }
+        Rectangle {
+          property bool selected: view.sortByTitle
+          width: sortByTitleText.paintedWidth + 32
+          height: 48
+          color: selected ? "#555" : "#eee"
+          radius: 8
+          Text {
+            anchors.centerIn: parent
+            id: sortByTitleText
+            text: "alphabetical"
+            color: parent.selected ? "white" : "black"
+            font.pixelSize: 16
+          }
+
+          MouseArea {
+            anchors.fill: parent
+            onClicked: view.sortByTitle = true
+          }
+        }
+
+        Rectangle {
+          property bool selected: !view.sortByTitle
+          width: sortByDateText.paintedWidth + 32
+          height: 48
+          color: selected ? "#555" : "#eee"
+          radius: 8
+          Text {
+            anchors.centerIn: parent
+            id: sortByDateText
+            text: "last updated"
+            color: parent.selected ? "white" : "black"
+            font.pixelSize: 16
+          }
+
+          MouseArea {
+            anchors.fill: parent
+            onClicked: view.sortByTitle = false
+          }
+        }
+
+        GuiHint {
+          control: "select"
+          anchors.verticalCenter: parent.verticalCenter
+          width: 32
+          height: 32
+        }
+      }
+    }
+
 
     delegate: PackageDelegate {
       pnd: modelData
@@ -33,13 +100,7 @@ View {
       }
 
       Text {
-        id: authorText
-        text: modelData.author.name
-        font.pixelSize: 14
-      }
-      Text {
-        anchors.top: authorText.bottom
-        text: Utils.prettySize(modelData.size)
+        text: modelData.author.name + "\n" + (view.sortByTitle ? Utils.prettySize(modelData.size) : Utils.prettySize(modelData.size) + " (updated " + Utils.prettyLastUpdatedString(modelData.modified) + ")")
         font.pixelSize: 14
       }
     }

@@ -119,6 +119,7 @@ PanoramaUI {
     else if(event.key === Pandora.TriggerL)     views.prev();
     else if(event.key === Pandora.TriggerR)     views.next();
     else if(event.key === Pandora.ButtonStart)  bottomBar.reload();
+    else if(event.key === Pandora.ButtonSelect)  views.current.current.selectButton();
   }
 
 

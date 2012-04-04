@@ -33,5 +33,12 @@ Rectangle {
     fillMode: Image.PreserveAspectFit
     visible: bar.showCloseButton
     MouseArea { anchors.fill: parent; onClicked: bar.closeButtonClicked() }
+    GuiHint {
+      control: "keyboardfnlayer-f12"
+      height: parent.height
+      width: height
+      anchors.right: parent.left
+      anchors.margins: 4
+    }
   }
 }
