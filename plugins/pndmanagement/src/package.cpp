@@ -31,7 +31,7 @@ QString Package::getIcon() const
 }
 QString Package::getInfo() const
 {
-  return !package ? "" : package->getInfo();
+  return !package ? "" : package->getInfo().replace("\r", "");
 }
 QString Package::getMd5() const
 {
@@ -83,7 +83,16 @@ QString Package::getTitle() const
 
 QString Package::getDescription() const
 {
-  return !package ? "" : package->getDescription();
+  if(!package)
+    return "";
+
+  QStringList lines;
+  foreach(QString line, package->getDescription().split("\n"))
+  {
+    lines.append(line.trimmed());
+  }
+
+  return lines.join("\n");
 }
 
 QPndman::Package* Package::getUpgradeCandidate() const

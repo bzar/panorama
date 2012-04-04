@@ -56,6 +56,7 @@ View {
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
+    elide: Text.ElideRight
     horizontalAlignment: Text.Center
     font.pixelSize: 42
   }
@@ -274,6 +275,14 @@ View {
 
       Text {
         text: pnd.description
+        anchors.left: parent.left
+        anchors.right: parent.right
+        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+        font.pixelSize: 14
+      }
+
+      Text {
+        text: pnd.info
         anchors.left: parent.left
         anchors.right: parent.right
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
