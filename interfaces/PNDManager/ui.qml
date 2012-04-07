@@ -35,7 +35,19 @@ PanoramaUI {
   }
 
 
+  Setting {
+      id: lastInstallDevice
+      section: "PNDManager"
+      key: "lastInstallDevice"
+      defaultValue: ""
+  }
 
+  Setting {
+      id: lastInstallLocation
+      section: "PNDManager"
+      key: "lastInstallLocation"
+      defaultValue: ""
+  }
 
   function init() {
     pndManager.crawl();
@@ -94,6 +106,8 @@ PanoramaUI {
     if(event.key === Qt.Key_F1) {
       showHints.value = !showHints.value
       event.accepted = true;
+    } else if(event.key === Qt.Key_Escape) {
+      runtime.quit()
     }
   }
 

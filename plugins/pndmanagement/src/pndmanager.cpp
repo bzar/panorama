@@ -172,29 +172,12 @@ void PNDManager::updatePackages()
   while(i.hasNext())
   {
     Package* p = i.next();
-    bool isInInstalled = installed.contains(p->getId());
-    if(isInInstalled || remote.contains(p->getId()))
+    QPndman::Package* localPackage = installed.value(p->getId(), 0);
+    QPndman::Package* remotePackage = remote.value(p->getId(), 0);
+    if(localPackage || remotePackage)
     {
-      p->setInstalled(isInInstalled);
-      QPndman::Package* package = isInInstalled ? installed.value(p->getId(), 0) : remote.value(p->getId(), 0);
-
-      if(package)
-      {
-        p->updateFrom(package);
-      }
-
-      // TODO: Temporary system to fetch icons from repo, replace with a QDeclarativeImageProvider system at some point
-      if(isInInstalled)
-      {
-        QPndman::Package* remotePackage = remote.value(p->getId(), 0);
-        if(remotePackage)
-        {
-          p->setOverrideIcon(remotePackage->getIcon());
-          p->setPreviewPictureList(remotePackage->getPreviewPictures());
-          p->setOverrideRating(remotePackage->getRating());
-        }
-      }
-
+      p->setLocalPackage(localPackage);
+      p->setRemotePackage(remotePackage);
       packagesById.insert(p->getId(), p);
     }
     else
@@ -208,16 +191,8 @@ void PNDManager::updatePackages()
   {
     if(!packagesById.contains(p->getId()))
     {
-      Package* package = new Package(this, p, true, this);
-
       QPndman::Package* remotePackage = remote.value(p->getId(), 0);
-      if(remotePackage)
-      {
-        package->setOverrideIcon(remotePackage->getIcon());
-        package->setPreviewPictureList(remotePackage->getPreviewPictures());
-        package->setOverrideRating(remotePackage->getRating());
-      }
-
+      Package* package = new Package(this, p, remotePackage, this);
       packagesById.insert(package->getId(), package);
       packages << package;
     }
@@ -227,7 +202,7 @@ void PNDManager::updatePackages()
   {
     if(!packagesById.contains(p->getId()))
     {
-      Package* package = new Package(this, p, false, this);
+      Package* package = new Package(this, 0, p, this);
       packagesById.insert(package->getId(), package);
       packages << package;
     }

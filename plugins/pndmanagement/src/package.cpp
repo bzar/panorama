@@ -3,10 +3,11 @@
 #include "downloadworker.h"
 #include <QDebug>
 
-Package::Package(PNDManager* manager, QPndman::Package* p, bool installed, QObject* parent):
-  QObject(parent), manager(manager), package(p), operationHandle(0), id(p->getId()),
-  installed(installed), bytesDownloaded(installed ? 1 : 0), bytesToDownload(1),
-  applicationList(), titleList(), descriptionList(), categoryList(), installedInstanceList(), overrideIcon(), overrideRating(0)
+Package::Package(PNDManager* manager, QPndman::Package* localPackage, QPndman::Package* remotePackage, QObject* parent):
+  QObject(parent), manager(manager), localPackage(localPackage), remotePackage(remotePackage), operationHandle(0),
+  id(localPackage ? localPackage->getId() : remotePackage ? remotePackage->getId() : ""),
+  bytesDownloaded(localPackage ? 1 : 0), bytesToDownload(1),
+  applicationList(), titleList(), descriptionList(), categoryList()
 {
 }
 
@@ -16,78 +17,64 @@ QString Package::getId() const
 }
 QString Package::getPath() const
 {
-  return !package ? "" : package->getPath();
+  return !localPackage ? "" : localPackage->getPath();
 }
 QString Package::getIcon() const
 {
-  if(installed || !overrideIcon.isEmpty())
-  {
-    return overrideIcon;
-  }
-  else
-  {
-    return !package ? "" : package->getIcon();
-  }
+  return !remotePackage ? "" : remotePackage->getIcon();
 }
 QString Package::getInfo() const
 {
-  return !package ? "" : package->getInfo().replace("\r", "");
+  return !remotePackage ? "" : remotePackage->getInfo().replace("\r", "");
 }
 QString Package::getMd5() const
 {
-  return !package ? "" : package->getMd5();
+  return lPackage() ? lPackage()->getMd5() : "";
 }
 QString Package::getUrl() const
 {
-  return !package ? "" : package->getUrl();
+  return !remotePackage ? "" : remotePackage->getUrl();
 }
 QString Package::getVendor() const
 {
-  return !package ? "" : package->getVendor();
+  return !remotePackage ? "" : remotePackage->getVendor();
 }
 QString Package::getMount() const
 {
-  return !package ? "" : package->getMount();
+  return !localPackage ? "" : localPackage->getMount();
 }
 qint64 Package::getSize() const
 {
-  return !package ? 0 : package->getSize();
+  return lPackage() ? lPackage()->getSize() : 0;
 }
 QDateTime Package::getModified() const
 {
-  return !package ? QDateTime() : package->getModified();
+  return rPackage() ? rPackage()->getModified() : QDateTime();
 }
 int Package::getRating() const
 {
-  if(overrideRating)
-  {
-    return overrideRating;
-  }
-  else
-  {
-    return !package ? 0 : package->getRating();
-  }
+  return !remotePackage ? 0 : remotePackage->getRating();
 }
 QPndman::Author* Package::getAuthor() const
 {
-  return !package ? 0 : package->getAuthor();
+  return rPackage() ? rPackage()->getAuthor() : 0;
 }
 QPndman::Version* Package::getVersion() const
 {
-  return !package ? 0 : package->getVersion();
+  return lPackage() ? lPackage()->getVersion() : 0;
 }
 QString Package::getTitle() const
 {
-  return !package ? "" : package->getTitle();
+  return lPackage() ? lPackage()->getTitle() : 0;
 }
 
 QString Package::getDescription() const
 {
-  if(!package)
+  if(!rPackage())
     return "";
 
   QStringList lines;
-  foreach(QString line, package->getDescription().split("\n"))
+  foreach(QString line, rPackage()->getDescription().split("\n"))
   {
     lines.append(line.trimmed());
   }
@@ -97,129 +84,115 @@ QString Package::getDescription() const
 
 QPndman::Package* Package::getUpgradeCandidate() const
 {
-  return !package ? 0 : package->getUpgradeCandidate();
+  if(localPackage
+     && localPackage->getUpgradeCandidate()
+     && localPackage->getUpgradeCandidate()->getVersion()->operator>(*localPackage->getVersion()))
+    return localPackage->getUpgradeCandidate();
+
+  return 0;
 }
 
 QList<QPndman::Application*> Package::getApplications() const
 {
-  return !package ? QList<QPndman::Application*>() : package->getApplications();
+  return rPackage() ? rPackage()->getApplications() : QList<QPndman::Application*>();
 }
 QList<QPndman::TranslatedString*> Package::getTitles() const
 {
-  return !package ? QList<QPndman::TranslatedString*>() : package->getTitles();
+  return rPackage() ? rPackage()->getTitles() : QList<QPndman::TranslatedString*>();
 }
 QList<QPndman::TranslatedString*> Package::getDescriptions() const
 {
-  return !package ? QList<QPndman::TranslatedString*>() : package->getDescriptions();
+  return rPackage() ? rPackage()->getDescriptions() : QList<QPndman::TranslatedString*>();
 }
 QList<QPndman::Category*> Package::getCategories() const
 {
-  return !package ? QList<QPndman::Category*>() : package->getCategories();
+  return rPackage() ? rPackage()->getCategories() : QList<QPndman::Category*>();
+
 }
 QList<QPndman::PreviewPicture*> Package::getPreviewPictures() const
 {
-  return !package ? QList<QPndman::PreviewPicture*>() : package->getPreviewPictures();
-}
-QList<QPndman::Package*> Package::getInstallInstances() const
-{
-  return !package ? QList<QPndman::Package*>() : package->getInstallInstances();
-}
+  return rPackage() ? rPackage()->getPreviewPictures() : QList<QPndman::PreviewPicture*>();
 
-
+}
 
 QDeclarativeListProperty<QPndman::Application> Package::getApplicationsProperty()
 {
-  if(applicationList.isEmpty() && package)
-    applicationList = package->getApplications();
-  qDebug() << "Application count: " << applicationList.count();
-  return QDeclarativeListProperty<QPndman::Application>(package.data(), applicationList);
+  if(applicationList.isEmpty())
+    applicationList = getApplications();
+  return QDeclarativeListProperty<QPndman::Application>(rPackage(), applicationList);
 }
 QDeclarativeListProperty<QPndman::TranslatedString> Package::getTitlesProperty()
 {
-  if(titleList.isEmpty() && package)
-    titleList = package->getTitles();
-  return QDeclarativeListProperty<QPndman::TranslatedString>(package.data(), titleList);
+  if(titleList.isEmpty())
+    titleList = getTitles();
+  return QDeclarativeListProperty<QPndman::TranslatedString>(rPackage(), titleList);
 }
 QDeclarativeListProperty<QPndman::TranslatedString> Package::getDescriptionsProperty()
 {
-  if(descriptionList.isEmpty() && package)
-    descriptionList = package->getDescriptions();
-  return QDeclarativeListProperty<QPndman::TranslatedString>(package.data(), descriptionList);
+  if(descriptionList.isEmpty())
+    descriptionList = getDescriptions();
+  return QDeclarativeListProperty<QPndman::TranslatedString>(rPackage(), descriptionList);
 }
 QDeclarativeListProperty<QPndman::Category> Package::getCategoriesProperty()
 {
-  if(categoryList.isEmpty() && package)
-    categoryList = package->getCategories();
-  return QDeclarativeListProperty<QPndman::Category>(package.data(), categoryList);
+  if(categoryList.isEmpty())
+    categoryList = getCategories();
+  return QDeclarativeListProperty<QPndman::Category>(rPackage(), categoryList);
 }
 QDeclarativeListProperty<QPndman::PreviewPicture> Package::getPreviewPicturesProperty()
 {
-  if(previewPictureList.isEmpty() && package)
-    previewPictureList = package->getPreviewPictures();
-  return QDeclarativeListProperty<QPndman::PreviewPicture>(package.data(), previewPictureList);
-}
-QDeclarativeListProperty<QPndman::Package> Package::getInstallInstancesProperty()
-{
-  if(installedInstanceList.isEmpty() && package)
-    installedInstanceList = package->getInstallInstances();
-  return QDeclarativeListProperty<QPndman::Package>(package.data(), installedInstanceList);
+  if(previewPictureList.isEmpty())
+    previewPictureList = getPreviewPictures();
+  return QDeclarativeListProperty<QPndman::PreviewPicture>(rPackage(), previewPictureList);
 }
 
 int Package::applicationCount() const
 {
-  return package ? package->getApplications().count() : 0;
+  return getApplications().count();
 }
 int Package::titleCount() const
 {
-  return package ? package->getTitles().count() : 0;
+  return getTitles().count();
 }
 int Package::descriptionCount() const
 {
-  return package ? package->getDescriptions().count() : 0;
+  return getDescriptions().count();
 }
 int Package::categoryCount() const
 {
-  return package ? package->getCategories().count() : 0;
+  return getCategories().count();
 }
 int Package::previewPictureCount() const
 {
-  return package ? package->getPreviewPictures().count() : 0;
-}
-int Package::installInstanceCount() const
-{
-  return package ? package->getInstallInstances().count() : 0;
+  return getPreviewPictures().count();
 }
 
 QPndman::Application* Package::getApplication(int i) const
 {
-  return package ? package->getApplications().at(i) : 0;
+  return getApplications().at(i);
 }
 QPndman::TranslatedString* Package::getTitle(int i) const
 {
-  return package ? package->getTitles().at(i) : 0;
+  return getTitles().at(i);
 }
 QPndman::TranslatedString* Package::getDescription(int i) const
 {
-  return package ? package->getDescriptions().at(i) : 0;
+  return getDescriptions().at(i);
 }
 QPndman::Category* Package::getCategory(int i) const
 {
-  return package ? package->getCategories().at(i) : 0;
+  return getCategories().at(i);
 }
 QPndman::PreviewPicture* Package::getPreviewPicture(int i) const
 {
-  return package ? package->getPreviewPictures().at(i) : 0;
-}
-QPndman::Package* Package::getInstallInstance(int i) const
-{
-  return package ? package->getInstallInstances().at(i) : 0;
+  return getPreviewPictures().at(i);
 }
 
 
 
 bool Package::getInstalled() const
 {
-  return installed;
+  return localPackage != 0;
 }
 
 qint64 Package::getBytesDownloaded() const
@@ -245,16 +218,6 @@ bool Package::getIsDownloading() const
 void Package::setInstalled()
 {
   setBytesDownloaded(bytesToDownload);
-  setInstalled(true);
-}
-
-void Package::setInstalled(bool value)
-{
-  if(installed != value)
-  {
-    installed = value;
-    emit installedChanged(installed);
-  }
 }
 
 void Package::setBytesDownloaded(qint64 value)
@@ -277,6 +240,9 @@ void Package::setBytesToDownload(qint64 value)
 
 void Package::install(QPndman::Device* device, QString location)
 {
+  if(!remotePackage)
+    return;
+
   QPndman::Enum::InstallLocation installLocation = QPndman::Enum::DesktopAndMenu;
   if(location == "Desktop") {
     installLocation = QPndman::Enum::Desktop;
@@ -284,7 +250,7 @@ void Package::install(QPndman::Device* device, QString location)
     installLocation = QPndman::Enum::Menu;
   }
 
-  QPndman::InstallHandle* handle = device->install(package, installLocation);
+  QPndman::InstallHandle* handle = device->install(remotePackage, installLocation);
   if(!handle)
   {
     return;
@@ -304,7 +270,7 @@ void Package::install(QPndman::Device* device, QString location)
 
 void Package::remove()
 {
-  if(!package)
+  if(!localPackage)
     return;
 
   for(int i = 0; i < manager->deviceCount(); ++i)
@@ -312,10 +278,9 @@ void Package::remove()
     QPndman::Device* device = manager->getDevice(i);
     if(device->getMount() == getMount())
     {
-      if(device->remove(package))
+      if(device->remove(localPackage))
       {
         setBytesDownloaded(0);
-        setInstalled(false);
         manager->crawl();
       }
     }
@@ -325,10 +290,10 @@ void Package::remove()
 
 void Package::upgrade()
 {
-  if(!package)
+  if(!localPackage)
     return;
 
-  QPndman::UpgradeHandle* handle = package->upgrade(false);
+  QPndman::UpgradeHandle* handle = localPackage->upgrade(false);
   if(!handle)
   {
     return;
@@ -358,34 +323,41 @@ void Package::handleDownloadCancelled()
   emit downloadCancelled();
 }
 
-void Package::updateFrom(QPndman::Package* other)
+void Package::setRemotePackage(QPndman::Package* p)
 {
   applicationList.clear();
   titleList.clear();
   descriptionList.clear();
   categoryList.clear();
-  installedInstanceList.clear();
   previewPictureList.clear();
 
-  QPndman::Package* old = package;
-  package = other;
+  remotePackage = p;
+}
 
-  if(old && ((old->getUpgradeCandidate() != 0) != (package->getUpgradeCandidate() != 0)))
+void Package::setLocalPackage(QPndman::Package* p)
+{
+  applicationList.clear();
+  titleList.clear();
+  descriptionList.clear();
+  categoryList.clear();
+  previewPictureList.clear();
+
+  QPndman::Package* old = localPackage;
+  localPackage = p;
+
+  if(old && ((old->getUpgradeCandidate() != 0) != (localPackage->getUpgradeCandidate() != 0)))
     emit hasUpgradeChanged();
-  emit installedChanged(other->getInstallInstances().count() > 0);
+
+  if(old && old->getInstallInstances().count() != localPackage->getInstallInstances().count())
+    emit installedChanged(localPackage->getInstallInstances().count() > 0);
 }
 
-void Package::setOverrideIcon(QString newIcon)
+QPndman::Package *Package::rPackage() const
 {
-  overrideIcon = newIcon;
+  return remotePackage ? remotePackage.data() : localPackage ? localPackage.data() : 0;
 }
 
-void Package::setOverrideRating(int newRating)
+QPndman::Package *Package::lPackage() const
 {
-  overrideRating = newRating;
-}
-
-void Package::setPreviewPictureList(QList<QPndman::PreviewPicture *> newPreviewPictures)
-{
-  previewPictureList = newPreviewPictures;
+  return localPackage ? localPackage.data() : remotePackage ? remotePackage.data() : 0;
 }

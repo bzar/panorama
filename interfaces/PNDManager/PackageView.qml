@@ -282,6 +282,18 @@ View {
       }
 
       Text {
+        text: "Additional information:"
+        visible: additionalInformation.text != ""
+        anchors.left: parent.left
+        anchors.right: parent.right
+        font.pixelSize: 14
+        height: paintedHeight + 8
+        verticalAlignment: Text.AlignBottom
+        font.weight: Font.DemiBold
+      }
+
+      Text {
+        id: additionalInformation
         text: pnd.info
         anchors.left: parent.left
         anchors.right: parent.right

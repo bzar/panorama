@@ -10,14 +10,35 @@ View {
   Keys.forwardTo: [deviceList, location]
 
   function install() {
+    lastInstallDevice.value = deviceList.currentItem.device.mount;
+    lastInstallLocation.value = location.options[location.selected];
     pnd.install(deviceList.currentItem.device, location.selectedItem());
     stack.pop();
+  }
+
+  Component.onCompleted: {
+    if(lastInstallDevice.value) {
+      for(var i = 0; i < deviceList.model.length; ++i) {
+        if(deviceList.model[i].mount === lastInstallDevice.value) {
+          deviceList.currentIndex = i;
+          break;
+        }
+      }
+    }
+
+    if(lastInstallLocation.value) {
+      for(var i = 0; i < location.options.length; ++i) {
+        if(location.options[i] === lastInstallLocation.value) {
+          location.selected = i;
+          break;
+        }
+      }
+    }
   }
 
   StyledListView {
     id: deviceList
 
-    property int selected: 0
     property int maxTextWidth: 0
 
     anchors.top: parent.top

@@ -35,7 +35,6 @@ class Package : public QObject
   Q_PROPERTY(QDeclarativeListProperty<QPndman::TranslatedString> descriptions READ getDescriptionsProperty CONSTANT)
   Q_PROPERTY(QDeclarativeListProperty<QPndman::Category> categories READ getCategoriesProperty CONSTANT)
   Q_PROPERTY(QDeclarativeListProperty<QPndman::PreviewPicture> previewPictures READ getPreviewPicturesProperty CONSTANT)
-  Q_PROPERTY(QDeclarativeListProperty<QPndman::Package> installInstances READ getInstallInstancesProperty CONSTANT)
 
   Q_PROPERTY(bool installed READ getInstalled NOTIFY installedChanged)
   Q_PROPERTY(bool hasUpgrade READ getHasUpgrade NOTIFY hasUpgradeChanged)
@@ -44,7 +43,7 @@ class Package : public QObject
   Q_PROPERTY(qint64 bytesToDownload READ getBytesToDownload NOTIFY bytesToDownloadChanged)
 
 public:
-  Package(PNDManager* manager, QPndman::Package* p, bool installed, QObject* parent = 0);
+  Package(PNDManager* manager, QPndman::Package* localPackage, QPndman::Package* remotePackage, QObject* parent = 0);
 
   QString getPath() const;
   QString getId() const;
@@ -68,14 +67,12 @@ public:
   QList<QPndman::TranslatedString*> getDescriptions() const;
   QList<QPndman::Category*> getCategories() const;
   QList<QPndman::PreviewPicture*> getPreviewPictures() const;
-  QList<QPndman::Package*> getInstallInstances() const;
 
   QDeclarativeListProperty<QPndman::Application> getApplicationsProperty();
   QDeclarativeListProperty<QPndman::TranslatedString> getTitlesProperty();
   QDeclarativeListProperty<QPndman::TranslatedString> getDescriptionsProperty();
   QDeclarativeListProperty<QPndman::Category> getCategoriesProperty();
   QDeclarativeListProperty<QPndman::PreviewPicture> getPreviewPicturesProperty();
-  QDeclarativeListProperty<QPndman::Package> getInstallInstancesProperty();
 
   int applicationCount() const;
   int titleCount() const;
@@ -89,22 +86,17 @@ public:
   QPndman::TranslatedString* getDescription(int i) const;
   QPndman::Category* getCategory(int i) const;
   QPndman::PreviewPicture* getPreviewPicture(int i) const;
-  QPndman::Package* getInstallInstance(int i) const;
 
   bool getInstalled() const;
   qint64 getBytesDownloaded() const;
   qint64 getBytesToDownload() const;
   bool getHasUpgrade() const;
   bool getIsDownloading() const;
-  void updateFrom(QPndman::Package* other);
-
-  void setOverrideIcon(QString newIcon);
-  void setOverrideRating(int newRating);
-  void setPreviewPictureList(QList<QPndman::PreviewPicture*> newPreviewPictures);
+  void setRemotePackage(QPndman::Package* p);
+  void setLocalPackage(QPndman::Package* p);
 
 public slots:
   void setInstalled();
-  void setInstalled(bool);
   void setBytesDownloaded(qint64);
   void setBytesToDownload(qint64);
 
@@ -123,13 +115,16 @@ signals:
   void downloadCancelled();
 
 private:
+  QPndman::Package* rPackage() const;
+  QPndman::Package* lPackage() const;
+
   PNDManager* manager;
-  QPointer<QPndman::Package> package;
+  QPointer<QPndman::Package> localPackage;
+  QPointer<QPndman::Package> remotePackage;
   QPointer<QPndman::Handle> operationHandle;
 
   QString id;
 
-  bool installed;
   qint64 bytesDownloaded;
   qint64 bytesToDownload;
 
@@ -138,10 +133,6 @@ private:
   QList<QPndman::TranslatedString*> descriptionList;
   QList<QPndman::Category*> categoryList;
   QList<QPndman::PreviewPicture*> previewPictureList;
-  QList<QPndman::Package*> installedInstanceList;
-
-  QString overrideIcon;
-  int overrideRating;
 };
 
 #endif
