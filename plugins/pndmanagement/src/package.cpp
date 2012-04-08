@@ -281,6 +281,7 @@ void Package::remove()
       if(device->remove(localPackage))
       {
         setBytesDownloaded(0);
+        setLocalPackage(0);
         manager->crawl();
       }
     }
@@ -345,11 +346,11 @@ void Package::setLocalPackage(QPndman::Package* p)
   QPndman::Package* old = localPackage;
   localPackage = p;
 
-  if(old && ((old->getUpgradeCandidate() != 0) != (localPackage->getUpgradeCandidate() != 0)))
+  if((localPackage != 0) != (old != 0) || (localPackage && old && (old->getUpgradeCandidate() != 0) != (localPackage->getUpgradeCandidate() != 0)))
     emit hasUpgradeChanged();
 
-  if(old && old->getInstallInstances().count() != localPackage->getInstallInstances().count())
-    emit installedChanged(localPackage->getInstallInstances().count() > 0);
+  if((localPackage && !old) || (!localPackage && old))
+    emit installedChanged(localPackage != 0);
 }
 
 QPndman::Package *Package::rPackage() const

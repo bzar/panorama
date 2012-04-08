@@ -120,25 +120,19 @@ void PNDManager::addCommitableDevice(QPndman::Device *device)
 
 void PNDManager::crawl()
 {
-  qDebug() << "PNDManager::crawl";
   emit crawling();
   foreach(QPndman::Device* device, devices)
   {
-    qDebug() << "Crawling" << device->getMount();
     device->crawl();
   }
-  qDebug() << "Updating remote repository";
   repository->update();
-  qDebug() << "Updating local repository";
   localRepository->update();
-  qDebug() << "Updating package list";
   updatePackages();
   emit crawlDone();
 }
 
 void PNDManager::sync()
 {
-  qDebug() << "PNDManager::sync";
   QPndman::SyncHandle* handle = repository->sync();
   emit syncing(handle);
   SyncWorker* worker = new SyncWorker(handle);
@@ -151,7 +145,6 @@ void PNDManager::sync()
 
 void PNDManager::updatePackages()
 {
-  qDebug() << "PNDManager::updatePackages";
   QList<QPndman::Package*> installedPackages = localRepository->getPackages();
   QList<QPndman::Package*> remotePackages = repository->getPackages();
 
