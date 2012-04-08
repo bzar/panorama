@@ -11,17 +11,22 @@ PNDManager::PNDManager(QObject* parent) : QObject(parent),
   localRepository(new QPndman::LocalRepository(context)),
   packages(), packagesById(), devices(), commitableDevices()
 {
+  qDebug() << "PNDManager::PNDManager";
   devices.append(QPndman::Device::detectDevices(context));
   foreach(QPndman::Device* device, devices)
   {
+    qDebug() << " * Reading from" << device->getMount();
     bool canRead = false;
-    canRead |= repository->loadFrom(device);
-    canRead |= localRepository->loadFrom(device);
+    canRead |= repository->loadFrom(device, false);
+    canRead |= localRepository->loadFrom(device, false);
     if(canRead)
     {
       commitableDevices << device;
     }
   }
+
+  repository->update();
+  localRepository->update();
 }
 
 PNDManager::~PNDManager()
@@ -125,7 +130,7 @@ void PNDManager::crawl()
   {
     device->crawl();
   }
-  repository->update();
+  //repository->update();
   localRepository->update();
   updatePackages();
   emit crawlDone();
@@ -240,4 +245,9 @@ void PNDManager::saveRepositories()
   {
     device->saveRepositories();
   }
+}
+
+void PNDManager::execute(const QString &pnd)
+{
+  QProcess::execute("pnd_run", QStringList(pnd));
 }

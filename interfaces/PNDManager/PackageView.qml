@@ -67,6 +67,17 @@ View {
     anchors.horizontalCenter: parent.horizontalCenter
     spacing: 16
     Button {
+      label: "Launch"
+      sublabel: Utils.prettySize(pnd.size)
+      //control: "game-a"
+      color: Theme.colors.install
+      width: 256
+      height: 64
+      radius: 4
+      visible: pnd.installed
+      onClicked: pndManager.execute(pnd.path)
+    }
+    Button {
       label: "Install"
       sublabel: Utils.prettySize(pnd.size)
       control: "game-a"

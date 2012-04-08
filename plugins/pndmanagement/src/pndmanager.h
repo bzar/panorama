@@ -34,6 +34,7 @@ public slots:
   void sync();
   void updatePackages();
   void saveRepositories();
+  void execute(QString const& pnd);
 
 signals:
   void packagesChanged();
