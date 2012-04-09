@@ -49,9 +49,16 @@ View {
         anchors.margins: 4
         font.pixelSize: 20
         activeFocusOnPress: false
+        cursorVisible: true
+        Keys.onRightPressed: event.accepted = true
+        Keys.onLeftPressed: event.accepted = true
         onAccepted: {
-          packageList.model = pndManager.searchPackages(text).sortedByTitle().all()
-          noSearchResultsText.visible = packageList.count === 0
+          if(text) {
+            packageList.model = pndManager.searchPackages(text).sortedByTitle().all();
+            noSearchResultsText.visible = packageList.count === 0;
+          } else {
+            packageList.model = null;
+          }
         }
       }
 

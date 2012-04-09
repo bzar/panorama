@@ -122,6 +122,19 @@ void PNDManager::addCommitableDevice(QPndman::Device *device)
   }
 }
 
+int PNDManager::getVerbosity() const
+{
+  return context->getLoggingVerbosity();
+}
+
+void PNDManager::setVerbosity(int level)
+{
+  if(level != context->getLoggingVerbosity()) {
+    context->setLoggingVerbosity(level);
+    emit verbosityChanged(level);
+  }
+}
+
 
 void PNDManager::crawl()
 {

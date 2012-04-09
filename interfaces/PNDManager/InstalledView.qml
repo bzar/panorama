@@ -18,8 +18,8 @@ View {
     onPackagesChanged: update()
   }
 
-  onUpgradeButton: upgradeAll()
-  onInstallRemoveButton: cancelDownload()
+  onInstallUpgradeButton: upgradeAll()
+  onRemoveButton: cancelDownload()
   onSelectButton: view.sortByTitle = !view.sortByTitle
 
   function sort(list) {
@@ -72,7 +72,11 @@ View {
   }
 
   function getSelected() {
-    return content.currentItem.pnd;
+    if(content.currentItem) {
+      return content.currentItem.pnd;
+    } else {
+      return null;
+    }
   }
   function openSelected() {
     showPackage(getSelected());
@@ -87,344 +91,371 @@ View {
     visible: installedModelPrefilter.length === 0 && downloadingModelPrefilter.length === 0 && upgradableModelPrefilter.length === 0
   }
 
-  Rectangle {
-    id: upgradeAllButtonContainer
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: parent.top
-    height: visible ? upgradeAllButton.height + 16 : 0
-    visible: upgradableModel.length > 0
-    color: "#eee"
-    z: 1
-    Button {
-      id: upgradeAllButton
-      label: "Upgrade all"
-      color: Theme.colors.upgrade
-      control: "game-y"
-      width: 256
-      height: 64
-      radius: 8
-      onClicked: upgradeAll()
-      anchors.centerIn: parent
-    }
-    Rectangle {
-      height: 1
-      color: "#ccc"
-      anchors.bottom: parent.bottom
-      anchors.left: parent.left
-      anchors.right: parent.right
+  ScrollBar {
+    id: scrollbar
+    target: content
+    z: 3
+    anchors.right: content.right
+    Connections {
+      target: content
+      onMovementStarted: scrollbar.show()
+      onMovementEnded: scrollbar.hide()
+      onCurrentIndexChanged: scrollbar.showIfChanged(content.contentY)
     }
 
   }
 
-  Item {
+  ListView {
+    id: content
     anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: upgradeAllButtonContainer.bottom
+    anchors.right: info.left
+    anchors.top: parent.top
     anchors.bottom: parent.bottom
 
+    Keys.priority: Keys.AfterItem
+    Keys.forwardTo: [ui, search]
 
-    ScrollBar {
-      id: scrollbar
-      target: content
-      z: 3
-      anchors.right: parent.right
-      Connections {
-        target: content
-        onMovementStarted: scrollbar.show()
-        onMovementEnded: scrollbar.hide()
-        onCurrentIndexChanged: scrollbar.showIfChanged(content.contentY)
+    model: ListModel {
+      id: packages
+
+      property int sectionDownloading: 1
+      property int sectionUpgradable: 2
+      property int sectionInstalled: 3
+      property int foo: createModel() // hack to make model update automatically
+      function createModel() {
+        clear();
+        for(var i = 0; i < downloadingModel.length; ++i) {
+          append({sect: sectionDownloading, item: downloadingModel[i]});
+        }
+        for(var i = 0; i < upgradableModel.length; ++i) {
+          append({sect: sectionUpgradable, item: upgradableModel[i]});
+        }
+        for(var i = 0; i < installedModel.length; ++i) {
+          append({sect: sectionInstalled, item: installedModel[i]});
+        }
+        return 1;
       }
-
     }
 
-    ListView {
-      id: content
-      anchors.fill: parent
+    boundsBehavior: Flickable.DragOverBounds
+    onCurrentItemChanged: if(currentIndex === 0 && packages.count > 1) positionViewAtBeginning()
 
-      Keys.priority: Keys.AfterItem
-      Keys.forwardTo: [ui, search]
+    header: Item {
+      height: 64
+      width: content.width
+      Row {
+        spacing: 32
+        anchors.centerIn: parent
 
-      model: ListModel {
-        id: packages
-
-        property int sectionDownloading: 1
-        property int sectionUpgradable: 2
-        property int sectionInstalled: 3
-        property int foo: createModel() // hack to make model update automatically
-        function createModel() {
-          clear();
-          for(var i = 0; i < downloadingModel.length; ++i) {
-            append({sect: sectionDownloading, item: downloadingModel[i]});
-          }
-          for(var i = 0; i < upgradableModel.length; ++i) {
-            append({sect: sectionUpgradable, item: upgradableModel[i]});
-          }
-          for(var i = 0; i < installedModel.length; ++i) {
-            append({sect: sectionInstalled, item: installedModel[i]});
-          }
-          return 1;
+        Text {
+          text: "Sorting:"
+          anchors.verticalCenter: parent.verticalCenter
+          font.pixelSize: 16
         }
-      }
-
-      boundsBehavior: Flickable.DragOverBounds
-      onCurrentItemChanged: if(currentIndex === 0 && packages.count > 1) positionViewAtBeginning()
-
-      Component {
-        id: downloadingComponent
-        Item {
-          Row {
-            width: parent.width
-
-            Rectangle {
-              color: selected ? "#eee" : "#ddd"
-              radius: 8
-              height: 16
-              width: parent.width / parent.children.length
-
-              Connections {
-                target: pkg
-                onDownloadCancelled: view.update()
-              }
-
-              ProgressBar {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.margins: 4
-                height: 8
-                radius: 4
-                color: "#333"
-                minimumValue: 0
-                maximumValue: pkg.bytesToDownload
-                value: pkg.bytesDownloaded
-              }
-              Image {
-                source: "img/x_alt_32x32.png"
-                width: 16
-                height: 16
-                smooth: true
-                anchors.left: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.margins: 16
-
-                GuiHint {
-                  control: "game-a"
-                  anchors.left: parent.right
-                  anchors.verticalCenter: parent.verticalCenter
-                  height: parent.height
-                  width: parent.width
-                  anchors.margins: 4
-                }
-
-                MouseArea {
-                  anchors.fill: parent
-                  onClicked: cancelDownload()
-                }
-              }
-            }
-
-
-            Item {
-              id: progressText
-              property variant progress: Utils.prettyProgress(pkg.bytesDownloaded, pkg.bytesToDownload)
-              width: parent.width / parent.children.length
-              height: 16
-              Text {
-                text: progressText.progress.value
-                font.pixelSize: 14
-                anchors.right: totalSize.left
-              }
-              Text {
-                id: totalSize
-                text: " / " + progressText.progress.size + " " + progressText.progress.unit
-                font.pixelSize: 14
-                anchors.right: parent.right
-              }
-            }
-          }
-        }
-      }
-
-      Component {
-        id: upgradableComponent
-        Row {
-          width: parent.width
+        Rectangle {
+          property bool selected: view.sortByTitle
+          width: sortByTitleText.paintedWidth + 32
+          height: 48
+          color: selected ? "#555" : "#eee"
+          radius: 8
           Text {
-            width: parent.width / parent.children.length
-            text: Utils.versionString(pkg.version) + " → " + Utils.versionString(pkg.upgradeCandidate.version)
-            font.pixelSize: 14
-          }
-          Text {
-            width: parent.width / parent.children.length
-            text: Utils.prettySize(pkg.upgradeCandidate.size)
-            font.pixelSize: 14
-          }
-          Text {
-            width: parent.width / parent.children.length
-            text: pkg.mount
-            font.pixelSize: 14
-          }
-        }
-      }
-
-      Component {
-        id: installedComponent
-        Row {
-          width: parent.width
-          Text {
-            width: parent.width / parent.children.length
-            text: Utils.versionString(pkg.version)
-            font.pixelSize: 14
-          }
-          Text {
-            width: parent.width / parent.children.length
-            text: Utils.prettySize(pkg.size)
-            font.pixelSize: 14
-          }
-          Text {
-            width: parent.width / parent.children.length
-            text: pkg.mount
-            font.pixelSize: 14
-          }
-        }
-      }
-
-      header: Item {
-        height: 64
-        width: content.width
-        Row {
-          spacing: 32
-          anchors.centerIn: parent
-
-          Text {
-            text: "Sorting:"
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.centerIn: parent
+            id: sortByTitleText
+            text: "alphabetical"
+            color: parent.selected ? "white" : "black"
             font.pixelSize: 16
           }
-          Rectangle {
-            property bool selected: view.sortByTitle
-            width: sortByTitleText.paintedWidth + 32
-            height: 48
-            color: selected ? "#555" : "#eee"
-            radius: 8
-            Text {
-              anchors.centerIn: parent
-              id: sortByTitleText
-              text: "alphabetical"
-              color: parent.selected ? "white" : "black"
-              font.pixelSize: 16
-            }
 
-            MouseArea {
-              anchors.fill: parent
-              onClicked: view.sortByTitle = true
-            }
-          }
-
-          Rectangle {
-            property bool selected: !view.sortByTitle
-            width: sortByDateText.paintedWidth + 32
-            height: 48
-            color: selected ? "#555" : "#eee"
-            radius: 8
-            Text {
-              anchors.centerIn: parent
-              id: sortByDateText
-              text: "last updated"
-              color: parent.selected ? "white" : "black"
-              font.pixelSize: 16
-            }
-
-            MouseArea {
-              anchors.fill: parent
-              onClicked: view.sortByTitle = false
-            }
-          }
-
-          GuiHint {
-            control: "select"
-            anchors.verticalCenter: parent.verticalCenter
-            width: 32
-            height: 32
+          MouseArea {
+            anchors.fill: parent
+            onClicked: view.sortByTitle = true
           }
         }
-      }
 
-      highlightFollowsCurrentItem: false
+        Rectangle {
+          property bool selected: !view.sortByTitle
+          width: sortByDateText.paintedWidth + 32
+          height: 48
+          color: selected ? "#555" : "#eee"
+          radius: 8
+          Text {
+            anchors.centerIn: parent
+            id: sortByDateText
+            text: "last updated"
+            color: parent.selected ? "white" : "black"
+            font.pixelSize: 16
+          }
 
-      highlight: Rectangle {
-        color: "#ddd"
-        width: content.currentItem ? content.currentItem.width : 0
-        height: content.currentItem ? content.currentItem.height : 0
-        visible: content.currentItem != null
-
-        Connections {
-          target: content
-          onCurrentIndexChanged: y = content.currentItem ? content.currentItem.y : 0
+          MouseArea {
+            anchors.fill: parent
+            onClicked: view.sortByTitle = false
+          }
         }
 
         GuiHint {
-          id: hint
-          control: "game-b"
-          anchors.right: parent.right
+          control: "select"
           anchors.verticalCenter: parent.verticalCenter
-          anchors.margins: 4
+          width: 32
+          height: 32
         }
       }
+    }
 
-      delegate: SectionItem {
-        width: content.width
-        text: item.title ? item.title : item.id
-        icon: item.icon
-        onClicked: { content.currentIndex = index; openSelected(); }
-        property QtObject pnd: item
-        Loader {
-          function getSource() {
-            if(sect == packages.sectionDownloading) {
-              return downloadingComponent;
-            } else if(sect == packages.sectionUpgradable) {
-              return upgradableComponent;
-            } else if(sect == packages.sectionInstalled) {
-              return installedComponent;
-            }
-          }
+    highlightFollowsCurrentItem: false
 
-          property QtObject pkg: pnd
-          property bool selected: index === content.currentIndex
-          sourceComponent: getSource()
-          width: parent.width
+    highlight: Rectangle {
+      color: "#ddd"
+      width: content.currentItem ? content.currentItem.width : 0
+      height: content.currentItem ? content.currentItem.height : 0
+      visible: content.currentItem != null
+
+      Connections {
+        target: content
+        onCurrentIndexChanged: y = content.currentItem ? content.currentItem.y : 0
+      }
+    }
+
+    delegate: SectionItem {
+      width: content.width
+      title: item.title ? item.title : item.id
+      icon: item.icon
+      progress: item.isDownloading ? Math.floor(100 * item.bytesDownloaded / item.bytesToDownload) + "%" : ""
+      onClicked: {
+        if(content.currentIndex === index) {
+          openSelected();
+        } else {
+          content.currentIndex = index;
         }
       }
+      property QtObject pnd: item
+    }
 
-      section.property: "sect"
-      section.delegate: SectionHeader {
-        function getText() {
-          if(section == packages.sectionDownloading) {
-            return "Downloading"
-          } else if(section == packages.sectionUpgradable) {
-            return "Upgradable"
-          } else if(section == packages.sectionInstalled) {
-            return "Installed"
-          }
-          else return "N/A"
+    section.property: "sect"
+    section.delegate: SectionHeader {
+      function getText() {
+        if(section == packages.sectionDownloading) {
+          return "Downloading"
+        } else if(section == packages.sectionUpgradable) {
+          return "Upgradable"
+        } else if(section == packages.sectionInstalled) {
+          return "Installed"
         }
+        else return "N/A"
+      }
 
-        function getIcon() {
-          if(section == packages.sectionDownloading) {
-            return "img/cloud_download_32x32.png"
-          } else if(section == packages.sectionUpgradable) {
-            return "img/arrow_up_alt1_32x32.png"
-          } else if(section == packages.sectionInstalled) {
-            return "img/download_darkgrey_24x32.png"
-          }
-          else return ""
+      function getIcon() {
+        if(section == packages.sectionDownloading) {
+          return "img/cloud_download_32x32.png"
+        } else if(section == packages.sectionUpgradable) {
+          return "img/arrow_up_alt1_32x32.png"
+        } else if(section == packages.sectionInstalled) {
+          return "img/download_darkgrey_24x32.png"
         }
+        else return ""
+      }
 
-        text: getText()
-        icon: getIcon()
+      text: getText()
+      icon: getIcon()
+      width: parent.width
+
+      Button {
+        id: upgradeAllButton
+        label: "Upgrade all"
+        color: Theme.colors.upgrade
+        control: "game-y"
+        width: 192
+        height: 32
+        radius: 4
+        onClicked: upgradeAll()
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
+        anchors.margins: 8
+        visible: section == packages.sectionUpgradable
+      }
+    }
+  }
+
+  Rectangle {
+    id: info
+    width: 256
+    anchors.right: parent.right
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+
+    property QtObject pnd: getSelected()
+
+    color: "#f8f8f8"
+
+    Rectangle {
+      width: 1
+      height: parent.height
+      color: "#ccc"
+      anchors.left: parent.left
+    }
+
+    Column {
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.margins: 8
+      height: childrenRect.height
+      spacing: 2
+
+      Text {
+        text: info.pnd ? info.pnd.title : "-"
+        font.pixelSize: 16
+        font.bold: Font.DemiBold
         width: parent.width
       }
+      Rectangle {
+        width: parent.width
+        height: 1
+        color: "#ddd"
+      }
+      PackageInfoText {
+        label: "Author"
+        text: info.pnd && info.pnd.author.name ? info.pnd.author.name : "-"
+      }
+      PackageInfoText {
+        label: "Rating"
+        function getRating() {
+          var s = "";
+          for(var i = 0; i < Math.ceil(info.pnd.rating/20); ++i) {
+            s += "★";
+          }
+          return s;
+        }
+
+        text: info.pnd && info.pnd.rating !== 0 ? getRating() : "(not rated)"
+      }
+      PackageInfoText {
+        label: "Size"
+        text: info.pnd ? Utils.prettySize(info.pnd.size) : "-"
+      }
+      PackageInfoText {
+        label: "Version"
+        text: info.pnd ? Utils.versionString(info.pnd.version) : "-"
+      }
+      PackageInfoText {
+        label: "Location"
+        text: info.pnd ? info.pnd.mount : "-"
+      }
+      Rectangle {
+        width: parent.width
+        height: 1
+        color: "#ddd"
+        visible: info.pnd !== null && info.pnd.upgradeCandidate !== null
+      }
+      PackageInfoText {
+        label: "Upgrade size"
+        text: visible ? Utils.prettySize(info.pnd.upgradeCandidate.size) : ""
+        visible: info.pnd !== null && info.pnd.upgradeCandidate !== null && !info.pnd.isDownloading
+      }
+      PackageInfoText {
+        label: "Upgrade version"
+        text: visible ? Utils.versionString(info.pnd.upgradeCandidate.version) : ""
+        visible: info.pnd !== null && info.pnd.upgradeCandidate !== null && !info.pnd.isDownloading
+      }
+
+      Item {
+        width: parent.width
+        height: 16
+        visible: info.pnd !== null && info.pnd.isDownloading
+
+        Rectangle {
+          id: progressBar
+          color: "#ddd"
+          radius: 8
+          height: 16
+
+          anchors.left: parent.left
+          anchors.right: downloadCancelButton.left
+          anchors.margins: 4
+
+          Connections {
+            target: info.pnd
+            onDownloadCancelled: view.update()
+          }
+
+          ProgressBar {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.margins: 4
+            height: 8
+            radius: 4
+            color: "#333"
+            minimumValue: 0
+            maximumValue: !info.pnd ? 0 : info.pnd.bytesToDownload
+            value: !info.pnd ? 0 : info.pnd.bytesDownloaded
+          }
+        }
+        Image {
+          id: downloadCancelButton
+          source: "img/x_alt_32x32.png"
+          width: 16
+          height: 16
+          smooth: true
+          anchors.right: parent.right
+          anchors.rightMargin: 20
+
+          GuiHint {
+            control: "game-a"
+            anchors.left: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            height: parent.height
+            width: parent.width
+            anchors.margins: 4
+          }
+
+          MouseArea {
+            anchors.fill: parent
+            onClicked: cancelDownload()
+          }
+        }
+      }
+
+      Item {
+        id: progressText
+        visible: info.pnd !== null && info.pnd.isDownloading
+        property variant progress: !visible ? null : Utils.prettyProgress(info.pnd.bytesDownloaded, info.pnd.bytesToDownload)
+        width: parent.width
+        height: 16
+        Text {
+          text: progressText.progress ? progressText.progress.value : ""
+          font.pixelSize: 14
+          anchors.right: totalSize.left
+        }
+        Text {
+          id: totalSize
+          text: progressText.progress ? " / " + progressText.progress.size + " " + progressText.progress.unit : ""
+          font.pixelSize: 14
+          anchors.right: parent.right
+        }
+      }
+
+      Rectangle {
+        width: parent.width
+        height: 1
+        color: "#ddd"
+      }
+      Text {
+        text: info.pnd ? info.pnd.description.split("\n")[0] : ""
+        width: parent.width
+        wrapMode: Text.WordWrap
+      }
+    }
+    Button {
+      label: "Show"
+      control: "game-b"
+      color: "#555"
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.bottom: parent.bottom
+      anchors.margins: 8
+      height: 64
+      radius: 4
+      onClicked: openSelected()
     }
   }
 
@@ -432,9 +463,9 @@ View {
     opacity: 0.8
     height: 32
     anchors.bottomMargin: search.text != "" ? 0 : -(height+1)
-    anchors.bottom: parent.bottom
-    anchors.left: parent.left
-    anchors.right: parent.right
+    anchors.bottom: content.bottom
+    anchors.left: content.left
+    anchors.right: content.right
     color: "#eee"
     border {
       color: "#444"
@@ -449,6 +480,9 @@ View {
       anchors.margins: 4
       font.pixelSize: 14
       activeFocusOnPress: false
+      cursorVisible: true
+      Keys.onRightPressed: event.accepted = true
+      Keys.onLeftPressed: event.accepted = true
     }
   }
 }

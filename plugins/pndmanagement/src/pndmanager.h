@@ -14,6 +14,7 @@ class PNDManager : public QObject
   Q_OBJECT
   Q_PROPERTY(PNDFilter* packages READ getPackages NOTIFY packagesChanged)
   Q_PROPERTY(QDeclarativeListProperty<QPndman::Device> devices READ getDevices NOTIFY devicesChanged)
+  Q_PROPERTY(int verbosity READ getVerbosity WRITE setVerbosity NOTIFY verbosityChanged)
 
   Q_ENUMS(QPndman::Enum::InstallLocation QPndman::Enum::Operation QPndman::Version::Type)
 public:
@@ -28,6 +29,9 @@ public:
   Q_INVOKABLE PNDFilter* searchPackages(QString const& search);
   QPndman::Context* getContext() const;
   void addCommitableDevice(QPndman::Device* device);
+
+  int getVerbosity() const;
+  void setVerbosity(int level);
 
 public slots:
   void crawl();
@@ -44,6 +48,8 @@ signals:
   void syncDone();
   void crawling();
   void crawlDone();
+
+  void verbosityChanged(int);
 
   
 private:

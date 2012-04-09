@@ -12,34 +12,30 @@ Item {
     id: icon
     source: pnd.icon
     asynchronous: true
-    height: 48
-    width: 48
-    x: 8
-    fillMode: Image.PreserveAspectFit
-    sourceSize {
-      height: 48
-      width: 48
-    }
+    anchors.leftMargin: (48/2 - width/2) + 4
+    anchors.left: parent.left
+    sourceSize.width: 48
   }
 
   Text {
     id: title
     text: pnd.title
-    anchors.left: icon.right
+    anchors.left: parent.left
     anchors.right: parent.right
+    anchors.leftMargin: 56
+    anchors.rightMargin: 8
     elide: Text.ElideRight
     font.pixelSize: 16
     font.underline: true
-    anchors.leftMargin: 8
   }
 
   Item {
     id: content
-    anchors.left: icon.right
+    anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: title.bottom
     anchors.bottom: parent.bottom
-    anchors.leftMargin: 8
+    anchors.leftMargin: 56
   }
 
   MouseArea {

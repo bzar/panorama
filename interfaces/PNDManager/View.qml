@@ -5,8 +5,8 @@ Rectangle {
   property string viewTitle
 
   signal okButton()
-  signal installRemoveButton()
-  signal upgradeButton()
+  signal removeButton()
+  signal installUpgradeButton()
   signal selectButton()
 
   height: parent.height

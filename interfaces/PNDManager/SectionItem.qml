@@ -4,41 +4,39 @@ Item {
   id: item
   height: 48
 
-  property alias text: title.text
+  property alias title: title.text
   property alias icon: icon.source
-  default property alias additionalItems: additionalItemsContainer.children
+  property alias progress: progress.text
   signal clicked()
 
   MouseArea { anchors.fill: parent; onClicked: item.clicked() }
 
   Image {
     id: icon
-    asynchronous: true
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
-    anchors.margins: 8
-    sourceSize.width: 32
-    sourceSize.height: 32
-    width: 32
-    height: 32
+    anchors.leftMargin: (48/2 - width/2) + 4
+    sourceSize.width: 48
   }
 
   Text {
     id: title
     font.pixelSize: 20
-    anchors.verticalCenter: parent.verticalCenter
-    anchors.left: icon.right
-    anchors.margins: 16
-    width: 256
+    height: parent.height
+    verticalAlignment: Text.AlignVCenter
+    anchors.left: parent.left
+    anchors.right: progress.left
+    anchors.leftMargin: 52
     elide: Text.ElideRight
   }
 
-  Row {
-    id: additionalItemsContainer
-    anchors.verticalCenter: parent.verticalCenter
-    anchors.left: title.right
+  Text {
+    id: progress
+    font.pixelSize: 20
+    height: parent.height
+    verticalAlignment: Text.AlignVCenter
     anchors.right: parent.right
-    anchors.margins: 16
+    visible: text
   }
 
   Rectangle {

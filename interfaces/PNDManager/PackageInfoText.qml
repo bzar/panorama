@@ -4,7 +4,7 @@ Item {
   property alias label: label.text
   property alias text: content.text
   height: childrenRect.height
-
+  width: parent.width
   Text {
     id: label
     font.pixelSize: 14

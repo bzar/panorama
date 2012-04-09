@@ -127,6 +127,9 @@ View {
       anchors.margins: 4
       font.pixelSize: 14
       activeFocusOnPress: false
+      cursorVisible: true
+      Keys.onRightPressed: event.accepted = true
+      Keys.onLeftPressed: event.accepted = true
     }
   }
 }

@@ -49,6 +49,15 @@ PanoramaUI {
       defaultValue: ""
   }
 
+  Setting {
+      id: loggingVerbosity
+      section: "PNDManager"
+      key: "loggingVerbosity"
+      defaultValue: "1"
+      onValueChanged: pndManager.verbosity = value
+      Component.onCompleted: pndManager.verbosity = value
+  }
+
   function init() {
     pndManager.crawl();
   }
@@ -72,6 +81,11 @@ PanoramaUI {
   PNDUtils { id: pndUtils }
 
   Keys.onPressed: {
+    if(!runtime.isActiveWindow) {
+      event.accepted = true;
+      return;
+    }
+
     if(!Pandora.controlsActive) {
       event.accepted = true;
       if(event.key === Qt.Key_PageDown) {
@@ -86,10 +100,10 @@ PanoramaUI {
         if(splashScreen.visible) {
           splashScreen.dontShowAgain();
         } else {
-          views.current.current.installRemoveButton();
+          views.current.current.removeButton();
         }
       } else if(event.key === Qt.Key_PageUp) {
-        views.current.current.upgradeButton();
+        views.current.current.installUpgradeButton();
       } else if(event.key === Qt.Key_1) {
         homeStack.activate();
       } else if(event.key === Qt.Key_2) {
@@ -113,6 +127,11 @@ PanoramaUI {
 
 
   Pandora.onPressed: {
+    if(!runtime.isActiveWindow) {
+      event.accepted = true;
+      return;
+    }
+
     event.accepted = true;
     if(event.key === Pandora.ButtonX)           views.current.pop();
     else if(event.key === Pandora.ButtonB) {
@@ -126,10 +145,10 @@ PanoramaUI {
       if(splashScreen.visible) {
         splashScreen.dontShowAgain();
       } else {
-        views.current.current.installRemoveButton();
+        views.current.current.removeButton();
       }
     }
-    else if(event.key === Pandora.ButtonY)      views.current.current.upgradeButton();
+    else if(event.key === Pandora.ButtonY)      views.current.current.installUpgradeButton();
     else if(event.key === Pandora.TriggerL)     views.prev();
     else if(event.key === Pandora.TriggerR)     views.next();
     else if(event.key === Pandora.ButtonStart)  bottomBar.reload();

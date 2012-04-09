@@ -6,7 +6,6 @@ Item {
     property alias label: labelText.text
     property alias sublabel: sublabelText.text
     property alias pressed: mouseArea.pressed
-    property alias hovered: mouseArea.hover
     property alias font: labelText.font
     property alias textColor: labelText.color
     property alias enabled: mouseArea.enabled
@@ -24,9 +23,9 @@ Item {
         smooth: radius != 0
 
         gradient: Gradient {
-            GradientStop { position: 0.0; color: Qt.darker(button.color, pressed ? 1.6 : hovered ? 0.8 : 1.0 ) }
-            GradientStop { position: pressed ? 0.2 : 0.8; color: Qt.darker(button.color, pressed ? 1.4 : hovered ? 1.0 : 1.2) }
-            GradientStop { position: 1.0; color: Qt.darker(button.color, pressed ? 1.2 : hovered ? 1.6 : 1.4) }
+            GradientStop { position: 0.0; color: Qt.darker(button.color, pressed ? 1.6 : 1.0 ) }
+            GradientStop { position: pressed ? 0.2 : 0.8; color: Qt.darker(button.color, pressed ? 1.4 : 1.2) }
+            GradientStop { position: 1.0; color: Qt.darker(button.color, pressed ? 1.2 : 1.4) }
         }
 
         clip: true
@@ -35,7 +34,7 @@ Item {
           id: guiHint
           anchors.right: parent.right
           anchors.top: parent.top
-          anchors.margins: 8
+          anchors.margins: Math.min(8, (parent.height - height) / 2)
         }
         Column {
           anchors.centerIn: parent
@@ -61,12 +60,8 @@ Item {
 
         MouseArea {
             id: mouseArea
-            property bool hover: false
             anchors.fill: parent
-            hoverEnabled: true
             onClicked: button.clicked()
-            onEntered: hover = true
-            onExited: hover = false
         }
 
         Rectangle {

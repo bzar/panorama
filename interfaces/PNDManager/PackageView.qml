@@ -11,18 +11,29 @@ View {
   Component { id: previewPictureView; PreviewPictureView {} }
 
   Keys.forwardTo: textArea
+  Keys.priority: Keys.AfterItem
+
   onOkButton: removeConfirmation.visible ? removeConfirmation.yes() : showPreviewPictures()
-  onInstallRemoveButton: {
+
+  Keys.onReturnPressed: execute()
+
+  onInstallUpgradeButton: {
+    if(removeConfirmation.visible)
+      return
+    else if(pnd.hasUpgrade)
+      upgrade()
+    else if(!pnd.installed)
+      showInstallDialog()
+  }
+
+  onRemoveButton: {
     if(removeConfirmation.visible)
       removeConfirmation.no()
     else if(pnd.isDownloading)
       pnd.cancelDownload()
     else if(pnd.installed)
       removeConfirmation.show()
-    else
-      showInstallDialog()
   }
-  onUpgradeButton: if(!removeConfirmation.visible) upgrade()
 
   ConfirmationDialog {
     id: removeConfirmation
@@ -50,6 +61,10 @@ View {
     }
   }
 
+  function execute() {
+    pndManager.execute(pnd.path)
+  }
+
   Text {
     id: titleText
     text: pnd.title
@@ -69,18 +84,18 @@ View {
     Button {
       label: "Launch"
       sublabel: Utils.prettySize(pnd.size)
-      //control: "game-a"
+      control: "keyboard-enter"
       color: Theme.colors.install
       width: 256
       height: 64
       radius: 4
       visible: pnd.installed
-      onClicked: pndManager.execute(pnd.path)
+      onClicked: execute()
     }
     Button {
       label: "Install"
       sublabel: Utils.prettySize(pnd.size)
-      control: "game-a"
+      control: "game-y"
       color: Theme.colors.install
       width: 256
       height: 64
@@ -234,14 +249,7 @@ View {
           id: icon
           source: pnd.icon
           asynchronous: true
-          smooth: true
-          height: 48
-          width: 48
-          fillMode: Image.PreserveAspectFit
-          sourceSize {
-            height: 48
-            width: 48
-          }
+          sourceSize.width: 48
           anchors.top: parent.top
           anchors.topMargin: 4
         }
@@ -341,13 +349,13 @@ View {
 
     Image {
       id: image
-      anchors.fill: parent
+      anchors.centerIn: parent
       anchors.bottomMargin: 4
       anchors.topMargin: 4
       source: pnd.previewPictures.length > 0 ? pnd.previewPictures[0].src : ""
       asynchronous: true
-      fillMode: Image.PreserveAspectFit
-      smooth: true
+
+      sourceSize.width: parent.width
 
       Text {
           anchors.centerIn: parent
@@ -361,35 +369,34 @@ View {
         anchors.fill: parent
         onClicked: showPreviewPictures()
       }
+    }
+    Rectangle {
+      anchors.top: parent.top
+      anchors.right: parent.right
+      anchors.margins: 8
+      visible: pnd.previewPictures.length > 0
+      height: 32
+      width: showPreviewPicturesText.paintedWidth + showPreviewPicturesIcon.width + 16
+      radius: height/4
+      color: Qt.rgba(0.8, 0.8, 0.8, 0.3)
 
-      Rectangle {
-        anchors.top: parent.top
-        anchors.right: parent.right
-        anchors.margins: 8
-        visible: pnd.previewPictures.length > 0
-        height: 32
-        width: showPreviewPicturesText.paintedWidth + showPreviewPicturesIcon.width + 16
-        radius: height/4
-        color: Qt.rgba(0.8, 0.8, 0.8, 0.3)
-
-        Row {
-          anchors.centerIn: parent
-          height: 24
-          spacing: 4
-          Text {
-            id: showPreviewPicturesText
-            text: "Show more"
-            font.pixelSize: 18
-            style: Text.Outline
-            styleColor: "#111"
-            color: "#fff"
-            anchors.verticalCenter: parent.verticalCenter
-          }
-          GuiHint {
-            id: showPreviewPicturesIcon
-            control: "game-b"
-            anchors.verticalCenter: parent.verticalCenter
-          }
+      Row {
+        anchors.centerIn: parent
+        height: 24
+        spacing: 4
+        Text {
+          id: showPreviewPicturesText
+          text: "Show more"
+          font.pixelSize: 18
+          style: Text.Outline
+          styleColor: "#111"
+          color: "#fff"
+          anchors.verticalCenter: parent.verticalCenter
+        }
+        GuiHint {
+          id: showPreviewPicturesIcon
+          control: "game-b"
+          anchors.verticalCenter: parent.verticalCenter
         }
       }
     }

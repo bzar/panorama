@@ -42,10 +42,11 @@ View {
 
       Image {
         id: image
-        smooth: true
         source: src
-        height: parent.height
-        fillMode: Image.PreserveAspectFit
+        sourceSize {
+          height: parent.height
+        }
+        anchors.verticalCenter: parent.verticalCenter
       }
     }
   }
