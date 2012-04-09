@@ -72,7 +72,7 @@ View {
   }
 
   function getSelected() {
-    return content.currentItem.pkg;
+    return content.currentItem.pnd;
   }
   function openSelected() {
     showPackage(getSelected());
@@ -155,19 +155,20 @@ View {
         function createModel() {
           clear();
           for(var i = 0; i < downloadingModel.length; ++i) {
-            append({sect: sectionDownloading, pnd: downloadingModel[i]});
+            append({sect: sectionDownloading, item: downloadingModel[i]});
           }
           for(var i = 0; i < upgradableModel.length; ++i) {
-            append({sect: sectionUpgradable, pnd: upgradableModel[i]});
+            append({sect: sectionUpgradable, item: upgradableModel[i]});
           }
           for(var i = 0; i < installedModel.length; ++i) {
-            append({sect: sectionInstalled, pnd: installedModel[i]});
+            append({sect: sectionInstalled, item: installedModel[i]});
           }
           return 1;
         }
       }
 
       boundsBehavior: Flickable.DragOverBounds
+      onCurrentItemChanged: if(currentIndex === 0 && packages.count > 1) positionViewAtBeginning()
 
       Component {
         id: downloadingComponent
@@ -182,7 +183,7 @@ View {
               width: parent.width / parent.children.length
 
               Connections {
-                target: pndd
+                target: pkg
                 onDownloadCancelled: view.update()
               }
 
@@ -195,8 +196,8 @@ View {
                 radius: 4
                 color: "#333"
                 minimumValue: 0
-                maximumValue: pndd.bytesToDownload
-                value: pndd.bytesDownloaded
+                maximumValue: pkg.bytesToDownload
+                value: pkg.bytesDownloaded
               }
               Image {
                 source: "img/x_alt_32x32.png"
@@ -226,7 +227,7 @@ View {
 
             Item {
               id: progressText
-              property variant progress: Utils.prettyProgress(pndd.bytesDownloaded, pndd.bytesToDownload)
+              property variant progress: Utils.prettyProgress(pkg.bytesDownloaded, pkg.bytesToDownload)
               width: parent.width / parent.children.length
               height: 16
               Text {
@@ -251,17 +252,17 @@ View {
           width: parent.width
           Text {
             width: parent.width / parent.children.length
-            text: Utils.versionString(pndd.version) + " → " + Utils.versionString(pndd.upgradeCandidate.version)
+            text: Utils.versionString(pkg.version) + " → " + Utils.versionString(pkg.upgradeCandidate.version)
             font.pixelSize: 14
           }
           Text {
             width: parent.width / parent.children.length
-            text: Utils.prettySize(pndd.upgradeCandidate.size)
+            text: Utils.prettySize(pkg.upgradeCandidate.size)
             font.pixelSize: 14
           }
           Text {
             width: parent.width / parent.children.length
-            text: pndd.mount
+            text: pkg.mount
             font.pixelSize: 14
           }
         }
@@ -273,17 +274,17 @@ View {
           width: parent.width
           Text {
             width: parent.width / parent.children.length
-            text: Utils.versionString(pndd.version)
+            text: Utils.versionString(pkg.version)
             font.pixelSize: 14
           }
           Text {
             width: parent.width / parent.children.length
-            text: Utils.prettySize(pndd.size)
+            text: Utils.prettySize(pkg.size)
             font.pixelSize: 14
           }
           Text {
             width: parent.width / parent.children.length
-            text: pndd.mount
+            text: pkg.mount
             font.pixelSize: 14
           }
         }
@@ -350,13 +351,34 @@ View {
         }
       }
 
+      highlightFollowsCurrentItem: false
+
+      highlight: Rectangle {
+        color: "#ddd"
+        width: content.currentItem ? content.currentItem.width : 0
+        height: content.currentItem ? content.currentItem.height : 0
+        visible: content.currentItem != null
+
+        Connections {
+          target: content
+          onCurrentIndexChanged: y = content.currentItem ? content.currentItem.y : 0
+        }
+
+        GuiHint {
+          id: hint
+          control: "game-b"
+          anchors.right: parent.right
+          anchors.verticalCenter: parent.verticalCenter
+          anchors.margins: 4
+        }
+      }
+
       delegate: SectionItem {
         width: content.width
-        text: pnd.title ? pnd.title : pnd.id
-        icon: pnd.icon
+        text: item.title ? item.title : item.id
+        icon: item.icon
         onClicked: { content.currentIndex = index; openSelected(); }
-        selected: index === content.currentIndex
-        property QtObject pkg: pnd
+        property QtObject pnd: item
         Loader {
           function getSource() {
             if(sect == packages.sectionDownloading) {
@@ -368,7 +390,7 @@ View {
             }
           }
 
-          property QtObject pndd: pkg
+          property QtObject pkg: pnd
           property bool selected: index === content.currentIndex
           sourceComponent: getSource()
           width: parent.width
