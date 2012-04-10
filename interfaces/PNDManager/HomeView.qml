@@ -205,15 +205,7 @@ View {
         }
 
         Text {
-          function getRating() {
-            var s = "";
-            for(var i = 0; i < Math.ceil(pnd.rating/20); ++i) {
-              s += "★";
-            }
-            return s;
-          }
-
-          text: pnd.rating !== 0 ? getRating() : "(not rated)"
+          text: pndUtils.createRatingString(pnd)
           font.pixelSize: 14
         }
       }

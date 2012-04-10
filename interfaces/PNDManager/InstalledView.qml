@@ -287,6 +287,7 @@ View {
     color: "#f8f8f8"
 
     Rectangle {
+      id: infoSeparator
       width: 1
       height: parent.height
       color: "#ccc"
@@ -318,26 +319,18 @@ View {
       }
       PackageInfoText {
         label: "Rating"
-        function getRating() {
-          var s = "";
-          for(var i = 0; i < Math.ceil(info.pnd.rating/20); ++i) {
-            s += "★";
-          }
-          return s;
-        }
-
-        text: info.pnd && info.pnd.rating !== 0 ? getRating() : "(not rated)"
+        text: pndUtils.createRatingString(info.pnd)
       }
       PackageInfoText {
-        label: "Size"
+        label: "Size:"
         text: info.pnd ? Utils.prettySize(info.pnd.size) : "-"
       }
       PackageInfoText {
-        label: "Version"
+        label: "Version:"
         text: info.pnd ? Utils.versionString(info.pnd.version) : "-"
       }
       PackageInfoText {
-        label: "Location"
+        label: "Location:"
         text: info.pnd ? info.pnd.mount : "-"
       }
       Rectangle {
@@ -346,13 +339,19 @@ View {
         color: "#ddd"
         visible: info.pnd !== null && info.pnd.upgradeCandidate !== null
       }
+      Text {
+        font.pixelSize: 14
+        text: "Upgrade"
+        font.bold: Font.DemiBold
+        visible: info.pnd !== null && info.pnd.upgradeCandidate !== null && !info.pnd.isDownloading
+      }
       PackageInfoText {
-        label: "Upgrade size"
+        label: "Size:"
         text: visible ? Utils.prettySize(info.pnd.upgradeCandidate.size) : ""
         visible: info.pnd !== null && info.pnd.upgradeCandidate !== null && !info.pnd.isDownloading
       }
       PackageInfoText {
-        label: "Upgrade version"
+        label: "Version:"
         text: visible ? Utils.versionString(info.pnd.upgradeCandidate.version) : ""
         visible: info.pnd !== null && info.pnd.upgradeCandidate !== null && !info.pnd.isDownloading
       }
@@ -443,9 +442,13 @@ View {
         text: info.pnd ? info.pnd.description.split("\n")[0] : ""
         width: parent.width
         wrapMode: Text.WordWrap
+        elide: Text.ElideRight
+        maximumLineCount: 4
       }
     }
+
     Button {
+      id: showButton
       label: "Show"
       control: "game-b"
       color: "#555"

@@ -262,5 +262,5 @@ void PNDManager::saveRepositories()
 
 void PNDManager::execute(const QString &pnd)
 {
-  QProcess::execute("pnd_run", QStringList(pnd));
+  QProcess::startDetached("pnd_run", QStringList(pnd));
 }

@@ -10,6 +10,7 @@ class PNDUtils : public QObject
 public:
   explicit PNDUtils(QObject *parent = 0);
   Q_INVOKABLE QString createCategoryString(Package* package);
+  Q_INVOKABLE QString createRatingString(Package* package);
 signals:
   
 public slots:

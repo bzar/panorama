@@ -22,3 +22,11 @@ QString PNDUtils::createCategoryString(Package *package)
 
   return categories.join(", ");
 }
+
+QString PNDUtils::createRatingString(Package *package)
+{
+  if(package && package->getRating())
+    return QString((package->getRating() + 10)/20, QChar(0x2605));
+  else
+    return "(not rated)";
+}

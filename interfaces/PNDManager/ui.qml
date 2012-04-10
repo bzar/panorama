@@ -81,11 +81,6 @@ PanoramaUI {
   PNDUtils { id: pndUtils }
 
   Keys.onPressed: {
-    if(!runtime.isActiveWindow) {
-      event.accepted = true;
-      return;
-    }
-
     if(!Pandora.controlsActive) {
       event.accepted = true;
       if(event.key === Qt.Key_PageDown) {
@@ -127,11 +122,6 @@ PanoramaUI {
 
 
   Pandora.onPressed: {
-    if(!runtime.isActiveWindow) {
-      event.accepted = true;
-      return;
-    }
-
     event.accepted = true;
     if(event.key === Pandora.ButtonX)           views.current.pop();
     else if(event.key === Pandora.ButtonB) {

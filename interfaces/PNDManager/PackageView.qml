@@ -80,7 +80,7 @@ View {
     id: buttons
     anchors.top: titleText.bottom
     anchors.horizontalCenter: parent.horizontalCenter
-    spacing: 16
+    spacing: pnd.installed && !pnd.isDownloading && pnd.hasUpgrade ? 8 : 16
     Button {
       label: "Launch"
       sublabel: Utils.prettySize(pnd.size)
@@ -89,7 +89,7 @@ View {
       width: 256
       height: 64
       radius: 4
-      visible: pnd.installed
+      visible: pnd.installed && !pnd.isDownloading
       onClicked: execute()
     }
     Button {
@@ -271,22 +271,13 @@ View {
             anchors.left: parent.left
             anchors.right: parent.right
             label: "Rating:"
-
-            function getRating() {
-              var s = "";
-              for(var i = 0; i < Math.ceil(pnd.rating/20); ++i) {
-                s += "★";
-              }
-              return s;
-            }
-
-            text: pnd.rating !== 0 ? getRating() : "(not rated)"
+            text: pndUtils.createRatingString(pnd)
           }
 
           PackageInfoText {
             anchors.left: parent.left
             anchors.right: parent.right
-            label: "Last updated:"
+            label: "Updated:"
             text: Utils.prettyLastUpdatedString(pnd.modified)
           }
         }
@@ -346,6 +337,7 @@ View {
     anchors.left: parent.horizontalCenter
     anchors.right: parent.right
     anchors.margins: 16
+    clip: true
 
     Image {
       id: image
@@ -355,7 +347,9 @@ View {
       source: pnd.previewPictures.length > 0 ? pnd.previewPictures[0].src : ""
       asynchronous: true
 
-      sourceSize.width: parent.width
+      Component.onCompleted: {
+        sourceSize.width = parent.width
+      }
 
       Text {
           anchors.centerIn: parent

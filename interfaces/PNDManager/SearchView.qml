@@ -112,19 +112,11 @@ View {
       }
 
       Text {
-        function getRating() {
-          var s = "";
-          for(var i = 0; i < Math.ceil(pnd.rating/20); ++i) {
-            s += "★";
-          }
-          return s;
-        }
-
-        text: getRating()
+        text: pndUtils.createRatingString(pnd)
         visible: pnd.rating !== 0
         font.pixelSize: 14
 
-        anchors.top: categoriesText.bottom
+        anchors.bottom: categoriesText.bottom
         anchors.right: parent.right
         anchors.rightMargin: 32
       }

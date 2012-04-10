@@ -48,16 +48,17 @@ Rectangle {
         spacing: 4
         ControlHelp { control: "use-dpad"; label: "Move cursor" }
         ControlHelp { control: "game-b"; label: "Yes, more information, next" }
-        ControlHelp { control: "game-a"; label: "No, install/remove, cancel" }
+        ControlHelp { control: "game-a"; label: "No, remove, cancel" }
         ControlHelp { control: "shoulder-l"; label: "Change mode left" }
         ControlHelp { control: "keyboardfnlayer-f1"; label: "Show/hide control hints" }
+        ControlHelp { control: "keyboard-enter"; label: "Launch PND / search" }
       }
 
       Column {
         spacing: 4
         ControlHelp { control: "start"; label: "Synchronize with server" }
         ControlHelp { control: "game-x"; label: "Back" }
-        ControlHelp { control: "game-y"; label: "Upgrade, upgrade all" }
+        ControlHelp { control: "game-y"; label: "Install/upgrade" }
         ControlHelp { control: "shoulder-r"; label: "Change mode right" }
         ControlHelp { control: "select"; label: "Change package sorting" }
       }
@@ -69,13 +70,13 @@ Rectangle {
     id: buttons
     anchors.bottom: parent.bottom
     anchors.horizontalCenter: parent.horizontalCenter
-    anchors.margins: 16
+    anchors.margins: 8
     spacing: 32
 
     Button {
       label: "Don't show next time"
-      width: 256
-      height: 64
+      width: 272
+      height: 48
       radius: 8
       onClicked: { dialog.dontShowAgain(); dialog.hide() }
       color: Theme.colors.no
@@ -84,8 +85,8 @@ Rectangle {
 
     Button {
       label: "Show next time"
-      width: 256
-      height: 64
+      width: 272
+      height: 48
       radius: 8
       onClicked: dialog.hide()
       color: Theme.colors.yes
