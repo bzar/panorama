@@ -23,11 +23,11 @@ View {
   }
 
   function openCurrent() {
-    var list = lists[currentIndex]
-    if(list.currentIndex < list.count)
-    var view = stack.push(packageView, {
-                            "pnd": list.model[list.currentIndex],
-                            "viewTitle": list.model[list.currentIndex].title,
+    var pnd = currentIndex === 0 ? lastUpdated.currentItem.pnd : highestRated.currentItem.pnd;
+    if(pnd !== undefined)
+      var view = stack.push(packageView, {
+                            "pnd": pnd,
+                            "viewTitle": pnd.title,
                             "pndManager": pndManager
                           });
   }
@@ -77,12 +77,7 @@ View {
       property int listIndex
       property bool active: listIndex === view.currentIndex
 
-      function refresh() { model = pndManager.packages.sortedByLastUpdated().all() }
-
-      Connections {
-        target: pndManager
-        onPackagesChanged: lastUpdated.refresh()
-      }
+      model: pndManager.packages.sortedByLastUpdated().packages
 
       highlight: Rectangle {
         width: lastUpdated.width
@@ -167,12 +162,7 @@ View {
       property int listIndex
       property bool active: listIndex === view.currentIndex
 
-      function refresh() { model = pndManager.packages.sortedByRating().all() }
-
-      Connections {
-        target: pndManager
-        onPackagesChanged: highestRated.refresh()
-      }
+      model: pndManager.packages.sortedByRating().packages
 
       highlight: Rectangle {
         width: highestRated.width

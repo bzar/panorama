@@ -34,7 +34,6 @@ View {
     height: Math.floor(parent.height/rows) * rows
 
     boundsBehavior: GridView.StopAtBounds
-    pressDelay: 1000
 
     function openCurrent() {
       stack.push(categoryView, {"pndManager": pndManager, "categories": currentItem.categoryFilter, "viewTitle": currentItem.categoryTitle});

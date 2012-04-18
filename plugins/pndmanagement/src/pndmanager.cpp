@@ -9,9 +9,14 @@ PNDManager::PNDManager(QObject* parent) : QObject(parent),
   context(new QPndman::Context(this)),
   repository(new QPndman::Repository(context, REPOSITORY_URL)),
   localRepository(new QPndman::LocalRepository(context)),
-  packages(), packagesById(), devices(), commitableDevices()
+  packages(), packagesById(), devices(), commitableDevices(),
+  runningApplication(), applicationRunning(false)
 {
   qDebug() << "PNDManager::PNDManager";
+
+  connect(&runningApplication, SIGNAL(started()), this, SLOT(applicationStarted()));
+  connect(&runningApplication, SIGNAL(finished(int)), this, SLOT(applicationFinished()));
+
   devices.append(QPndman::Device::detectDevices(context));
   foreach(QPndman::Device* device, devices)
   {
@@ -133,6 +138,11 @@ void PNDManager::setVerbosity(int level)
     context->setLoggingVerbosity(level);
     emit verbosityChanged(level);
   }
+}
+
+bool PNDManager::getApplicationRunning() const
+{
+  return applicationRunning;
 }
 
 
@@ -262,5 +272,17 @@ void PNDManager::saveRepositories()
 
 void PNDManager::execute(const QString &pnd)
 {
-  QProcess::startDetached("pnd_run", QStringList(pnd));
+  runningApplication.start("pnd_run", QStringList(pnd), QIODevice::NotOpen);
+}
+
+void PNDManager::applicationStarted()
+{
+  applicationRunning = true;
+  emit applicationRunningChanged(true);
+}
+
+void PNDManager::applicationFinished()
+{
+  applicationRunning = false;
+  emit applicationRunningChanged(false);
 }

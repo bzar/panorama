@@ -15,6 +15,7 @@ class PNDManager : public QObject
   Q_PROPERTY(PNDFilter* packages READ getPackages NOTIFY packagesChanged)
   Q_PROPERTY(QDeclarativeListProperty<QPndman::Device> devices READ getDevices NOTIFY devicesChanged)
   Q_PROPERTY(int verbosity READ getVerbosity WRITE setVerbosity NOTIFY verbosityChanged)
+  Q_PROPERTY(bool applicationRunning READ getApplicationRunning NOTIFY applicationRunningChanged)
 
   Q_ENUMS(QPndman::Enum::InstallLocation QPndman::Enum::Operation QPndman::Version::Type)
 public:
@@ -33,6 +34,8 @@ public:
   int getVerbosity() const;
   void setVerbosity(int level);
 
+  bool getApplicationRunning() const;
+
 public slots:
   void crawl();
   void sync();
@@ -50,8 +53,12 @@ signals:
   void crawlDone();
 
   void verbosityChanged(int);
+  void applicationRunningChanged(bool);
 
-  
+private slots:
+  void applicationStarted();
+  void applicationFinished();
+
 private:
   static QString const REPOSITORY_URL;
   
@@ -63,6 +70,9 @@ private:
   QMap<QString, Package*> packagesById;
   QList<QPndman::Device*> devices;
   QList<QPndman::Device*> commitableDevices;
+
+  QProcess runningApplication;
+  bool applicationRunning;
 };
 
 #endif

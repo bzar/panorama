@@ -13,14 +13,11 @@ View {
   onOkButton: openSelected()
 
   Keys.forwardTo: content
-  Connections {
-    target: pndManager
-    onPackagesChanged: update()
-  }
 
   onInstallUpgradeButton: upgradeAll()
   onRemoveButton: cancelDownload()
   onSelectButton: view.sortByTitle = !view.sortByTitle
+
 
   function sort(list) {
     if(sortByTitle) {
@@ -30,34 +27,11 @@ View {
     }
   }
 
-  function getDownloadingModelPrefilter() { return pndManager.packages.downloading() }
-  function getUpgradableModelPrefilter() { return pndManager.packages.installed().upgradable().notDownloading() }
-  function getInstalledModelPrefilter() { return pndManager.packages.installed().notUpgradable().notDownloading() }
-
-  property QtObject downloadingModelPrefilter: getDownloadingModelPrefilter()
-  property QtObject upgradableModelPrefilter: getUpgradableModelPrefilter()
-  property QtObject installedModelPrefilter: getInstalledModelPrefilter()
-
-  property QtObject downloadingModelSorted: sort(downloadingModelPrefilter)
-  property QtObject upgradableModelSorted: sort(upgradableModelPrefilter)
-  property QtObject installedModelSorted: sort(installedModelPrefilter)
-
-  property variant downloadingModel: downloadingModelSorted.titleContains(search.text).all()
-  property variant upgradableModel: upgradableModelSorted.titleContains(search.text).all()
-  property variant installedModel: installedModelSorted.titleContains(search.text).all()
-
-  function update() {
-    downloadingModelPrefilter = getDownloadingModelPrefilter();
-    upgradableModelPrefilter = getUpgradableModelPrefilter();
-    installedModelPrefilter = getInstalledModelPrefilter();
-    packages.createModel()
-  }
-
   function cancelDownload() {
     var pnd = getSelected();
     if(pnd.isDownloading) {
       pnd.cancelDownload();
-      update();
+      packages.createModel()
     }
 
   }
@@ -66,8 +40,11 @@ View {
   }
 
   function upgradeAll() {
-    for(var i = 0; i < upgradableModel.length; ++i) {
-      upgradableModel[i].upgrade();
+    for(var i = 0; i < packages.count; ++i) {
+      var pnd = packages.get(i).item;
+      if(pnd.hasUpgrade) {
+        pnd.upgrade();
+      }
     }
   }
 
@@ -88,7 +65,7 @@ View {
     text: "Nothing installed"
     font.pixelSize: 20
     anchors.centerIn: parent
-    visible: installedModelPrefilter.length === 0 && downloadingModelPrefilter.length === 0 && upgradableModelPrefilter.length === 0
+    visible: packages.count === 0 && search.text === ""
   }
 
   ScrollBar {
@@ -124,14 +101,19 @@ View {
       property int foo: createModel() // hack to make model update automatically
       function createModel() {
         clear();
-        for(var i = 0; i < downloadingModel.length; ++i) {
-          append({sect: sectionDownloading, item: downloadingModel[i]});
+        var downloading = sort(pndManager.packages.downloading()).titleContains(search.text).packages;
+        var installed = sort(pndManager.packages.installed().notDownloading());
+        var upgradable = installed.copy().upgradable().titleContains(search.text).packages;
+        installed = installed.notUpgradable().titleContains(search.text).packages
+
+        for(var i = 0; i < downloading.length; ++i) {
+          append({sect: sectionDownloading, item: downloading[i]});
         }
-        for(var i = 0; i < upgradableModel.length; ++i) {
-          append({sect: sectionUpgradable, item: upgradableModel[i]});
+        for(var i = 0; i < upgradable.length; ++i) {
+          append({sect: sectionUpgradable, item: upgradable[i]});
         }
-        for(var i = 0; i < installedModel.length; ++i) {
-          append({sect: sectionInstalled, item: installedModel[i]});
+        for(var i = 0; i < installed.length; ++i) {
+          append({sect: sectionInstalled, item: installed[i]});
         }
         return 1;
       }
@@ -327,7 +309,7 @@ View {
       }
       PackageInfoText {
         label: "Version:"
-        text: info.pnd ? Utils.versionString(info.pnd.version) : "-"
+        text: info.pnd ? Utils.versionString(info.pnd.localVersion) : "-"
       }
       PackageInfoText {
         label: "Location:"
@@ -352,7 +334,7 @@ View {
       }
       PackageInfoText {
         label: "Version:"
-        text: visible ? Utils.versionString(info.pnd.upgradeCandidate.version) : ""
+        text: visible ? Utils.versionString(info.pnd.remoteVersion) : ""
         visible: info.pnd !== null && info.pnd.upgradeCandidate !== null && !info.pnd.isDownloading
       }
 
@@ -371,9 +353,10 @@ View {
           anchors.right: downloadCancelButton.left
           anchors.margins: 4
 
+
           Connections {
             target: info.pnd
-            onDownloadCancelled: view.update()
+            onDownloadCancelled: packages.createModel()
           }
 
           ProgressBar {

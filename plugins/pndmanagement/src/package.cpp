@@ -59,9 +59,13 @@ QPndman::Author* Package::getAuthor() const
 {
   return rPackage() ? rPackage()->getAuthor() : 0;
 }
-QPndman::Version* Package::getVersion() const
+QPndman::Version* Package::getLocalVersion() const
 {
-  return lPackage() ? lPackage()->getVersion() : 0;
+  return localPackage ? localPackage->getVersion() : 0;
+}
+QPndman::Version* Package::getRemoteVersion() const
+{
+  return remotePackage ? remotePackage->getVersion() : 0;
 }
 QString Package::getTitle() const
 {

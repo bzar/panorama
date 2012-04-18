@@ -8,12 +8,17 @@
 class PNDFilter : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(QDeclarativeListProperty<Package> packages READ getPackages CONSTANT)
+
 public:
   PNDFilter(QList<Package*> packages = QList<Package*>(), QObject *parent = 0);
   PNDFilter(PNDFilter const& other);
   PNDFilter& operator=(PNDFilter const& other);
 
+  QDeclarativeListProperty<Package> getPackages();
+
   Q_INVOKABLE QList<QObject*> all();
+  Q_INVOKABLE PNDFilter* copy();
 
   Q_INVOKABLE PNDFilter* inCategory(QString categoryFilter);
   Q_INVOKABLE PNDFilter* installed(bool value = true);

@@ -57,7 +57,9 @@ function prettyLastUpdatedString(datetime) {
 
   var days = Math.floor((now - then) / (1000 * 60*60*24));
 
-  if(days === 0) {
+  if(days < 0) {
+    return "recently";
+  } else if(days === 0) {
     return "today";
   } else if(days === 1) {
     return "yesterday";

@@ -14,9 +14,15 @@ PNDFilter &PNDFilter::operator=(const PNDFilter &other)
   packages = other.packages;
 }
 
+QDeclarativeListProperty<Package> PNDFilter::getPackages()
+{
+  return QDeclarativeListProperty<Package>(this, packages);
+}
+
 QList<QObject*> PNDFilter::all()
 {
   QList<QObject*> result;
+  result.reserve(packages.size());
   foreach(Package* p, packages)
   {
     result << p;
@@ -24,10 +30,16 @@ QList<QObject*> PNDFilter::all()
   return result;
 }
 
+PNDFilter *PNDFilter::copy()
+{
+  return new PNDFilter(packages);
+}
+
 PNDFilter* PNDFilter::inCategory(QString categoryFilter)
 {
   QRegExp re(categoryFilter);
   QList<Package*> result;
+  result.reserve(packages.size());
   foreach(Package* p, packages)
   {
     foreach(QPndman::Category const* category, p->getCategories())
@@ -40,12 +52,14 @@ PNDFilter* PNDFilter::inCategory(QString categoryFilter)
     }
 
   }
-  return new PNDFilter(result);
+  result.swap(packages);
+  return this;
 }
 
 PNDFilter* PNDFilter::installed(bool value)
 {
   QList<Package*> result;
+  result.reserve(packages.size());
   foreach(Package* p, packages)
   {
     if(p->getInstalled() == value)
@@ -53,7 +67,8 @@ PNDFilter* PNDFilter::installed(bool value)
       result << p;
     }
   }
-  return new PNDFilter(result);
+  result.swap(packages);
+  return this;
 }
 
 PNDFilter* PNDFilter::notInstalled()
@@ -64,6 +79,7 @@ PNDFilter* PNDFilter::notInstalled()
 PNDFilter* PNDFilter::upgradable(bool value)
 {
   QList<Package*> result;
+  result.reserve(packages.size());
   foreach(Package* p, packages)
   {
     if(p->getHasUpgrade() == value)
@@ -71,7 +87,8 @@ PNDFilter* PNDFilter::upgradable(bool value)
       result << p;
     }
   }
-  return new PNDFilter(result);
+  result.swap(packages);
+  return this;
 }
 
 PNDFilter* PNDFilter::notUpgradable()
@@ -82,6 +99,7 @@ PNDFilter* PNDFilter::notUpgradable()
 PNDFilter* PNDFilter::downloading(bool value)
 {
   QList<Package*> result;
+  result.reserve(packages.size());
   foreach(Package* p, packages)
   {
     if(p->getIsDownloading() == value)
@@ -89,7 +107,8 @@ PNDFilter* PNDFilter::downloading(bool value)
       result << p;
     }
   }
-  return new PNDFilter(result);
+  result.swap(packages);
+  return this;
 }
 
 PNDFilter* PNDFilter::notDownloading()
@@ -103,9 +122,8 @@ bool titleAlphabeticalSorter(Package const* a, Package const* b) {
 
 PNDFilter *PNDFilter::sortedByTitle()
 {
-  QList<Package*> result(packages);
-  qSort(result.begin(), result.end(), titleAlphabeticalSorter);
-  return new PNDFilter(result);
+  qSort(packages.begin(), packages.end(), titleAlphabeticalSorter);
+  return this;
 }
 
 bool lastUpdatedDateSorter(Package const* a, Package const* b) {
@@ -114,9 +132,8 @@ bool lastUpdatedDateSorter(Package const* a, Package const* b) {
 
 PNDFilter *PNDFilter::sortedByLastUpdated()
 {
-  QList<Package*> result(packages);
-  qSort(result.begin(), result.end(), lastUpdatedDateSorter);
-  return new PNDFilter(result);
+  qSort(packages.begin(), packages.end(), lastUpdatedDateSorter);
+  return this;
 }
 
 bool ratingSorter(Package const* a, Package const* b) {
@@ -125,9 +142,8 @@ bool ratingSorter(Package const* a, Package const* b) {
 
 PNDFilter *PNDFilter::sortedByRating()
 {
-  QList<Package*> result(packages);
-  qSort(result.begin(), result.end(), ratingSorter);
-  return new PNDFilter(result);
+  qSort(packages.begin(), packages.end(), ratingSorter);
+  return this;
 }
 
 PNDFilter *PNDFilter::titleContains(const QString &s)
@@ -136,6 +152,7 @@ PNDFilter *PNDFilter::titleContains(const QString &s)
     return this;
 
   QList<Package*> result;
+  result.reserve(packages.size());
   foreach(Package* p, packages)
   {
     if(p->getTitle().contains(s, Qt::CaseInsensitive))
@@ -143,6 +160,7 @@ PNDFilter *PNDFilter::titleContains(const QString &s)
       result << p;
     }
   }
-  return new PNDFilter(result);
+  result.swap(packages);
+  return this;
 }
 

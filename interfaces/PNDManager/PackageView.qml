@@ -116,7 +116,7 @@ View {
     }
     Button {
       label: "Upgrade"
-      sublabel: pnd.hasUpgrade ? Utils.versionString(pnd.version) + " → " + Utils.versionString(pnd.upgradeCandidate.version) + " (" + Utils.prettySize(pnd.upgradeCandidate.size) + ")" : ""
+      sublabel: pnd.hasUpgrade ? Utils.versionString(pnd.localVersion) + " → " + Utils.versionString(pnd.remoteVersion) + " (" + Utils.prettySize(pnd.upgradeCandidate.size) + ")" : ""
       control: "game-y"
       color: Theme.colors.upgrade
       width: 256

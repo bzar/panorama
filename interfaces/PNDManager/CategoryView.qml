@@ -9,7 +9,7 @@ View {
   property QtObject pndManager
   property bool sortByTitle: true
   property QtObject filteredPackages: pndManager.packages.inCategory(categories).notInstalled()
-  property QtObject filteredAndSortedPackages: sortByTitle ? filteredPackages.sortedByTitle() : filteredPackages.sortedByLastUpdated()
+  property QtObject filteredAndSortedPackages: sortByTitle ? filteredPackages.copy().sortedByTitle() : filteredPackages.copy().sortedByLastUpdated()
   Keys.forwardTo: packageList
 
   onOkButton: packageList.openCurrent()
@@ -19,7 +19,7 @@ View {
     id: packageList
     columns: 2
     pndManager: view.pndManager
-    model: filteredAndSortedPackages.titleContains(search.text).all()
+    model: filteredAndSortedPackages.copy().titleContains(search.text).packages
     anchors.fill: parent
 
     Keys.priority: Keys.AfterItem

@@ -26,7 +26,8 @@ class Package : public QObject
   Q_PROPERTY(QDateTime modified READ getModified CONSTANT)
   Q_PROPERTY(int rating READ getRating CONSTANT)
   Q_PROPERTY(QPndman::Author* author READ getAuthor CONSTANT)
-  Q_PROPERTY(QPndman::Version* version READ getVersion CONSTANT)
+  Q_PROPERTY(QPndman::Version* localVersion READ getLocalVersion CONSTANT)
+  Q_PROPERTY(QPndman::Version* remoteVersion READ getRemoteVersion CONSTANT)
   Q_PROPERTY(QString title READ getTitle CONSTANT)
   Q_PROPERTY(QString description READ getDescription CONSTANT)
   Q_PROPERTY(QPndman::Package* upgradeCandidate READ getUpgradeCandidate CONSTANT)
@@ -57,7 +58,8 @@ public:
   QDateTime getModified() const;
   int getRating() const;
   QPndman::Author* getAuthor() const;
-  QPndman::Version* getVersion() const;
+  QPndman::Version* getLocalVersion() const;
+  QPndman::Version* getRemoteVersion() const;
   QString getTitle() const;
   QString getDescription() const;
   QPndman::Package* getUpgradeCandidate() const;
