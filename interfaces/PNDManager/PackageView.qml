@@ -82,17 +82,6 @@ View {
     anchors.horizontalCenter: parent.horizontalCenter
     spacing: pnd.installed && !pnd.isDownloading && pnd.hasUpgrade ? 8 : 16
     Button {
-      label: "Launch"
-      sublabel: Utils.prettySize(pnd.size)
-      control: "keyboard-enter"
-      color: Theme.colors.install
-      width: 256
-      height: 64
-      radius: 4
-      visible: pnd.installed && !pnd.isDownloading
-      onClicked: execute()
-    }
-    Button {
       label: "Install"
       sublabel: Utils.prettySize(pnd.size)
       control: "game-y"
@@ -125,6 +114,18 @@ View {
       visible: pnd.installed && pnd.hasUpgrade && !pnd.isDownloading
       onClicked: upgrade()
     }
+    Button {
+      label: "Launch"
+      sublabel: Utils.prettySize(pnd.size)
+      control: "keyboard-enter"
+      color: Theme.colors.install
+      width: 256
+      height: 64
+      radius: 4
+      visible: pnd.installed && !pnd.isDownloading
+      onClicked: execute()
+    }
+
     Column {
       width: 256
       height: 64

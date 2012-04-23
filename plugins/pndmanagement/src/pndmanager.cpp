@@ -153,7 +153,6 @@ void PNDManager::crawl()
   {
     device->crawl();
   }
-  //repository->update();
   localRepository->update();
   updatePackages();
   emit crawlDone();
@@ -197,8 +196,8 @@ void PNDManager::updatePackages()
     QPndman::Package* remotePackage = remote.value(p->getId(), 0);
     if(localPackage || remotePackage)
     {
-      p->setLocalPackage(localPackage);
       p->setRemotePackage(remotePackage);
+      p->setLocalPackage(localPackage);
       packagesById.insert(p->getId(), p);
     }
     else

@@ -44,7 +44,7 @@ SyncWorkerSingletonThread* SyncWorkerSingleton::thread = 0;
 
 SyncWorkerSingleton *SyncWorkerSingleton::instance()
 {
-/*  if(thread == 0)
+  if(thread == 0)
   {
     thread = new SyncWorkerSingletonThread(QApplication::instance());
     thread->start(QThread::LowPriority);
@@ -52,9 +52,9 @@ SyncWorkerSingleton *SyncWorkerSingleton::instance()
       QThread::yieldCurrentThread();
     }
   }
-  return thread->getSingleton();*/
-  static SyncWorkerSingleton* singleton = new SyncWorkerSingleton(QApplication::instance());
-  return singleton;
+  return thread->getSingleton();
+  /*static SyncWorkerSingleton* singleton = new SyncWorkerSingleton(QApplication::instance());
+  return singleton;*/
 }
 
 SyncWorkerSingleton::~SyncWorkerSingleton()
