@@ -35,10 +35,19 @@ View {
       removeConfirmation.show()
   }
 
+  Connections {
+    target: pnd
+    onDownloadStarted: spinner.hide()
+  }
+
   ConfirmationDialog {
     id: removeConfirmation
     message: "Remove " + pnd.title + "?"
-    onYes: pnd.remove()
+    onYes: {
+      spinner.show();
+      pnd.remove();
+      spinner.hide();
+    }
     z: 10
   }
 
@@ -55,14 +64,16 @@ View {
   }
 
   function upgrade() {
-    console.log(pnd.installed + " " + pnd.hasUpgrade + " " + pnd.isDownloading)
     if(pnd.installed && pnd.hasUpgrade && !pnd.isDownloading) {
+      spinner.show();
       pnd.upgrade();
     }
   }
 
   function execute() {
-    pndManager.execute(pnd.path)
+    if(!pndManager.applicationRunning) {
+      pndManager.execute(pnd.path)
+    }
   }
 
   Text {
@@ -89,7 +100,7 @@ View {
       width: 256
       height: 64
       radius: 4
-      visible: !pnd.installed && !pnd.isDownloading
+      visible: !pnd.installed && !pnd.isDownloading && pnd.remoteVersion !== null
       onClicked: showInstallDialog()
     }
     Button {
@@ -124,6 +135,7 @@ View {
       radius: 4
       visible: pnd.installed && !pnd.isDownloading
       onClicked: execute()
+      enabled: !pndManager.applicationRunning
     }
 
     Column {

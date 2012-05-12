@@ -44,6 +44,10 @@ function prettySize(size) {
 }
 
 function versionString(version) {
+  if(version === null) {
+    return "N/A";
+  }
+
   return version.major + "." + version.minor + "." + version.release + "." + version.build;
 }
 

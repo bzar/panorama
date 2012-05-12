@@ -115,6 +115,7 @@ signals:
   void bytesToDownloadChanged(qint64);
   void hasUpgradeChanged();
   void downloadCancelled();
+  void downloadStarted();
 
 private:
   QPndman::Package* rPackage() const;

@@ -10,10 +10,18 @@ View {
   Keys.forwardTo: [deviceList, location]
 
   function install() {
+    installButton.enabled = false;
+    spinner.show();
     lastInstallDevice.value = deviceList.currentItem.device.mount;
     lastInstallLocation.value = location.options[location.selected];
     pnd.install(deviceList.currentItem.device, location.selectedItem());
-    stack.pop();
+  }
+
+  Connections {
+    target: pnd
+    onDownloadStarted: {
+      stack.pop();
+    }
   }
 
   Component.onCompleted: {

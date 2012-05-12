@@ -164,9 +164,7 @@ void PNDManager::sync()
   emit syncing(handle);
   SyncWorker* worker = new SyncWorker(handle);
   handle->setParent(worker);
-  connect(worker, SIGNAL(ready(QPndman::SyncHandle*)), repository, SLOT(update()));
-  connect(worker, SIGNAL(ready(QPndman::SyncHandle*)), this, SLOT(crawl()));
-  connect(worker, SIGNAL(ready(QPndman::SyncHandle*)), this, SIGNAL(syncDone()));
+  connect(worker, SIGNAL(ready(QPndman::SyncHandle*)), this, SLOT(syncFinished()));
   worker->start();
 }
 
@@ -284,4 +282,11 @@ void PNDManager::applicationFinished()
 {
   applicationRunning = false;
   emit applicationRunningChanged(false);
+}
+
+void PNDManager::syncFinished()
+{
+  repository->update();
+  crawl();
+  emit syncDone();
 }

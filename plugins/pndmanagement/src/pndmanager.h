@@ -51,6 +51,7 @@ signals:
   void syncDone();
   void crawling();
   void crawlDone();
+  void downloadStarted();
 
   void verbosityChanged(int);
   void applicationRunningChanged(bool);
@@ -58,7 +59,7 @@ signals:
 private slots:
   void applicationStarted();
   void applicationFinished();
-
+  void syncFinished();
 private:
   static QString const REPOSITORY_URL;
   

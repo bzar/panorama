@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <QObject>
 #include <QThread>
+#include <QSemaphore>
 
 class SyncWorker : public QObject
 {
@@ -38,6 +39,7 @@ class SyncWorkerSingleton : public QObject
 public:
   static SyncWorkerSingleton* instance();
   ~SyncWorkerSingleton();
+  QSemaphore mutex;
 public slots:
   void start();
 signals:

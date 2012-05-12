@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <QObject>
 #include <QThread>
+#include <QSemaphore>
 
 class DownloadWorker : public QObject
 {
@@ -38,6 +39,7 @@ class DownloadWorkerSingleton : public QObject
 public:
   static DownloadWorkerSingleton* instance();
   ~DownloadWorkerSingleton();
+  QSemaphore mutex;
 public slots:
   void start();
 signals:

@@ -81,7 +81,7 @@ PanoramaUI {
   PNDUtils { id: pndUtils }
 
   Keys.onPressed: {
-    if(!runtime.isActiveWindow || pndManager.applicationRunning) {
+    if(spinner.visible || !runtime.isActiveWindow || pndManager.applicationRunning) {
       event.accepted = true;
       return
     }
@@ -126,7 +126,7 @@ PanoramaUI {
   }
 
   Pandora.onPressed: {
-    if(!runtime.isActiveWindow || pndManager.applicationRunning) {
+    if(spinner.visible || !runtime.isActiveWindow || pndManager.applicationRunning) {
       event.accepted = true;
       return
     }
@@ -160,6 +160,12 @@ PanoramaUI {
     text: "Sync complete"
     anchors.centerIn: parent
     z: 2
+  }
+
+  SpinnerOverlay {
+    id: spinner
+    anchors.fill: parent
+    z: 3
   }
 
   HelpDialog {

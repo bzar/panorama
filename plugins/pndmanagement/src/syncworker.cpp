@@ -20,6 +20,7 @@ void SyncWorker::start()
 
 void SyncWorker::process()
 {
+  SyncWorkerSingleton::instance()->mutex.acquire();
   handle->update();
 
   if(!syncStarted && handle->getBytesDownloaded() > 0)
@@ -33,6 +34,7 @@ void SyncWorker::process()
     emit ready(handle);
     deleteLater();
   }
+  SyncWorkerSingleton::instance()->mutex.release();
 }
 
 void SyncWorker::emitError()
@@ -66,7 +68,7 @@ void SyncWorkerSingleton::start()
   timer.start();
 }
 
-SyncWorkerSingleton::SyncWorkerSingleton(QObject *parent) : QObject(parent), timer()
+SyncWorkerSingleton::SyncWorkerSingleton(QObject *parent) : QObject(parent), mutex(1), timer()
 {
   qDebug() << "SyncWorkerSingleton::SyncWorkerSingleton";
   timer.setInterval(100);
@@ -76,16 +78,18 @@ SyncWorkerSingleton::SyncWorkerSingleton(QObject *parent) : QObject(parent), tim
 
 void SyncWorkerSingleton::process()
 {
+  mutex.acquire();
   int status = QPndman::SyncHandle::sync();
   if(status == 0)
   {
     timer.stop();
   }
-  else if(status <= 0)
+  else if(status < 0)
   {
     timer.stop();
     emit error();
   }
+  mutex.release();
 }
 
 

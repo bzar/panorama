@@ -19,6 +19,7 @@ void DownloadWorker::start()
   
 void DownloadWorker::process()
 {
+  DownloadWorkerSingleton::instance()->mutex.acquire();
   handle->update();
   
   if(!downloadStarted && handle->getBytesDownloaded() > 0)
@@ -32,6 +33,7 @@ void DownloadWorker::process()
     emit ready(handle);
     deleteLater();
   }
+  DownloadWorkerSingleton::instance()->mutex.release();
 }
 
 void DownloadWorker::emitError()
@@ -63,7 +65,7 @@ void DownloadWorkerSingleton::start()
   timer.start();
 }
 
-DownloadWorkerSingleton::DownloadWorkerSingleton(QObject *parent) : QObject(parent), timer()
+DownloadWorkerSingleton::DownloadWorkerSingleton(QObject *parent) : QObject(parent), mutex(1), timer()
 {
   qDebug() << "DownloadWorkerSingleton::DownloadWorkerSingleton";
   timer.setInterval(100);
@@ -73,6 +75,7 @@ DownloadWorkerSingleton::DownloadWorkerSingleton(QObject *parent) : QObject(pare
 
 void DownloadWorkerSingleton::process()
 {
+  mutex.acquire();
   int status = QPndman::Handle::download();
   emit update();
   if(status == 0)
@@ -84,6 +87,7 @@ void DownloadWorkerSingleton::process()
     timer.stop();
     emit error();
   }
+  mutex.release();
 }
 
 

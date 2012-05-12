@@ -262,11 +262,12 @@ void Package::install(QPndman::Device* device, QString location)
   manager->addCommitableDevice(device);
   DownloadWorker* worker = new DownloadWorker(handle);
   handle->setParent(worker);
-  connect(worker, SIGNAL(started(QPndman::Handle*)), manager, SIGNAL(packagesChanged()));
+  connect(worker, SIGNAL(started(QPndman::Handle*)), this, SIGNAL(downloadStarted()));
+  connect(worker, SIGNAL(started(QPndman::Handle*)), manager, SIGNAL(downloadStarted()));
   connect(handle, SIGNAL(bytesDownloadedChanged(qint64)), this, SLOT(setBytesDownloaded(qint64)));
   connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), this, SLOT(setBytesToDownload(qint64)));
-  connect(handle, SIGNAL(done()), this, SLOT(setInstalled()));
-  connect(handle, SIGNAL(done()), manager, SLOT(crawl()));
+  connect(worker, SIGNAL(ready(QPndman::Handle*)), this, SLOT(setInstalled()));
+  connect(worker, SIGNAL(ready(QPndman::Handle*)), manager, SLOT(crawl()));
   connect(handle, SIGNAL(cancelled()), this, SLOT(handleDownloadCancelled()));
   operationHandle = handle;
   worker->start();
@@ -305,11 +306,12 @@ void Package::upgrade()
   }
   DownloadWorker* worker = new DownloadWorker(handle);
   handle->setParent(worker);
-  connect(worker, SIGNAL(started(QPndman::Handle*)), manager, SIGNAL(packagesChanged()));
+  connect(worker, SIGNAL(started(QPndman::Handle*)), this, SIGNAL(downloadStarted()));
+  connect(worker, SIGNAL(started(QPndman::Handle*)), manager, SIGNAL(downloadStarted()));
   connect(handle, SIGNAL(bytesDownloadedChanged(qint64)), this, SLOT(setBytesDownloaded(qint64)));
   connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), this, SLOT(setBytesToDownload(qint64)));
-  connect(handle, SIGNAL(done()), this, SLOT(setInstalled()));
-  connect(handle, SIGNAL(done()), manager, SLOT(crawl()));
+  connect(worker, SIGNAL(ready(QPndman::Handle*)), this, SLOT(setInstalled()));
+  connect(worker, SIGNAL(ready(QPndman::Handle*)), manager, SLOT(crawl()));
   connect(handle, SIGNAL(cancelled()), this, SLOT(handleDownloadCancelled()));
   operationHandle = handle;
   worker->start();

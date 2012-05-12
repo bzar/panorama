@@ -96,7 +96,7 @@ View {
 
       MouseArea {
         anchors.fill: parent
-        onClicked: {
+        onPressed: {
           categoryList.currentIndex = index;
           categoryList.openCurrent();
         }

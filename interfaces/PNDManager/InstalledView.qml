@@ -98,7 +98,7 @@ View {
       property int sectionDownloading: 1
       property int sectionUpgradable: 2
       property int sectionInstalled: 3
-      property int foo: createModel() // hack to make model update automatically
+
       function createModel() {
         clear();
         var downloading = sort(pndManager.packages.downloading()).titleContains(search.text).packages;
@@ -115,8 +115,24 @@ View {
         for(var i = 0; i < installed.length; ++i) {
           append({sect: sectionInstalled, item: installed[i]});
         }
-        return 1;
       }
+
+    }
+
+    Connections {
+      target: pndManager
+      onDownloadStarted: packages.createModel()
+      onPackagesChanged: packages.createModel()
+    }
+
+    Connections {
+      target: search
+      onTextChanged: packages.createModel()
+    }
+
+    Connections {
+      target: view
+      onSortByTitleChanged: packages.createModel()
     }
 
     boundsBehavior: Flickable.DragOverBounds

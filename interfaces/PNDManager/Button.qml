@@ -9,8 +9,8 @@ Item {
     property alias font: labelText.font
     property alias textColor: labelText.color
     property alias enabled: mouseArea.enabled
-    property alias radius: rectangle.radius
-    property alias border: rectangle.border
+    property alias radius: bg.radius
+    property alias border: bg.border
     property alias control: guiHint.control
     signal clicked();
 
@@ -18,14 +18,16 @@ Item {
     height: 32
 
     Rectangle {
-        id: rectangle
+        id: bg
         anchors.fill: parent
         smooth: radius != 0
 
+        property color c: button.enabled ? button.color : Qt.tint(button.color, "#88888888")
+
         gradient: Gradient {
-            GradientStop { position: 0.0; color: Qt.darker(button.color, pressed ? 1.6 : 1.0 ) }
-            GradientStop { position: pressed ? 0.2 : 0.8; color: Qt.darker(button.color, pressed ? 1.4 : 1.2) }
-            GradientStop { position: 1.0; color: Qt.darker(button.color, pressed ? 1.2 : 1.4) }
+            GradientStop { position: 0.0; color: Qt.darker(bg.c, pressed ? 1.6 : 1.0 ) }
+            GradientStop { position: pressed ? 0.2 : 0.8; color: Qt.darker(bg.c, pressed ? 1.4 : 1.2) }
+            GradientStop { position: 1.0; color: Qt.darker(bg.c, pressed ? 1.2 : 1.4) }
         }
 
         clip: true
