@@ -1,0 +1,292 @@
+#include "pndmanager.h"
+#include "syncworker.h"
+
+#include <QDebug>
+
+QString const PNDManager::REPOSITORY_URL("http://repo.openpandora.org/includes/get_data.php");
+
+PNDManager::PNDManager(QObject* parent) : QObject(parent), 
+  context(new QPndman::Context(this)),
+  repository(new QPndman::Repository(context, REPOSITORY_URL)),
+  localRepository(new QPndman::LocalRepository(context)),
+  packages(), packagesById(), devices(), commitableDevices(),
+  runningApplication(), applicationRunning(false)
+{
+  qDebug() << "PNDManager::PNDManager";
+
+  connect(&runningApplication, SIGNAL(started()), this, SLOT(applicationStarted()));
+  connect(&runningApplication, SIGNAL(finished(int)), this, SLOT(applicationFinished()));
+
+  devices.append(QPndman::Device::detectDevices(context));
+  foreach(QPndman::Device* device, devices)
+  {
+    qDebug() << " * Reading from" << device->getMount();
+    bool canRead = false;
+    canRead |= repository->loadFrom(device, false);
+    canRead |= localRepository->loadFrom(device, false);
+    if(canRead)
+    {
+      commitableDevices << device;
+    }
+  }
+
+  repository->update();
+  localRepository->update();
+}
+
+PNDManager::~PNDManager()
+{
+  saveRepositories();
+}
+
+QDeclarativeListProperty<QPndman::Device> PNDManager::getDevices()
+{
+  return QDeclarativeListProperty<QPndman::Device>(this, devices);
+}
+
+int PNDManager::deviceCount() const
+{
+  return devices.count();
+}
+
+QPndman::Device *PNDManager::getDevice(int i) const
+{
+  return devices.at(i);
+}
+
+PNDFilter* PNDManager::getPackages()
+{
+  return new PNDFilter(packages);
+}
+
+PNDFilter* PNDManager::searchPackages(const QString &search)
+{
+  QList<Package*> result;
+  foreach(Package* package, packages)
+  {
+    bool matches = false;
+
+    foreach(QPndman::TranslatedString const* title, package->getTitles())
+    {
+      if(title->getContent().contains(search, Qt::CaseInsensitive))
+      {
+        matches = true;
+        break;
+      }
+    }
+
+    if(!matches)
+    {
+      foreach(QPndman::TranslatedString const* description, package->getDescriptions())
+      {
+        if(description->getContent().contains(search, Qt::CaseInsensitive))
+        {
+          matches = true;
+          break;
+        }
+      }
+    }
+
+    if(!matches)
+    {
+      foreach(QPndman::Category const* category, package->getCategories())
+      {
+        if(category->getMain().contains(search, Qt::CaseInsensitive)
+           || category->getSub().contains(search, Qt::CaseInsensitive))
+        {
+          matches = true;
+          break;
+        }
+      }
+    }
+
+    if(!matches && package->getAuthor()->getName().contains(search, Qt::CaseInsensitive))
+    {
+      matches = true;
+    }
+
+    if(matches)
+    {
+      result << package;
+    }
+  }
+
+  return new PNDFilter(result);
+}
+
+QPndman::Context* PNDManager::getContext() const
+{
+  return context;
+}
+
+void PNDManager::addCommitableDevice(QPndman::Device *device)
+{
+  if(!commitableDevices.contains(device))
+  {
+    commitableDevices << device;
+  }
+}
+
+int PNDManager::getVerbosity() const
+{
+  return context->getLoggingVerbosity();
+}
+
+void PNDManager::setVerbosity(int level)
+{
+  if(level != context->getLoggingVerbosity()) {
+    context->setLoggingVerbosity(level);
+    emit verbosityChanged(level);
+  }
+}
+
+bool PNDManager::getApplicationRunning() const
+{
+  return applicationRunning;
+}
+
+
+void PNDManager::crawl()
+{
+  emit crawling();
+  foreach(QPndman::Device* device, devices)
+  {
+    device->crawl();
+  }
+  localRepository->update();
+  updatePackages();
+  emit crawlDone();
+}
+
+void PNDManager::sync()
+{
+  QPndman::SyncHandle* handle = repository->sync();
+  emit syncing(handle);
+  SyncWorker* worker = new SyncWorker(handle);
+  handle->setParent(worker);
+  connect(worker, SIGNAL(ready(QPndman::SyncHandle*)), this, SLOT(syncFinished()));
+  worker->start();
+}
+
+void PNDManager::updatePackages()
+{
+  QList<QPndman::Package*> installedPackages = localRepository->getPackages();
+  QList<QPndman::Package*> remotePackages = repository->getPackages();
+
+  QMap<QString, QPndman::Package*> installed;
+  foreach(QPndman::Package* p, installedPackages)
+  {
+    installed.insert(p->getId(), p);
+  }
+
+  QMap<QString, QPndman::Package*> remote;
+  foreach(QPndman::Package* p, remotePackages)
+  {
+    remote.insert(p->getId(), p);
+  }
+
+  QMutableListIterator<Package*> i(packages);
+  packagesById.clear();
+  while(i.hasNext())
+  {
+    Package* p = i.next();
+    QPndman::Package* localPackage = installed.value(p->getId(), 0);
+    QPndman::Package* remotePackage = remote.value(p->getId(), 0);
+    if(localPackage || remotePackage)
+    {
+      p->setRemotePackage(remotePackage);
+      p->setLocalPackage(localPackage);
+      packagesById.insert(p->getId(), p);
+    }
+    else
+    {
+      i.remove();
+      p->deleteLater();
+    }
+  }
+
+  foreach(QPndman::Package* p, installedPackages)
+  {
+    if(!packagesById.contains(p->getId()))
+    {
+      QPndman::Package* remotePackage = remote.value(p->getId(), 0);
+      Package* package = new Package(this, p, remotePackage, this);
+      packagesById.insert(package->getId(), package);
+      packages << package;
+    }
+  }
+
+  foreach(QPndman::Package* p, remotePackages)
+  {
+    if(!packagesById.contains(p->getId()))
+    {
+      Package* package = new Package(this, 0, p, this);
+      packagesById.insert(package->getId(), package);
+      packages << package;
+    }
+  }
+
+  qDebug() << "Found" << packages.count() << "packages";
+  saveRepositories();
+  emit packagesChanged();
+}
+
+void PNDManager::saveRepositories()
+{
+  if(commitableDevices.empty())
+  {
+    QSet<QString> mounts;
+    foreach(Package* package, packages)
+    {
+      if(!package->getInstalled())
+        continue;
+
+      QString const mount = package->getMount();
+      if(!mounts.contains(mount))
+      {
+        mounts.insert(mount);
+
+        foreach(QPndman::Device* device, devices)
+        {
+          if(device->getMount() == mount)
+          {
+            commitableDevices.append(device);
+            break;
+          }
+        }
+
+        // If seen all devices, break
+        if(mounts.count() == devices.count())
+          break;
+      }
+    }
+  }
+  foreach(QPndman::Device* device, commitableDevices)
+  {
+    device->saveRepositories();
+  }
+}
+
+void PNDManager::execute(const QString &pnd)
+{
+  runningApplication.start("pnd_run", QStringList(pnd), QIODevice::NotOpen);
+}
+
+void PNDManager::applicationStarted()
+{
+  applicationRunning = true;
+  emit applicationRunningChanged(true);
+}
+
+void PNDManager::applicationFinished()
+{
+  applicationRunning = false;
+  emit applicationRunningChanged(false);
+}
+
+void PNDManager::syncFinished()
+{
+  repository->update();
+  crawl();
+  emit syncDone();
+}
