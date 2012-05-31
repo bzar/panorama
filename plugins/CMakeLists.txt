@@ -1,5 +1,4 @@
 ADD_SUBDIRECTORY(applications)
-#ADD_SUBDIRECTORY(packages)
 ADD_SUBDIRECTORY(pandora)
 ADD_SUBDIRECTORY(settings)
 ADD_SUBDIRECTORY(systeminformation)

@@ -2,9 +2,6 @@
     path = deps/pnd/src
     url = git://github.com/Panorama/pandora-libraries.git
     branch = develop
-[submodule "milkyhelper"]
-    path = deps/milky/src
-    url = git://github.com/Cloudef/milkyhelper.git
 [submodule "jansson"]
     path = deps/jansson/src
     url = git://github.com/akheron/jansson.git
