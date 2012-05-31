@@ -7,7 +7,7 @@ This is the source distribution for the Panorama project. It is licensed under t
 About
 -----
 
-Panorama is an application lanucher written in Qt for the [OpenPandora][] portable
+Panorama is an application launcher written in Qt for the [OpenPandora][] portable
 gaming platform. The focus lies on creating an extremely portable, modular and
 extensible system that also is visually appealing and uses little resources. Having
 intuitive controls and an efficient usage of screen real estate is also a primary
@@ -20,7 +20,9 @@ You will need the following tools and resources to compile Panorama:
 
 *   A C++ compiler
 *   [Git][]
-*   Qt 4.7 or later
+*   CMake
+*   Make
+*   Qt 4.8 or later
 
 Once you have these tools, you should get hold of the latest version of the
 Panorama source code distribution, which you can do by going to the
@@ -31,11 +33,14 @@ them using the following commands:
     git submodule init
     git submodule update
 
-Then, do the following:
+Then, do the following (needed for now until these are integrated into 
+the build system):
 
-*   Run `qmake` for the Qt version you used. If you want to enable OpenGL
-    rendering use `qmake CONFIG+=enable_opengl panorama.pro`. 
-*   Run `gmake` (or `make`). You should now have the `panorama` executable in the panorama/target directory.
+    cd deps/jansson/src && autoreconf -i && ./configure && cd -
+    cd deps/pndman/src && make version && cd -
+    mkdir build && cd build
+    cmake ..
+    make
 
 Further documentation
 ---------------------
