@@ -2,68 +2,22 @@
 #define DOWNLOADWORKER_H
 
 #include "qtpndman.h"
-#include <QTimer>
-#include <QObject>
 #include <QThread>
-#include <QSemaphore>
+#include <QMutex>
 
-class DownloadWorker : public QObject
+class DownloadWorker : public QThread
 {
   Q_OBJECT
 public:
-  DownloadWorker(QPndman::Handle* handle);
-  
-public slots:
-  void start();
-  
-private slots:
-  void process();
-  void emitError();
-
-signals:
-  void started(QPndman::Handle* handle);
-  void ready(QPndman::Handle* handle);
-  void error(QPndman::Handle* handle);
-  
-private:
-  QPndman::Handle* handle;
-  bool downloadStarted;
-  QTimer timer;
-};
-
-class DownloadWorkerSingletonThread;
-
-class DownloadWorkerSingleton : public QObject
-{
-  Q_OBJECT
-public:
-  static DownloadWorkerSingleton* instance();
-  ~DownloadWorkerSingleton();
-  QSemaphore mutex;
-public slots:
-  void start();
-signals:
-  void update();
-  void error();
-private slots:
-  void process();
-private:
-  friend class DownloadWorkerSingletonThread;
-  static DownloadWorkerSingletonThread* thread;
-  DownloadWorkerSingleton(QObject* parent = 0);
-  QTimer timer;
-};
-
-class DownloadWorkerSingletonThread : public QThread
-{
-  Q_OBJECT
-public:
-  DownloadWorkerSingletonThread(QObject* parent = 0);
-  ~DownloadWorkerSingletonThread();
+  DownloadWorker(QPndman::Context* context);
   void run();
-  DownloadWorkerSingleton* getSingleton() const;
+  
+public slots:
+  void stop();
+  
 private:
-  DownloadWorkerSingleton* singleton;
+  QPndman::Context* context;
+  QMutex stopMutex;
 };
 
 #endif

@@ -1,6 +1,5 @@
 #include "package.h"
 #include "pndmanager.h"
-#include "downloadworker.h"
 #include <QDebug>
 
 Package::Package(PNDManager* manager, QPndman::Package* localPackage, QPndman::Package* remotePackage, QObject* parent):
@@ -254,23 +253,31 @@ void Package::install(QPndman::Device* device, QString location)
     installLocation = QPndman::Enum::Menu;
   }
 
-  QPndman::InstallHandle* handle = device->install(remotePackage, installLocation);
-  if(!handle)
+  QPndman::InstallHandle* handle = new QPndman::InstallHandle(manager->getContext(), remotePackage, device, installLocation, false, this);
+
+  connect(handle, SIGNAL(downloadStarted()), this, SIGNAL(downloadStarted()));
+  connect(handle, SIGNAL(downloadStarted()), manager, SIGNAL(downloadStarted()));
+  connect(handle, SIGNAL(bytesDownloadedChanged(qint64)), this, SLOT(setBytesDownloaded(qint64)));
+  connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), this, SLOT(setBytesToDownload(qint64)));
+
+  connect(handle, SIGNAL(done()), this, SLOT(setInstalled()));
+  connect(handle, SIGNAL(done()), manager, SLOT(crawl()));
+  connect(handle, SIGNAL(done()), handle, SLOT(deleteLater()));
+
+  connect(handle, SIGNAL(cancelled()), this, SLOT(handleDownloadCancelled()));
+  connect(handle, SIGNAL(cancelled()), handle, SLOT(deleteLater()));
+
+  connect(handle, SIGNAL(error(QString)), handle, SLOT(deleteLater()));
+
+  if(!handle->execute())
   {
     return;
   }
+
   manager->addCommitableDevice(device);
-  DownloadWorker* worker = new DownloadWorker(handle);
-  handle->setParent(worker);
-  connect(worker, SIGNAL(started(QPndman::Handle*)), this, SIGNAL(downloadStarted()));
-  connect(worker, SIGNAL(started(QPndman::Handle*)), manager, SIGNAL(downloadStarted()));
-  connect(handle, SIGNAL(bytesDownloadedChanged(qint64)), this, SLOT(setBytesDownloaded(qint64)));
-  connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), this, SLOT(setBytesToDownload(qint64)));
-  connect(worker, SIGNAL(ready(QPndman::Handle*)), this, SLOT(setInstalled()));
-  connect(worker, SIGNAL(ready(QPndman::Handle*)), manager, SLOT(crawl()));
-  connect(handle, SIGNAL(cancelled()), this, SLOT(handleDownloadCancelled()));
+
+
   operationHandle = handle;
-  worker->start();
 }
 
 void Package::remove()
@@ -299,22 +306,29 @@ void Package::upgrade()
   if(!localPackage)
     return;
 
-  QPndman::UpgradeHandle* handle = localPackage->upgrade(false);
-  if(!handle)
+  QPndman::UpgradeHandle* handle = new QPndman::UpgradeHandle(manager->getContext(), localPackage->getUpgradeCandidate(), false, this);
+
+  connect(handle, SIGNAL(downloadStarted()), this, SIGNAL(downloadStarted()));
+  connect(handle, SIGNAL(downloadStarted()), manager, SIGNAL(downloadStarted()));
+  connect(handle, SIGNAL(bytesDownloadedChanged(qint64)), this, SLOT(setBytesDownloaded(qint64)));
+  connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), this, SLOT(setBytesToDownload(qint64)));
+
+  connect(handle, SIGNAL(done()), this, SLOT(setInstalled()));
+  connect(handle, SIGNAL(done()), manager, SLOT(crawl()));
+  connect(handle, SIGNAL(done()), handle, SLOT(deleteLater()));
+
+  connect(handle, SIGNAL(cancelled()), this, SLOT(handleDownloadCancelled()));
+  connect(handle, SIGNAL(cancelled()), handle, SLOT(deleteLater()));
+
+  connect(handle, SIGNAL(error(QString)), handle, SLOT(deleteLater()));
+
+
+  if(!handle->execute())
   {
     return;
   }
-  DownloadWorker* worker = new DownloadWorker(handle);
-  handle->setParent(worker);
-  connect(worker, SIGNAL(started(QPndman::Handle*)), this, SIGNAL(downloadStarted()));
-  connect(worker, SIGNAL(started(QPndman::Handle*)), manager, SIGNAL(downloadStarted()));
-  connect(handle, SIGNAL(bytesDownloadedChanged(qint64)), this, SLOT(setBytesDownloaded(qint64)));
-  connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), this, SLOT(setBytesToDownload(qint64)));
-  connect(worker, SIGNAL(ready(QPndman::Handle*)), this, SLOT(setInstalled()));
-  connect(worker, SIGNAL(ready(QPndman::Handle*)), manager, SLOT(crawl()));
-  connect(handle, SIGNAL(cancelled()), this, SLOT(handleDownloadCancelled()));
+
   operationHandle = handle;
-  worker->start();
 }
 
 void Package::cancelDownload()

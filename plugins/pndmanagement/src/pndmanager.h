@@ -7,6 +7,7 @@
 #include "qtpndman.h"
 #include "package.h"
 #include "pndfilter.h"
+#include "downloadworker.h"
 #include <QDeclarativeListProperty>
 
 class PNDManager : public QObject
@@ -72,6 +73,7 @@ private:
   QList<QPndman::Device*> devices;
   QList<QPndman::Device*> commitableDevices;
 
+  DownloadWorker downloadWorker;
   QProcess runningApplication;
   bool applicationRunning;
 };

@@ -1,5 +1,4 @@
 #include "pndmanager.h"
-#include "syncworker.h"
 
 #include <QDebug>
 
@@ -10,7 +9,7 @@ PNDManager::PNDManager(QObject* parent) : QObject(parent),
   repository(new QPndman::Repository(context, REPOSITORY_URL)),
   localRepository(new QPndman::LocalRepository(context)),
   packages(), packagesById(), devices(), commitableDevices(),
-  runningApplication(), applicationRunning(false)
+  downloadWorker(context), runningApplication(), applicationRunning(false)
 {
   qDebug() << "PNDManager::PNDManager";
 
@@ -32,10 +31,12 @@ PNDManager::PNDManager(QObject* parent) : QObject(parent),
 
   repository->update();
   localRepository->update();
+  downloadWorker.start(QThread::LowPriority);
 }
 
 PNDManager::~PNDManager()
 {
+  downloadWorker.stop();
   saveRepositories();
 }
 
@@ -148,12 +149,10 @@ bool PNDManager::getApplicationRunning() const
 
 void PNDManager::crawl()
 {
+  qDebug() << "Crawling";
   emit crawling();
-  foreach(QPndman::Device* device, devices)
-  {
-    device->crawl();
-  }
-  localRepository->update();
+  int found = context->crawlAllPndmanDevices();
+  qDebug() << "Found" << found << "new installed packages";
   updatePackages();
   emit crawlDone();
 }
@@ -162,15 +161,14 @@ void PNDManager::sync()
 {
   QPndman::SyncHandle* handle = repository->sync();
   emit syncing(handle);
-  SyncWorker* worker = new SyncWorker(handle);
-  handle->setParent(worker);
-  connect(worker, SIGNAL(ready(QPndman::SyncHandle*)), this, SLOT(syncFinished()));
-  worker->start();
+  connect(handle, SIGNAL(done()), this, SLOT(syncFinished()));
+  connect(handle, SIGNAL(done()), handle, SLOT(deleteLater()));
 }
 
 void PNDManager::updatePackages()
 {
   QList<QPndman::Package*> installedPackages = localRepository->getPackages();
+  qDebug() << installedPackages.size() << "installed packages";
   QList<QPndman::Package*> remotePackages = repository->getPackages();
 
   QMap<QString, QPndman::Package*> installed;
@@ -226,7 +224,7 @@ void PNDManager::updatePackages()
     }
   }
 
-  qDebug() << "Found" << packages.count() << "packages";
+  qDebug() << "Total" << packages.count() << "packages";
   saveRepositories();
   emit packagesChanged();
 }
