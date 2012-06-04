@@ -265,9 +265,19 @@ void PNDManager::saveRepositories()
   }
 }
 
-void PNDManager::execute(const QString &pnd)
+void PNDManager::execute(QString const& pndId)
 {
-  runningApplication.start("pnd_run", QStringList(pnd), QIODevice::NotOpen);
+  Package* pnd = packagesById.value(pndId, 0);
+  if(pnd)
+  {
+    QStringList fullPath;
+    fullPath << pnd->getMount() << QDir::separator() << pnd->getPath();
+    QFile pndFile(fullPath.join(""));
+    if(pndFile.exists())
+    {
+      runningApplication.start("pnd_run", QStringList(pndFile.fileName()), QIODevice::NotOpen);
+    }
+  }
 }
 
 void PNDManager::applicationStarted()

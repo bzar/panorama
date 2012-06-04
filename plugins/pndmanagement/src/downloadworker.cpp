@@ -1,7 +1,7 @@
 #include "downloadworker.h"
 #include <QDebug>
 
-DownloadWorker::DownloadWorker(QPndman::Context *context) : context(context), stopMutex()
+DownloadWorker::DownloadWorker(QPndman::Context *context) : QThread(), context(context), stopMutex()
 {
   stopMutex.lock();
 }

@@ -72,7 +72,7 @@ View {
 
   function execute() {
     if(!pndManager.applicationRunning) {
-      pndManager.execute(pnd.path)
+      pndManager.execute(pnd.id)
     }
   }
 
