@@ -260,7 +260,7 @@ View {
 
         Image {
           id: icon
-          source: pnd.icon
+          source: pnd.installed ? "image://pnd/" + pnd.id : pnd.icon
           asynchronous: true
           sourceSize.width: 48
           anchors.top: parent.top

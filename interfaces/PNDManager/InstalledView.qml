@@ -216,7 +216,7 @@ View {
     delegate: SectionItem {
       width: content.width
       title: item.title ? item.title : item.id
-      icon: item.icon
+      icon: item.installed ? "image://pnd/" + item.id : item.icon
       progress: item.isDownloading ? Math.floor(100 * item.bytesDownloaded / item.bytesToDownload) + "%" : ""
       onClicked: {
         if(content.currentIndex === index) {

@@ -28,6 +28,8 @@ public:
   QPndman::Device* getDevice(int) const;
 
   PNDFilter* getPackages();
+  Package* getPackageById(QString const& id);
+
   Q_INVOKABLE PNDFilter* searchPackages(QString const& search);
   QPndman::Context* getContext() const;
   void addCommitableDevice(QPndman::Device* device);

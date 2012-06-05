@@ -13,6 +13,7 @@ Item {
 
   Image {
     id: icon
+    asynchronous: true
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
     anchors.leftMargin: (48/2 - width/2) + 4

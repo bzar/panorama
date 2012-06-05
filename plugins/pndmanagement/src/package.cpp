@@ -373,6 +373,16 @@ void Package::setLocalPackage(QPndman::Package* p)
     emit installedChanged(localPackage != 0);
 }
 
+QImage Package::getEmbeddedIcon() const
+{
+  if(!localPackage)
+  {
+    return QImage();
+  }
+
+  return localPackage->getEmbeddedIcon();
+}
+
 QPndman::Package *Package::rPackage() const
 {
   return remotePackage ? remotePackage.data() : localPackage ? localPackage.data() : 0;

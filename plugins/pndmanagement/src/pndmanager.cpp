@@ -1,5 +1,5 @@
 #include "pndmanager.h"
-
+#include "pnddeclarativeimageprovider.h"
 #include <QDebug>
 
 QString const PNDManager::REPOSITORY_URL("http://repo.openpandora.org/includes/get_data.php");
@@ -32,6 +32,7 @@ PNDManager::PNDManager(QObject* parent) : QObject(parent),
   repository->update();
   localRepository->update();
   downloadWorker.start(QThread::LowPriority);
+  PNDDeclarativeImageProvider::registerPNDManager(this);
 }
 
 PNDManager::~PNDManager()
@@ -59,6 +60,11 @@ QPndman::Device *PNDManager::getDevice(int i) const
 PNDFilter* PNDManager::getPackages()
 {
   return new PNDFilter(packages);
+}
+
+Package *PNDManager::getPackageById(const QString &id)
+{
+  return packagesById.value(id, 0);
 }
 
 PNDFilter* PNDManager::searchPackages(const QString &search)

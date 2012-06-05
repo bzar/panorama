@@ -97,6 +97,7 @@ public:
   void setRemotePackage(QPndman::Package* p);
   void setLocalPackage(QPndman::Package* p);
 
+  QImage getEmbeddedIcon() const;
 public slots:
   void setInstalled();
   void setBytesDownloaded(qint64);

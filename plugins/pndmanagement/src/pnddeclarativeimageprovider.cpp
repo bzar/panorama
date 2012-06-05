@@ -2,29 +2,9 @@
 #include "pnd_apps.h"
 #include "pnd_pndfiles.h"
 
-#include <QDir>
-#include <QEventLoop>
-#include <QCryptographicHash>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkRequest>
-#include <QtNetwork/QNetworkReply>
 #include <QDebug>
-#include <QUrl>
-#include <QtConcurrentRun>
 
-namespace
-{
-  QByteArray download(QString url)
-  {
-    QEventLoop eventLoop;
-    QNetworkAccessManager manager(&eventLoop);
-    QNetworkReply* reply = manager.get(QNetworkRequest(QUrl(url)));
-    QObject::connect(reply, SIGNAL(finished()), &eventLoop, SLOT(quit()));
-    QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), &eventLoop, SLOT(quit()));
-    eventLoop.exec();
-    return reply->readAll();
-  }
-}
+QList< QPointer<PNDManager> > PNDDeclarativeImageProvider::managers;
 
 PNDDeclarativeImageProvider::PNDDeclarativeImageProvider() :
   QDeclarativeImageProvider(QDeclarativeImageProvider::Image)
@@ -33,38 +13,45 @@ PNDDeclarativeImageProvider::PNDDeclarativeImageProvider() :
 
 QImage PNDDeclarativeImageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize)
 {
-  qDebug() << "PNDDeclarativeImageProvider::requestImage" << id;
   QImage image;
-  if(id.startsWith("http://")) {
-    QFuture<QByteArray> data = QtConcurrent::run(download, id);
-    image.loadFromData(data.result());
-  }
-  else if(QFile(PND_PNDRUN_DEFAULT).exists())
+
+  foreach(QPointer<PNDManager> p, managers)
   {
-    QStringList idParts = id.split("::");
-    QString pndPath = idParts.at(0);
-    QString imagePath = idParts.at(1);
-    QCryptographicHash hasher(QCryptographicHash::Md5);
-    hasher.addData(id.toLocal8Bit());
-    QString hash = hasher.result().toHex();
-    if(pnd_pnd_mount(PND_PNDRUN_DEFAULT, pndPath.toLocal8Bit().data(), hash.toLocal8Bit().data()) <= 0)
+    if(p.isNull())
     {
-      qDebug() << "ERROR: Could not mount PND" << hash;
-      return image;
+      continue;
     }
 
-    QString filePath = QString("/mnt/utmp/%1/%2").arg(hash).arg(imagePath);
-    image.load(filePath);
-    pnd_pnd_unmount(PND_PNDRUN_DEFAULT, pndPath.toLocal8Bit().data(), hash.toLocal8Bit().data());
+    Package* package = p->getPackageById(id);
+
+    if(package)
+    {
+      image = package->getEmbeddedIcon();
+
+      if(!image.isNull())
+      {
+        if(requestedSize.width() && requestedSize.height())
+        {
+          image = image.scaled(requestedSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        }
+        else if(requestedSize.width())
+        {
+          image = image.scaledToWidth(requestedSize.width(), Qt::SmoothTransformation);
+        }
+        else if(requestedSize.height())
+        {
+          image = image.scaledToHeight(requestedSize.height(), Qt::SmoothTransformation);
+        }
+
+        break;
+      }
+    }
   }
 
-  size->setWidth(image.width());
-  size->setHeight(image.height());
+  return image;
+}
 
-  if(requestedSize.isNull() || requestedSize.isEmpty() || !requestedSize.isValid())
-  {
-    return image;
-  }
-
-  return image.scaled(requestedSize);
+void PNDDeclarativeImageProvider::registerPNDManager(PNDManager *pndManager)
+{
+  managers.append(QPointer<PNDManager>(pndManager));
 }

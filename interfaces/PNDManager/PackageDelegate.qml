@@ -10,7 +10,7 @@ Item {
 
   Image {
     id: icon
-    source: pnd.icon
+    source: pnd.installed ? "image://pnd/" + pnd.id : pnd.icon
     asynchronous: true
     anchors.leftMargin: (48/2 - width/2) + 4
     anchors.left: parent.left

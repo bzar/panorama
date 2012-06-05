@@ -3,7 +3,7 @@
 #include "pndfilter.h"
 #include "package.h"
 #include "pndutils.h"
-//#include "pnddeclarativeimageprovider.h"
+#include "pnddeclarativeimageprovider.h"
 
 void PNDManagementPlugin::registerTypes(const char *uri)
 {
@@ -27,8 +27,7 @@ void PNDManagementPlugin::registerTypes(const char *uri)
 void PNDManagementPlugin::initializeEngine(QDeclarativeEngine *engine, const char *uri)
 {
   Q_UNUSED(uri)
-  //TODO: Disabled until cached dowloading can be fixed
-  //engine->addImageProvider("pnd", new PNDDeclarativeImageProvider);
+  engine->addImageProvider("pnd", new PNDDeclarativeImageProvider);
 }
 
 Q_EXPORT_PLUGIN2(pndmanagement,PNDManagementPlugin)
