@@ -5,7 +5,7 @@
 QString const PNDManager::REPOSITORY_URL("http://repo.openpandora.org/includes/get_data.php");
 
 PNDManager::PNDManager(QObject* parent) : QObject(parent), 
-  context(new QPndman::Context(this)),
+  context(new QPndman::Context),
   repository(new QPndman::Repository(context, REPOSITORY_URL)),
   localRepository(new QPndman::LocalRepository(context)),
   packages(), packagesById(), devices(), commitableDevices(),
@@ -38,6 +38,7 @@ PNDManager::~PNDManager()
 {
   downloadWorker.stop();
   saveRepositories();
+  delete context;
 }
 
 QDeclarativeListProperty<QPndman::Device> PNDManager::getDevices()
