@@ -33,11 +33,13 @@ Item {
 
   Text {
     id: progress
-    font.pixelSize: 20
+    font.pixelSize: 14
     height: parent.height
     verticalAlignment: Text.AlignVCenter
     anchors.right: parent.right
     visible: text
+    horizontalAlignment: Text.AlignRight
+    width: 64
   }
 
   Rectangle {

@@ -1,4 +1,5 @@
 import QtQuick 1.1
+import "util.js" as Utils
 
 View {
   id: view
@@ -107,7 +108,7 @@ View {
 
       Text {
         id: categoriesText
-        text: pndUtils.createCategoryString(modelData) + "\n" + modelData.author.name
+        text: Utils.cropText(pndUtils.createCategoryString(modelData), 40) + "\n" + Utils.cropText(modelData.author.name, 40)
         font.pixelSize: 14
       }
 

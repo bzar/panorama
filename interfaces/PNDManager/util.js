@@ -77,3 +77,7 @@ function prettyLastUpdatedString(datetime) {
     return Math.floor(days/365) + " years ago";
   }
 }
+
+function cropText(text, maxSize) {
+  return text.length > maxSize ? text.slice(0, maxSize - 1) + "…" : text;
+}

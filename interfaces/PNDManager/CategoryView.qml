@@ -100,7 +100,7 @@ View {
       }
 
       Text {
-        text: modelData.author.name + "\n" + (view.sortByTitle ? Utils.prettySize(modelData.size) : Utils.prettySize(modelData.size) + " (updated " + Utils.prettyLastUpdatedString(modelData.modified) + ")")
+        text: Utils.cropText(modelData.author.name, 40) + "\n" + (view.sortByTitle ? Utils.prettySize(modelData.size) : Utils.prettySize(modelData.size) + " (updated " + Utils.prettyLastUpdatedString(modelData.modified) + ")")
         font.pixelSize: 14
       }
     }

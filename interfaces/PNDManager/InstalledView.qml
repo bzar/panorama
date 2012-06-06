@@ -214,10 +214,38 @@ View {
     }
 
     delegate: SectionItem {
+      Timer {
+        id: downloadStats
+        property int prevBytesDownloaded: 0
+        property int bytesDownloaded: 0
+        interval: 1000
+        running: item.isDownloading
+        onTriggered: {
+          prevBytesDownloaded = bytesDownloaded;
+          bytesDownloaded = item.bytesDownloaded;
+        }
+      }
+
+      function getProgress() {
+        if(!item.isDownloading) {
+          return "";
+        }
+
+        var percentage = Math.floor(100 * item.bytesDownloaded / item.bytesToDownload);
+        var t = percentage + "%\n";
+
+        if(downloadStats.prevBytesDownloaded) {
+          var rate = downloadStats.bytesDownloaded - downloadStats.prevBytesDownloaded;
+          t += Utils.prettySize(rate) + "/s";
+        }
+
+        return t;
+      }
+
       width: content.width
       title: item.title ? item.title : item.id
       icon: item.installed ? "image://pnd/" + item.id : item.icon
-      progress: item.isDownloading ? Math.floor(100 * item.bytesDownloaded / item.bytesToDownload) + "%" : ""
+      progress: getProgress()
       onClicked: {
         if(content.currentIndex === index) {
           openSelected();
