@@ -9,6 +9,7 @@ View {
 
   Component { id: installDialog; InstallLocationDialog {} }
   Component { id: previewPictureView; PreviewPictureView {} }
+  Component { id: commentView; CommentView {} }
 
   Keys.forwardTo: textArea
   Keys.priority: Keys.AfterItem
@@ -16,6 +17,7 @@ View {
   onOkButton: removeConfirmation.visible ? removeConfirmation.yes() : showPreviewPictures()
 
   Keys.onReturnPressed: execute()
+  Keys.onPressed: if(event.key == Qt.Key_C) showComments();
 
   onInstallUpgradeButton: {
     if(removeConfirmation.visible)
@@ -55,6 +57,10 @@ View {
     if(pnd.previewPictures.length > 0) {
       stack.push(previewPictureView, { "previewPictures": pnd.previewPictures });
     }
+  }
+
+  function showComments() {
+    stack.push(commentView, {"pnd": pnd});
   }
 
   function showInstallDialog() {

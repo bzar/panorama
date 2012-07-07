@@ -58,6 +58,20 @@ PanoramaUI {
       Component.onCompleted: pndManager.verbosity = value
   }
 
+  Setting {
+    id: usernameSetting
+    section: "PNDManager"
+    key: "username"
+    defaultValue: ""
+  }
+
+  Setting {
+    id: apiKeySetting
+    section: "PNDManager"
+    key: "apiKey"
+    defaultValue: ""
+  }
+
   function init() {
     pndManager.crawl();
   }
@@ -76,7 +90,11 @@ PanoramaUI {
       bottomBar.syncing = false
       syncCompleteNotification.show()
     }
+    username: usernameSetting.value
+    key: apiKeySetting.value
   }
+
+  property bool loggedIn: pndManager.username && pndManager.key
 
   PNDUtils { id: pndUtils }
 

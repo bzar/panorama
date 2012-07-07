@@ -22,6 +22,7 @@ void PNDManagementPlugin::registerTypes(const char *uri)
   qmlRegisterType<QPndman::Association>();
   qmlRegisterType<QPndman::ExecutionInfo>();
   qmlRegisterType<QPndman::Application>();
+  qmlRegisterType<QPndman::Comment>();
 }
 
 void PNDManagementPlugin::initializeEngine(QDeclarativeEngine *engine, const char *uri)

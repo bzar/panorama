@@ -45,9 +45,10 @@ View {
       TextInput {
         id: search
         anchors.left: searchIcon.right
-        anchors.right: searchHint.left
+        anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
         anchors.margins: 4
+        anchors.rightMargin: searchHint.visible ? 32 : 4
         font.pixelSize: 20
         activeFocusOnPress: false
         cursorVisible: true
@@ -62,15 +63,16 @@ View {
           }
         }
       }
+    }
 
-      GuiHint {
-        id: searchHint
-        control: "keyboard-enter"
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        width: height
-      }
+    GuiHint {
+      id: searchHint
+      control: "keyboard-enter"
+      anchors.right: searchBox.right
+      anchors.verticalCenter: searchBox.verticalCenter
+      anchors.rightMargin: -16
+      width: 48
+      height: 48
     }
 
     Rectangle {

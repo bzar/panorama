@@ -13,25 +13,13 @@ Rectangle {
   }
 
   function hide() {
-    n -= 1;
+    if(n > 0)
+      n -= 1;
   }
 
-  Image {
+  SpinnerImage {
+    id: spinnerImage
     anchors.centerIn: parent
-    source: "img/spin_alt_32x32.png"
-    sourceSize {
-      height: 64
-      width: 64
-    }
-    smooth: true
-
-    NumberAnimation on rotation {
-      running: overlay.visible
-      from: 0
-      to: 360
-      duration: 2000
-      loops: NumberAnimation.Infinite
-    }
   }
 
   MouseArea {

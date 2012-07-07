@@ -18,6 +18,9 @@ class PNDManager : public QObject
   Q_PROPERTY(int verbosity READ getVerbosity WRITE setVerbosity NOTIFY verbosityChanged)
   Q_PROPERTY(bool applicationRunning READ getApplicationRunning NOTIFY applicationRunningChanged)
 
+  Q_PROPERTY(QString username READ getUsername WRITE setUsername NOTIFY usernameChanged)
+  Q_PROPERTY(QString key READ getKey WRITE setKey NOTIFY keyChanged)
+
   Q_ENUMS(QPndman::Enum::InstallLocation QPndman::Enum::Operation QPndman::Version::Type)
 public:
   PNDManager(QObject* parent = 0);
@@ -39,6 +42,12 @@ public:
 
   bool getApplicationRunning() const;
 
+  QString getUsername() const;
+  QString getKey() const;
+
+  void setUsername(QString const newUsername);
+  void setKey(QString const newKey);
+
 public slots:
   void crawl();
   void sync();
@@ -59,13 +68,18 @@ signals:
   void verbosityChanged(int);
   void applicationRunningChanged(bool);
 
+  void usernameChanged();
+  void keyChanged();
+
 private slots:
   void applicationStarted();
   void applicationFinished();
   void syncFinished();
+  void login();
+
 private:
   static QString const REPOSITORY_URL;
-  
+
   QPndman::Context* context;
   QPndman::Repository* repository;
   QPndman::LocalRepository* localRepository;
@@ -78,6 +92,9 @@ private:
   DownloadWorker downloadWorker;
   QProcess runningApplication;
   bool applicationRunning;
+
+  QString username;
+  QString key;
 };
 
 #endif

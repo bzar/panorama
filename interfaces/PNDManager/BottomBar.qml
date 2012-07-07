@@ -98,8 +98,6 @@ Rectangle {
       control: "start"
       anchors.right: reloadIcon.left
       anchors.margins: 8
-      width: 24
-      height: 24
       anchors.verticalCenter: parent.verticalCenter
     }
 

@@ -29,6 +29,9 @@ PNDManager::PNDManager(QObject* parent) : QObject(parent),
     }
   }
 
+  connect(this, SIGNAL(usernameChanged()), this, SLOT(login()));
+  connect(this, SIGNAL(keyChanged()), this, SLOT(login()));
+
   repository->update();
   localRepository->update();
   downloadWorker.start(QThread::LowPriority);
@@ -151,6 +154,34 @@ void PNDManager::setVerbosity(int level)
 bool PNDManager::getApplicationRunning() const
 {
   return applicationRunning;
+}
+
+QString PNDManager::getUsername() const
+{
+  return username;
+}
+
+QString PNDManager::getKey() const
+{
+  return key;
+}
+
+void PNDManager::setUsername(const QString newUsername)
+{
+  if(newUsername != username)
+  {
+    username = newUsername;
+    emit usernameChanged();
+  }
+}
+
+void PNDManager::setKey(const QString newKey)
+{
+  if(newKey != key)
+  {
+    key = newKey;
+    emit keyChanged();
+  }
 }
 
 
@@ -284,6 +315,15 @@ void PNDManager::execute(QString const& pndId)
     {
       runningApplication.start("pnd_run", QStringList(pndFile.fileName()), QIODevice::NotOpen);
     }
+  }
+}
+
+void PNDManager::login()
+{
+  if(!username.isEmpty() && !key.isEmpty())
+  {
+    qDebug() << "setting credentials to" << username << key;
+    repository->setCredentials(username, key);
   }
 }
 

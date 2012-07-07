@@ -4,8 +4,8 @@ Image {
   property string control
 
   source: control ? "img/guihints/p02_" + control + ".png" : ""
-  width: 24
-  height: 24
+  width: 32
+  height: 32
   smooth: true
   visible: showHints.value
 }

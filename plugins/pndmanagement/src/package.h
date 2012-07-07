@@ -43,6 +43,8 @@ class Package : public QObject
   Q_PROPERTY(qint64 bytesDownloaded READ getBytesDownloaded NOTIFY bytesDownloadedChanged)
   Q_PROPERTY(qint64 bytesToDownload READ getBytesToDownload NOTIFY bytesToDownloadChanged)
 
+  Q_PROPERTY(QDeclarativeListProperty<QPndman::Comment> comments READ getCommentsProperty NOTIFY commentsChanged)
+
 public:
   Package(PNDManager* manager, QPndman::Package* localPackage, QPndman::Package* remotePackage, QObject* parent = 0);
 
@@ -69,12 +71,14 @@ public:
   QList<QPndman::TranslatedString*> getDescriptions() const;
   QList<QPndman::Category*> getCategories() const;
   QList<QPndman::PreviewPicture*> getPreviewPictures() const;
+  QList<QPndman::Comment*> getComments() const;
 
   QDeclarativeListProperty<QPndman::Application> getApplicationsProperty();
   QDeclarativeListProperty<QPndman::TranslatedString> getTitlesProperty();
   QDeclarativeListProperty<QPndman::TranslatedString> getDescriptionsProperty();
   QDeclarativeListProperty<QPndman::Category> getCategoriesProperty();
   QDeclarativeListProperty<QPndman::PreviewPicture> getPreviewPicturesProperty();
+  QDeclarativeListProperty<QPndman::Comment> getCommentsProperty();
 
   int applicationCount() const;
   int titleCount() const;
@@ -98,6 +102,9 @@ public:
   void setLocalPackage(QPndman::Package* p);
 
   QImage getEmbeddedIcon() const;
+
+  Q_INVOKABLE void addComment(QString const comment);
+
 public slots:
   void setInstalled();
   void setBytesDownloaded(qint64);
@@ -110,6 +117,9 @@ public slots:
   void cancelDownload();
   void handleDownloadCancelled();
 
+  void handleCommentUpdate();
+  void reloadComments();
+
 signals:
   void installedChanged(bool);
   void bytesDownloadedChanged(qint64);
@@ -117,6 +127,10 @@ signals:
   void hasUpgradeChanged();
   void downloadCancelled();
   void downloadStarted();
+
+  void commentsChanged();
+  void reloadCommentsDone();
+  void addCommentDone();
 
 private:
   QPndman::Package* rPackage() const;
@@ -137,6 +151,7 @@ private:
   QList<QPndman::TranslatedString*> descriptionList;
   QList<QPndman::Category*> categoryList;
   QList<QPndman::PreviewPicture*> previewPictureList;
+  QList<QPndman::Comment*> commentList;
 };
 
 #endif

@@ -8,6 +8,12 @@ Package::Package(PNDManager* manager, QPndman::Package* localPackage, QPndman::P
   bytesDownloaded(localPackage ? 1 : 0), bytesToDownload(1),
   applicationList(), titleList(), descriptionList(), categoryList()
 {
+  if(remotePackage)
+  {
+    connect(remotePackage, SIGNAL(commentsChanged()), this, SLOT(handleCommentUpdate()));
+    connect(remotePackage, SIGNAL(reloadCommentsDone()), this, SIGNAL(reloadCommentsDone()));
+    connect(remotePackage, SIGNAL(addCommentDone()), this, SIGNAL(addCommentDone()));
+  }
 }
 
 QString Package::getId() const
@@ -115,7 +121,11 @@ QList<QPndman::Category*> Package::getCategories() const
 QList<QPndman::PreviewPicture*> Package::getPreviewPictures() const
 {
   return rPackage() ? rPackage()->getPreviewPictures() : QList<QPndman::PreviewPicture*>();
+}
 
+QList<QPndman::Comment *> Package::getComments() const
+{
+  return commentList;
 }
 
 QDeclarativeListProperty<QPndman::Application> Package::getApplicationsProperty()
@@ -147,6 +157,11 @@ QDeclarativeListProperty<QPndman::PreviewPicture> Package::getPreviewPicturesPro
   if(previewPictureList.isEmpty())
     previewPictureList = getPreviewPictures();
   return QDeclarativeListProperty<QPndman::PreviewPicture>(rPackage(), previewPictureList);
+}
+
+QDeclarativeListProperty<QPndman::Comment> Package::getCommentsProperty()
+{
+  return QDeclarativeListProperty<QPndman::Comment>(rPackage(), commentList);
 }
 
 int Package::applicationCount() const
@@ -344,6 +359,20 @@ void Package::handleDownloadCancelled()
   emit downloadCancelled();
 }
 
+void Package::handleCommentUpdate()
+{
+  if(remotePackage) {
+    commentList = remotePackage->getComments();
+    emit commentsChanged();
+  }
+}
+
+void Package::reloadComments()
+{
+  if(remotePackage)
+    remotePackage->reloadComments();
+}
+
 void Package::setRemotePackage(QPndman::Package* p)
 {
   applicationList.clear();
@@ -353,6 +382,12 @@ void Package::setRemotePackage(QPndman::Package* p)
   previewPictureList.clear();
 
   remotePackage = p;
+  if(remotePackage)
+  {
+    connect(remotePackage, SIGNAL(commentsChanged()), this, SLOT(handleCommentUpdate()));
+    connect(remotePackage, SIGNAL(reloadCommentsDone()), this, SIGNAL(reloadCommentsDone()));
+    connect(remotePackage, SIGNAL(addCommentDone()), this, SIGNAL(addCommentDone()));
+  }
 }
 
 void Package::setLocalPackage(QPndman::Package* p)
@@ -381,6 +416,14 @@ QImage Package::getEmbeddedIcon() const
   }
 
   return localPackage->getEmbeddedIcon();
+}
+
+void Package::addComment(const QString comment)
+{
+  if(remotePackage)
+  {
+    remotePackage->addComment(comment);
+  }
 }
 
 QPndman::Package *Package::rPackage() const
