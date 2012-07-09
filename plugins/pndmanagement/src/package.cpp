@@ -426,6 +426,14 @@ void Package::addComment(const QString comment)
   }
 }
 
+void Package::rate(const int rating)
+{
+  if(remotePackage)
+  {
+    remotePackage->rate(rating);
+  }
+}
+
 QPndman::Package *Package::rPackage() const
 {
   return remotePackage ? remotePackage.data() : localPackage ? localPackage.data() : 0;

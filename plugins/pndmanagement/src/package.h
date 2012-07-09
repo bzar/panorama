@@ -104,6 +104,7 @@ public:
   QImage getEmbeddedIcon() const;
 
   Q_INVOKABLE void addComment(QString const comment);
+  Q_INVOKABLE void rate(int const rating);
 
 public slots:
   void setInstalled();
