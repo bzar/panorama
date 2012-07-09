@@ -352,10 +352,11 @@ View {
   Item {
     id: imageArea
     anchors.top: buttons.bottom
-    anchors.bottom: parent.bottom
+    anchors.bottom: secondaryButtons.top
     anchors.left: parent.horizontalCenter
     anchors.right: parent.right
-    anchors.margins: 16
+    anchors.margins: 4
+    anchors.topMargin: 16
     clip: true
 
     Image {
@@ -421,6 +422,27 @@ View {
     anchors.top: imageArea.bottom
     anchors.left: imageArea.left
     anchors.right: imageArea.right
+  }
+
+  Item {
+    id: secondaryButtons
+    anchors.bottom: parent.bottom
+    anchors.left: parent.horizontalCenter
+    anchors.right: parent.right
+    anchors.margins: 4
+    height: childrenRect.height
+
+    Button {
+      id: commentsButton
+      label: "Comments"
+      color: "#555"
+      control: "keyboard-c"
+      radius: 4
+      anchors.right: parent.right
+      height: 32
+      width: 192
+      onClicked: showComments()
+    }
   }
 }
 
