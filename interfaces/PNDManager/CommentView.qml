@@ -99,7 +99,11 @@ View {
     Keys.priority: Keys.BeforeItem
 
     Component.onCompleted: {
-      pnd.reloadComments();
+      if(pnd.comments.length === 0) {
+        pnd.reloadComments();
+      } else {
+        spinnerImage.visible = false;
+      }
     }
 
     NumberAnimation {

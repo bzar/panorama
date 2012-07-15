@@ -24,7 +24,8 @@ class Package : public QObject
   Q_PROPERTY(QString mount READ getMount CONSTANT)
   Q_PROPERTY(qint64 size READ getSize CONSTANT)
   Q_PROPERTY(QDateTime modified READ getModified CONSTANT)
-  Q_PROPERTY(int rating READ getRating CONSTANT)
+  Q_PROPERTY(int rating READ getRating NOTIFY ratingChanged)
+  Q_PROPERTY(int ownRating READ getOwnRating NOTIFY ownRatingChanged)
   Q_PROPERTY(QPndman::Author* author READ getAuthor CONSTANT)
   Q_PROPERTY(QPndman::Version* localVersion READ getLocalVersion CONSTANT)
   Q_PROPERTY(QPndman::Version* remoteVersion READ getRemoteVersion CONSTANT)
@@ -59,6 +60,7 @@ public:
   qint64 getSize() const;
   QDateTime getModified() const;
   int getRating() const;
+  int getOwnRating() const;
   QPndman::Author* getAuthor() const;
   QPndman::Version* getLocalVersion() const;
   QPndman::Version* getRemoteVersion() const;
@@ -120,6 +122,7 @@ public slots:
 
   void handleCommentUpdate();
   void reloadComments();
+  void reloadOwnRating();
 
 signals:
   void installedChanged(bool);
@@ -132,6 +135,10 @@ signals:
   void commentsChanged();
   void reloadCommentsDone();
   void addCommentDone();
+
+  void rateDone();
+  void ratingChanged();
+  void ownRatingChanged();
 
 private:
   QPndman::Package* rPackage() const;

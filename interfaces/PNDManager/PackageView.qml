@@ -10,6 +10,7 @@ View {
   Component { id: installDialog; InstallLocationDialog {} }
   Component { id: previewPictureView; PreviewPictureView {} }
   Component { id: commentView; CommentView {} }
+  Component { id: ratingView; RatingView {} }
 
   Keys.forwardTo: textArea
   Keys.priority: Keys.AfterItem
@@ -17,7 +18,10 @@ View {
   onOkButton: removeConfirmation.visible ? removeConfirmation.yes() : showPreviewPictures()
 
   Keys.onReturnPressed: execute()
-  Keys.onPressed: if(event.key == Qt.Key_C) showComments();
+  Keys.onPressed: {
+    if(event.key === Qt.Key_C) showComments();
+    else if(event.key === Qt.Key_R) showRatingDialog();
+  }
 
   onInstallUpgradeButton: {
     if(removeConfirmation.visible)
@@ -61,6 +65,10 @@ View {
 
   function showComments() {
     stack.push(commentView, {"pnd": pnd});
+  }
+
+  function showRatingDialog() {
+    stack.push(ratingView, {"pnd": pnd});
   }
 
   function showInstallDialog() {
@@ -424,24 +432,49 @@ View {
     anchors.right: imageArea.right
   }
 
-  Item {
+  StretchRow {
     id: secondaryButtons
     anchors.bottom: parent.bottom
     anchors.left: parent.horizontalCenter
     anchors.right: parent.right
     anchors.margins: 4
+    spacing: 4
     height: childrenRect.height
 
     Button {
+      id: ratingButton
+      label: pnd.ownRating ? pndUtils.createOwnRatingString(pnd) : "Rate PND"
+      height: 32
+      control: "keyboard-r"
+      radius: 4
+      color: "#B5B559"
+      onClicked: showRatingDialog()
+
+
+      Component.onCompleted: {
+        pnd.reloadOwnRating();
+      }
+    }
+
+    Button {
       id: commentsButton
-      label: "Comments"
+      property int numberOfComments: -1
+      label: numberOfComments < 0 ? "Comments" : "Comments (" + numberOfComments + ")"
       color: "#555"
       control: "keyboard-c"
       radius: 4
-      anchors.right: parent.right
       height: 32
-      width: 192
       onClicked: showComments()
+
+      Component.onCompleted: {
+        if(pnd.comments.length === 0)
+          pnd.reloadComments();
+      }
+
+      Connections {
+        target: pnd
+        onReloadCommentsDone: commentsButton.numberOfComments = pnd.comments.length
+      }
     }
   }
 }

@@ -30,3 +30,11 @@ QString PNDUtils::createRatingString(Package *package)
   else
     return "(not rated)";
 }
+
+QString PNDUtils::createOwnRatingString(Package *package)
+{
+  if(package && package->getOwnRating())
+    return QString(package->getOwnRating(), QChar(0x2605));
+  else
+    return "(not rated)";
+}

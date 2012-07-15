@@ -13,6 +13,9 @@ Package::Package(PNDManager* manager, QPndman::Package* localPackage, QPndman::P
     connect(remotePackage, SIGNAL(commentsChanged()), this, SLOT(handleCommentUpdate()));
     connect(remotePackage, SIGNAL(reloadCommentsDone()), this, SIGNAL(reloadCommentsDone()));
     connect(remotePackage, SIGNAL(addCommentDone()), this, SIGNAL(addCommentDone()));
+    connect(remotePackage, SIGNAL(rateDone()), this, SIGNAL(rateDone()));
+    connect(remotePackage, SIGNAL(ratingChanged()), this, SIGNAL(ratingChanged()));
+    connect(remotePackage, SIGNAL(ownRatingChanged()), this, SIGNAL(ownRatingChanged()));
   }
 }
 
@@ -60,6 +63,12 @@ int Package::getRating() const
 {
   return !remotePackage ? 0 : remotePackage->getRating();
 }
+
+int Package::getOwnRating() const
+{
+  return !remotePackage ? 0 : remotePackage->getOwnRating();
+}
+
 QPndman::Author* Package::getAuthor() const
 {
   return rPackage() ? rPackage()->getAuthor() : 0;
@@ -373,6 +382,12 @@ void Package::reloadComments()
     remotePackage->reloadComments();
 }
 
+void Package::reloadOwnRating()
+{
+  if(remotePackage)
+    remotePackage->reloadOwnRating();
+}
+
 void Package::setRemotePackage(QPndman::Package* p)
 {
   applicationList.clear();
@@ -387,6 +402,9 @@ void Package::setRemotePackage(QPndman::Package* p)
     connect(remotePackage, SIGNAL(commentsChanged()), this, SLOT(handleCommentUpdate()));
     connect(remotePackage, SIGNAL(reloadCommentsDone()), this, SIGNAL(reloadCommentsDone()));
     connect(remotePackage, SIGNAL(addCommentDone()), this, SIGNAL(addCommentDone()));
+    connect(remotePackage, SIGNAL(rateDone()), this, SIGNAL(rateDone()));
+    connect(remotePackage, SIGNAL(ratingChanged()), this, SIGNAL(ratingChanged()));
+    connect(remotePackage, SIGNAL(ownRatingChanged()), this, SIGNAL(ownRatingChanged()));
   }
 }
 
