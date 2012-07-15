@@ -193,8 +193,6 @@ View {
         GuiHint {
           control: "select"
           anchors.verticalCenter: parent.verticalCenter
-          width: 32
-          height: 32
         }
       }
     }

@@ -17,6 +17,14 @@ Item {
     width: 64
     height: 32
 
+    GuiHint {
+      id: guiHint
+      anchors.right: parent.right
+      anchors.top: parent.top
+      anchors.margins: Math.min(8, (parent.height - height) / 2)
+      z: 1
+    }
+
     Rectangle {
         id: bg
         anchors.fill: parent
@@ -32,12 +40,6 @@ Item {
 
         clip: true
 
-        GuiHint {
-          id: guiHint
-          anchors.right: parent.right
-          anchors.top: parent.top
-          anchors.margins: Math.min(8, (parent.height - height) / 2)
-        }
         Column {
           anchors.centerIn: parent
           Text {

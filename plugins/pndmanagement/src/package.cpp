@@ -426,6 +426,11 @@ void Package::setLocalPackage(QPndman::Package* p)
     emit installedChanged(localPackage != 0);
 }
 
+bool Package::getIsForeign() const
+{
+  return remotePackage == 0;
+}
+
 QImage Package::getEmbeddedIcon() const
 {
   if(!localPackage)

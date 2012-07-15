@@ -449,7 +449,7 @@ View {
       radius: 4
       color: "#B5B559"
       onClicked: showRatingDialog()
-
+      visible: loggedIn && !pnd.isForeign
 
       Component.onCompleted: {
         pnd.reloadOwnRating();
@@ -465,6 +465,7 @@ View {
       radius: 4
       height: 32
       onClicked: showComments()
+      visible: !pnd.isForeign
 
       Component.onCompleted: {
         if(pnd.comments.length === 0)

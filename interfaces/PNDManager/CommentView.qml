@@ -36,7 +36,7 @@ View {
         anchors.fill: parent
         contentHeight: input.paintedHeight
         anchors.margins: 8
-        anchors.rightMargin: inputHint.visible ? 32 : 4
+        anchors.rightMargin: inputHint.visible ? 40 : 4
 
         TextEdit {
           id: input
@@ -68,9 +68,6 @@ View {
       control: "keyboard-enter"
       anchors.right: inputBox.right
       anchors.verticalCenter: inputBox.verticalCenter
-      anchors.rightMargin: -16
-      width: 48
-      height: 48
     }
 
     Rectangle {
