@@ -127,7 +127,14 @@ PNDFilter *PNDFilter::sortedByTitle()
 }
 
 bool lastUpdatedDateSorter(Package const* a, Package const* b) {
-  return a->getModified() > b->getModified();
+  if(a->getIsForeign() != b->getIsForeign())
+  {
+    return b->getIsForeign();
+  }
+  else
+  {
+    return a->getModified() > b->getModified();
+  }
 }
 
 PNDFilter *PNDFilter::sortedByLastUpdated()

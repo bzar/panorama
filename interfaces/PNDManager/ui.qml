@@ -99,12 +99,12 @@ PanoramaUI {
   PNDUtils { id: pndUtils }
 
   Keys.onPressed: {
-    if(spinner.visible || !runtime.isActiveWindow || pndManager.applicationRunning) {
+    if(!runtime.isActiveWindow || pndManager.applicationRunning) {
       event.accepted = true;
       return
     }
 
-    if(!Pandora.controlsActive) {
+    if(!Pandora.controlsActive && !spinner.visible) {
       event.accepted = true;
       if(event.key === Qt.Key_PageDown) {
         views.current.pop();
