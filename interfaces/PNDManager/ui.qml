@@ -128,11 +128,11 @@ PanoramaUI {
       } else if(event.key === Qt.Key_PageUp) {
         views.current.current.installUpgradeButton();
       } else if(event.key === Qt.Key_1) {
-        homeStack.activate();
-      } else if(event.key === Qt.Key_2) {
-        categoriesStack.activate();
-      } else if(event.key === Qt.Key_3) {
         installedStack.activate();
+      } else if(event.key === Qt.Key_2) {
+        homeStack.activate();
+      } else if(event.key === Qt.Key_3) {
+        categoriesStack.activate();
       } else if(event.key === Qt.Key_4) {
         searchStack.activate();
       } else {
@@ -262,9 +262,19 @@ PanoramaUI {
     backArrowVisible: !views.current.atRootView
 
     IconButton {
-      id: homeIcon
-      leftHintVisible: categoriesIcon.highlight
+      id: installedIcon
       rightHintVisible: searchIcon.highlight
+      leftHintVisible: homeIcon.highlight
+      normalImage: "img/bottombar/pndme-0.6.1.0-cat-installed-flimsy.png"
+      highlightImage: "img/bottombar/pndme-0.6.1.0-cat-installed-flimsy_active.png"
+      highlight: installedStack.active
+      height: parent.height
+      onClicked: installedStack.activate()
+    }
+    IconButton {
+      id: homeIcon
+      rightHintVisible: installedIcon.highlight
+      leftHintVisible: categoriesIcon.highlight
       normalImage: "img/bottombar/pndme-0.6.1.0-cat-home-flimsy.png"
       highlightImage: "img/bottombar/pndme-0.6.1.0-cat-home-flimsy_active.png"
       highlight: homeStack.active
@@ -273,8 +283,8 @@ PanoramaUI {
     }
     IconButton {
       id: categoriesIcon
-      leftHintVisible: installedIcon.highlight
       rightHintVisible: homeIcon.highlight
+      leftHintVisible: searchIcon.highlight
       normalImage: "img/bottombar/pndme-0.6.1.0-cat-online-flimsy.png"
       highlightImage: "img/bottombar/pndme-0.6.1.0-cat-online-flimsy_active.png"
       highlight: categoriesStack.active
@@ -282,19 +292,9 @@ PanoramaUI {
       onClicked: categoriesStack.activate()
     }
     IconButton {
-      id: installedIcon
-      leftHintVisible: searchIcon.highlight
-      rightHintVisible: categoriesIcon.highlight
-      normalImage: "img/bottombar/pndme-0.6.1.0-cat-installed-flimsy.png"
-      highlightImage: "img/bottombar/pndme-0.6.1.0-cat-installed-flimsy_active.png"
-      highlight: installedStack.active
-      height: parent.height
-      onClicked: installedStack.activate()
-    }
-    IconButton {
       id: searchIcon
-      leftHintVisible: homeIcon.highlight
-      rightHintVisible: installedIcon.highlight
+      rightHintVisible: categoriesIcon.highlight
+      leftHintVisible: installedIcon.highlight
       normalImage: "img/bottombar/pndme-0.6.1.0-cat-search-flimsy.png"
       highlightImage: "img/bottombar/pndme-0.6.1.0-cat-search-flimsy_active.png"
       highlight: searchStack.active
