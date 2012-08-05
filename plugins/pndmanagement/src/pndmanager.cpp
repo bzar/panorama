@@ -201,6 +201,8 @@ void PNDManager::sync()
   emit syncing(handle);
   connect(handle, SIGNAL(done()), this, SLOT(syncFinished()));
   connect(handle, SIGNAL(done()), handle, SLOT(deleteLater()));
+  connect(handle, SIGNAL(errorChanged(QString)), this, SIGNAL(error(QString)));
+  connect(handle, SIGNAL(errorChanged(QString)), this, SIGNAL(syncError()));
 }
 
 void PNDManager::updatePackages()

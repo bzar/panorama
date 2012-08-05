@@ -61,6 +61,7 @@ signals:
   void error(QString);
   void syncing(QPndman::SyncHandle* handle);
   void syncDone();
+  void syncError();
   void crawling();
   void crawlDone();
   void downloadStarted();

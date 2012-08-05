@@ -6,6 +6,7 @@ Rectangle {
   default property alias icons: iconRow.children
   property alias backArrowVisible: backArrow.visible
   property bool syncing: false
+  property bool syncError: false
   color: "#111"
 
   signal back()
@@ -17,97 +18,91 @@ Rectangle {
     id: iconRow
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: parent.top
-    anchors.bottom: parent.bottom
-    width: childrenRect.width
-    anchors.margins: 4
-    spacing: 32
+    anchors.topMargin: 2
+    height: 32
+    spacing: 3
 
   }
-  GuiHint {
-    control: "shoulder-l"
+
+  Image {
+    source: "img/bottombar/pndme-0.6.1.0-stopper-lef.png"
     anchors.right: iconRow.left
-    anchors.margins: 8
-    anchors.verticalCenter: parent.verticalCenter
+    anchors.rightMargin: 3
+    anchors.top: iconRow.top
   }
-  GuiHint {
-    control: "shoulder-r"
+
+  Image {
+    source: "img/bottombar/pndme-0.6.1.0-stopper-right.png"
     anchors.left: iconRow.right
-    anchors.margins: 8
-    anchors.verticalCenter: parent.verticalCenter
+    anchors.leftMargin: 3
+    anchors.top: iconRow.top
   }
 
-
-  Item {
+  Image {
     id: backArrow
+    source: "img/bottombar/pndme-0.6.1.1-return.png"
+    anchors.right: iconRow.left
+    anchors.rightMargin: 3
     anchors.top: parent.top
-    anchors.bottom: parent.bottom
-    anchors.left: parent.left
-    width: height
 
-    Image {
-      source: mouseArea.pressed || mouseArea.hover ? "img/arrow_left_white_32x32.png" : "img/arrow_left_32x32.png"
-      smooth: true
-      anchors.margins: 16
-      anchors.fill: parent
-      fillMode: Image.PreserveAspectFit
-      GuiHint {
-        control: "game-x"
-        anchors.left: parent.right
-        anchors.margins: 8
-        anchors.verticalCenter: parent.verticalCenter
-      }
-
-    }
     MouseArea {
       id: mouseArea
-      property bool hover: false
       anchors.fill: parent
-      hoverEnabled: true
-      onEntered: hover = true
-      onExited: hover = false
       onClicked: bar.back()
     }
-
   }
 
-  Item {
-    anchors.top: parent.top
-    anchors.bottom: parent.bottom
-    anchors.right: parent.right
-    width: height
+  AnimatedImage {
+    id: reloadIcon
+    property bool showingSuccess: false
+    property bool showingError: false
+    signal finished();
 
-    Image {
-      NumberAnimation on rotation {
-        id: syncAnimation
-        from: 0
-        to: 360
-        loops: Animation.Infinite
-        duration: 2000
-        alwaysRunToEnd: true
-        running: syncing
+    function getSource() {
+      if(syncing) {
+        return "img/bottombar/pndme-0.6.1.0-update_working.gif";
+      } else if(showingSuccess) {
+        return "img/bottombar/pndme-0.6.1.0-update_success.gif";
+      } else if(syncError) {
+        return "img/bottombar/pndme-0.6.1.0-update_failed.png";
+      } else {
+        return "img/bottombar/pndme-0.6.1.0-update.png";
       }
-
-      id: reloadIcon
-      source: reloadMouseArea.pressed || reloadMouseArea.hover ? "img/reload_alt_white_24x28.png" : "img/reload_alt_24x28.png"
-      smooth: true
-      anchors.margins: 16
-      anchors.fill: parent
-      fillMode: Image.PreserveAspectFit
     }
-    GuiHint {
-      control: "start"
-      anchors.right: reloadIcon.left
-      anchors.margins: 8
-      anchors.verticalCenter: parent.verticalCenter
+
+    source: getSource()
+
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.right: parent.right
+    anchors.rightMargin: 16
+    onSourceChanged: {
+      playing = true;
+      paused = false;
+    }
+
+    onCurrentFrameChanged: {
+      if(currentFrame === frameCount - 1) {
+        reloadIcon.finished();
+      }
+    }
+
+    onFinished: {
+      if(showingSuccess) {
+        // Pausing is required. Changing the source of a playing
+        // AnimatedImage within onCurrentFrameChanged causes a segfault
+        paused = true;
+        showingSuccess = false;
+      }
+    }
+
+    Connections {
+      target: bar
+      onSyncingChanged: reloadIcon.showingSuccess = !syncing
     }
 
     MouseArea {
       id: reloadMouseArea
-      property bool hover: false
       anchors.fill: parent
-      hoverEnabled: true
-      onEntered: hover = true
-      onExited: hover = false
       onClicked: bar.reload()
     }
   }

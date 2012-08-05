@@ -5,26 +5,29 @@ Image {
   property string normalImage
   property string highlightImage
   property bool highlight: false
-  property bool hover: false
+  property alias leftHintVisible: leftHint.visible
+  property alias rightHintVisible: rightHint.visible
+
   signal clicked()
-  source: highlight || hover ? highlightImage : normalImage
-  height: parent.height
-  fillMode: Image.PreserveAspectFit
-  smooth: true
+  source: highlight ? highlightImage : normalImage
   MouseArea {
     anchors.fill: parent;
     onClicked: icon.clicked()
-    hoverEnabled: true
-    onEntered: icon.hover = true
-    onExited: icon.hover = false
   }
 
-  Rectangle {
-    width: 32
-    height: 3
-    color: "#eee"
-    anchors.horizontalCenter: parent.horizontalCenter
+  Image {
+    id: leftHint
+    source: "img/bottombar/pndme-0.6.1.0-catleft.png"
+    anchors.right: parent.right
+    anchors.rightMargin: -1
     anchors.bottom: parent.bottom
-    visible: highlight
   }
+  Image {
+    id: rightHint
+    source: "img/bottombar/pndme-0.6.1.0-catright.png"
+    anchors.left: parent.left
+    anchors.leftMargin: -1
+    anchors.bottom: parent.bottom
+  }
+
 }

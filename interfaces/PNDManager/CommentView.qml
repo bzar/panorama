@@ -24,7 +24,7 @@ View {
       border.color:  "#ccc"
       border.width: 1
       radius: 8
-      height: Math.min(input.lineCount * input.font.pixelSize + 16, 192)
+      height: Math.min((input.lineCount + 1) * input.font.pixelSize, 192)
       anchors.top: parent.top
       anchors.left: parent.left
       anchors.right: parent.right

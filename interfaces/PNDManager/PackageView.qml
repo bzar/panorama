@@ -459,7 +459,7 @@ View {
     Button {
       id: commentsButton
       property int numberOfComments: -1
-      label: numberOfComments < 0 ? "Comments" : "Comments (" + numberOfComments + ")"
+      label: numberOfComments < 0 ? "Comments" : numberOfComments + " comments"
       color: "#555"
       control: "keyboard-c"
       radius: 4

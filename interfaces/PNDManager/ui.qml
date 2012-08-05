@@ -90,6 +90,11 @@ PanoramaUI {
       bottomBar.syncing = false
       syncCompleteNotification.show()
     }
+    onSyncError: {
+      bottomBar.syncing = false
+      bottomBar.syncError = true
+    }
+
     username: usernameSetting.value
     key: apiKeySetting.value
   }
@@ -258,38 +263,49 @@ PanoramaUI {
 
     IconButton {
       id: homeIcon
-      normalImage: "img/home_32x32.png"
-      highlightImage: "img/home_white_32x32.png"
+      leftHintVisible: categoriesIcon.highlight
+      rightHintVisible: searchIcon.highlight
+      normalImage: "img/bottombar/pndme-0.6.1.0-cat-home-flimsy.png"
+      highlightImage: "img/bottombar/pndme-0.6.1.0-cat-home-flimsy_active.png"
       highlight: homeStack.active
       height: parent.height
       onClicked: homeStack.activate()
     }
     IconButton {
       id: categoriesIcon
-      normalImage: "img/list_32x28.png"
-      highlightImage: "img/list_white_32x28.png"
+      leftHintVisible: installedIcon.highlight
+      rightHintVisible: homeIcon.highlight
+      normalImage: "img/bottombar/pndme-0.6.1.0-cat-online-flimsy.png"
+      highlightImage: "img/bottombar/pndme-0.6.1.0-cat-online-flimsy_active.png"
       highlight: categoriesStack.active
       height: parent.height
       onClicked: categoriesStack.activate()
     }
     IconButton {
       id: installedIcon
-      normalImage: "img/download_24x32.png"
-      highlightImage: "img/download_white_24x32.png"
+      leftHintVisible: searchIcon.highlight
+      rightHintVisible: categoriesIcon.highlight
+      normalImage: "img/bottombar/pndme-0.6.1.0-cat-installed-flimsy.png"
+      highlightImage: "img/bottombar/pndme-0.6.1.0-cat-installed-flimsy_active.png"
       highlight: installedStack.active
       height: parent.height
       onClicked: installedStack.activate()
     }
     IconButton {
       id: searchIcon
-      normalImage: "img/magnifying_glass_32x32.png"
-      highlightImage: "img/magnifying_glass_white_32x32.png"
+      leftHintVisible: homeIcon.highlight
+      rightHintVisible: installedIcon.highlight
+      normalImage: "img/bottombar/pndme-0.6.1.0-cat-search-flimsy.png"
+      highlightImage: "img/bottombar/pndme-0.6.1.0-cat-search-flimsy_active.png"
       highlight: searchStack.active
       height: parent.height
       onClicked: searchStack.activate()
     }
 
     onBack: views.current.pop()
-    onReload: { pndManager.sync(); }
+    onReload: {
+      syncError = false;
+      pndManager.sync();
+    }
   }
 }
