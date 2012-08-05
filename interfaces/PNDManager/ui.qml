@@ -214,10 +214,19 @@ PanoramaUI {
 
   ViewStackList {
     id: views
+    currentIndex: 1
     anchors.top: topBar.bottom
     anchors.bottom: bottomBar.top
     anchors.left: parent.left
     anchors.right: parent.right
+
+    ViewStack {
+      id: installedStack
+      onActivate: views.activate(installedStack)
+      InstalledView {
+        pndManager: pndManager
+      }
+    }
 
     ViewStack {
       id: homeStack
@@ -226,18 +235,11 @@ PanoramaUI {
         pndManager: pndManager
       }
     }
+
     ViewStack {
       id: categoriesStack
       onActivate: views.activate(categoriesStack)
       CategoriesView {
-        pndManager: pndManager
-      }
-    }
-
-    ViewStack {
-      id: installedStack
-      onActivate: views.activate(installedStack)
-      InstalledView {
         pndManager: pndManager
       }
     }

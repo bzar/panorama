@@ -40,7 +40,7 @@ Item {
     show((viewStacks.length + currentIndex - 1) % viewStacks.length);
   }
 
-  Component.onCompleted: show(0)
+  Component.onCompleted: show(currentIndex)
 
   Item {
     id: viewStackContainer
