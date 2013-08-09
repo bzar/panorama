@@ -93,6 +93,7 @@ PanoramaUI {
     onSyncError: {
       bottomBar.syncing = false
       bottomBar.syncError = true
+      syncFailedNotification.show()
     }
 
     username: usernameSetting.value
@@ -181,6 +182,20 @@ PanoramaUI {
   Notification {
     id: syncCompleteNotification
     text: "Sync complete"
+    anchors.centerIn: parent
+    z: 2
+  }
+
+  Notification {
+    id: syncFailedNotification
+    text: "Sync failed"
+    anchors.centerIn: parent
+    z: 2
+  }
+
+  Notification {
+    id: syncingNotification
+    text: "Syncing"
     anchors.centerIn: parent
     z: 2
   }
@@ -307,7 +322,10 @@ PanoramaUI {
     onBack: views.current.pop()
     onReload: {
       syncError = false;
-      pndManager.sync();
+      if(!bottomBar.syncing) {
+         syncingNotification.show()
+         pndManager.sync();
+      }
     }
   }
 }

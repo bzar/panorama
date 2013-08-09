@@ -16,5 +16,5 @@ ADD_DEFINITIONS(${QT_DEFINITIONS})
 FILE(COPY ${qtpndman_INCLUDES} DESTINATION include)
 ADD_DEFINITIONS(-fPIC)
 ADD_LIBRARY(qtpndman ${qtpndman_SOURCES} ${qtpndman_HEADERS} ${qtpndman_HEADERS_MOC})
-target_link_libraries(qtpndman pndman)
+target_link_libraries(qtpndman pndman bz2)
 
