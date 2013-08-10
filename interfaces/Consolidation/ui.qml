@@ -1,4 +1,4 @@
-import Qt 4.7
+import QtQuick 1.1
 import Panorama.UI 1.0
 import Panorama.Packages 1.0
 import Panorama.Settings 1.0
