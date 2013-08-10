@@ -2,7 +2,8 @@
 #include "pnddeclarativeimageprovider.h"
 #include <QDebug>
 
-QString const PNDManager::REPOSITORY_URL("http://repo.openpandora.org/client/masterlist?com=true&bzip=true");
+//QString const PNDManager::REPOSITORY_URL("http://repo.openpandora.org/client/masterlist?com=true&bzip=true");
+QString const PNDManager::REPOSITORY_URL("file://masterlist.json");
 
 PNDManager::PNDManager(QObject* parent) : QObject(parent),
   context(new QPndman::Context),
@@ -67,6 +68,7 @@ PNDFilter* PNDManager::getPackages()
 
 Package *PNDManager::getPackageById(const QString &id)
 {
+  qDebug() << "PNDManager::getPackageById " << id;
   return packagesById.value(id, 0);
 }
 
@@ -195,6 +197,18 @@ void PNDManager::crawl()
   emit crawlDone();
 }
 
+void PNDManager::crawl(QString packageId)
+{
+  crawl();
+  /* TODO: fix single package crawl
+  qDebug() << "Crawling " << packageId;
+  emit crawling();
+  context->crawlPndmanPackageById(packageId);
+  updatePackages();
+  emit crawlDone();
+  */
+}
+
 void PNDManager::sync()
 {
   QPndman::SyncHandle* handle = repository->sync(false);
@@ -207,6 +221,7 @@ void PNDManager::sync()
 
 void PNDManager::updatePackages()
 {
+  qDebug() << "PNDManager::updatePackages";
   QList<QPndman::Package*> installedPackages = localRepository->getPackages();
   qDebug() << installedPackages.size() << "installed packages";
   QList<QPndman::Package*> remotePackages = repository->getPackages();

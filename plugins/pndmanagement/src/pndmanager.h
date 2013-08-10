@@ -50,6 +50,7 @@ public:
 
 public slots:
   void crawl();
+  void crawl(QString packageId);
   void sync();
   void updatePackages();
   void saveRepositories();

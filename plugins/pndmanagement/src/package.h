@@ -117,6 +117,7 @@ public slots:
 
   // TODO: ugly QString, Qt 4.7 doesn't allow enums in slot parameters yet :(
   void install(QPndman::Device* device, QString installLocation);
+  void crawl();
   void remove();
   void upgrade();
   void cancelDownload();

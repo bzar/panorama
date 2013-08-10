@@ -14,7 +14,7 @@ PNDDeclarativeImageProvider::PNDDeclarativeImageProvider() :
 QImage PNDDeclarativeImageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize)
 {
   QImage image;
-
+  qDebug() << "Searching for icon for pnd " << id;
   foreach(QPointer<PNDManager> p, managers)
   {
     if(p.isNull())
@@ -26,6 +26,7 @@ QImage PNDDeclarativeImageProvider::requestImage(const QString &id, QSize *size,
 
     if(package)
     {
+      qDebug() << "   Found it!";
       image = package->getEmbeddedIcon();
 
       if(!image.isNull())
@@ -48,6 +49,10 @@ QImage PNDDeclarativeImageProvider::requestImage(const QString &id, QSize *size,
     }
   }
 
+  if(image.isNull())
+  {
+    qDebug() << "   Not found!";
+  }
   return image;
 }
 

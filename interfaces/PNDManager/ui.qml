@@ -53,7 +53,7 @@ PanoramaUI {
       id: loggingVerbosity
       section: "PNDManager"
       key: "loggingVerbosity"
-      defaultValue: "1"
+      defaultValue: 5
       onValueChanged: pndManager.verbosity = value
       Component.onCompleted: pndManager.verbosity = value
   }

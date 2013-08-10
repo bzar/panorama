@@ -285,7 +285,7 @@ void Package::install(QPndman::Device* device, QString location)
   connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), this, SLOT(setBytesToDownload(qint64)));
 
   connect(handle, SIGNAL(done()), this, SLOT(setInstalled()));
-  connect(handle, SIGNAL(done()), manager, SLOT(crawl()));
+  connect(handle, SIGNAL(done()), this, SLOT(crawl()));
   connect(handle, SIGNAL(done()), handle, SLOT(deleteLater()));
 
   connect(handle, SIGNAL(cancelled()), this, SLOT(handleDownloadCancelled()));
@@ -302,6 +302,11 @@ void Package::install(QPndman::Device* device, QString location)
 
 
   operationHandle = handle;
+}
+
+void Package::crawl()
+{
+  manager->crawl(id);
 }
 
 void Package::remove()

@@ -13,7 +13,7 @@ void DownloadWorker::run()
   {
     int pending = context->processDownload();
     stopMutex.unlock();
-    msleep(pending ? 100 : 500);
+    msleep(pending ? 10 : 500);
   }
 }
 
