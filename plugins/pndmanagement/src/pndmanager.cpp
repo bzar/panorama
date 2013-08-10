@@ -2,9 +2,9 @@
 #include "pnddeclarativeimageprovider.h"
 #include <QDebug>
 
-QString const PNDManager::REPOSITORY_URL("http://repo.openpandora.org/includes/get_data.php");
+QString const PNDManager::REPOSITORY_URL("http://repo.openpandora.org/client/masterlist?com=true&bzip=true");
 
-PNDManager::PNDManager(QObject* parent) : QObject(parent), 
+PNDManager::PNDManager(QObject* parent) : QObject(parent),
   context(new QPndman::Context),
   repository(new QPndman::Repository(context, REPOSITORY_URL)),
   localRepository(new QPndman::LocalRepository(context)),
@@ -197,7 +197,7 @@ void PNDManager::crawl()
 
 void PNDManager::sync()
 {
-  QPndman::SyncHandle* handle = repository->sync();
+  QPndman::SyncHandle* handle = repository->sync(false);
   emit syncing(handle);
   connect(handle, SIGNAL(done()), this, SLOT(syncFinished()));
   connect(handle, SIGNAL(done()), handle, SLOT(deleteLater()));

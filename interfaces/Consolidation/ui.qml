@@ -35,7 +35,7 @@ PanoramaUI {
         id: repositoryUrls
         section: "Milky"
         key: "repositoryUrls"
-        defaultValue: "http://repo.openpandora.org/includes/get_data.php"
+        defaultValue: "http://repo.openpandora.org/client/masterlist?com=true&bzip=true"
     }
 
     Setting {
