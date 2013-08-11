@@ -2,8 +2,7 @@
 #include "pnddeclarativeimageprovider.h"
 #include <QDebug>
 
-//QString const PNDManager::REPOSITORY_URL("http://repo.openpandora.org/client/masterlist?com=true&bzip=true");
-QString const PNDManager::REPOSITORY_URL("file://masterlist.json");
+QString const PNDManager::REPOSITORY_URL("http://repo.openpandora.org/client/masterlist?com=true&bzip=true");
 
 PNDManager::PNDManager(QObject* parent) : QObject(parent),
   context(new QPndman::Context),
