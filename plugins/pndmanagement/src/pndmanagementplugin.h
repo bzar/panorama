@@ -1,18 +1,17 @@
 #ifndef PNDMANAGEMENTPLUGIN_H
 #define PNDMANAGEMENTPLUGIN_H
 
-#include <QtDeclarative>
-#include <QDeclarativeExtensionPlugin>
+#include <QtQuick>
+#include <QQmlExtensionPlugin>
 #include "qtpndman.h"
 
-class PNDManagementPlugin : public QDeclarativeExtensionPlugin
+class PNDManagementPlugin : public QQmlExtensionPlugin
 {
     Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")
 public:
     void registerTypes(const char *uri);
-    void initializeEngine(QDeclarativeEngine *engine, const char *uri);
+    void initializeEngine(QQmlEngine *engine, const char *uri);
 };
-
-QML_DECLARE_TYPE(QPndman::Version)
 
 #endif

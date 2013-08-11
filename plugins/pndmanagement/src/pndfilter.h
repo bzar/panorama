@@ -2,20 +2,20 @@
 #define PNDFILTER_H
 
 #include <QObject>
-#include <QtDeclarative>
+#include <QtQuick>
 #include "package.h"
 
 class PNDFilter : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(QDeclarativeListProperty<Package> packages READ getPackages CONSTANT)
+  Q_PROPERTY(QQmlListProperty<Package> packages READ getPackages CONSTANT)
 
 public:
   PNDFilter(QList<Package*> packages = QList<Package*>(), QObject *parent = 0);
   PNDFilter(PNDFilter const& other);
   PNDFilter& operator=(PNDFilter const& other);
 
-  QDeclarativeListProperty<Package> getPackages();
+  QQmlListProperty<Package> getPackages();
 
   Q_INVOKABLE QList<QObject*> all();
   Q_INVOKABLE PNDFilter* copy();

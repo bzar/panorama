@@ -6,7 +6,7 @@
 #include <QObject>
 #include <QString>
 #include <QVariant>
-#include <qdeclarative.h>
+#include <QtQuick>
 
 #include "settingssource.h"
 
@@ -73,6 +73,6 @@ protected slots:
                            const QVariant &value);
 };
 
-QML_DECLARE_TYPE(Setting);
+QML_DECLARE_TYPE(Setting)
 
 #endif // SETTING_H

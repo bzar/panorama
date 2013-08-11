@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QEvent>
 #include <QKeyEvent>
-#include "qdeclarative.h"
+#include <QtQuick>
 
 class PandoraKeyEvent : public QObject
 {

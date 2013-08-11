@@ -7,7 +7,7 @@
 #include <QString>
 #include <QProcess>
 #include <QAbstractItemModel>
-#include <QDeclarativeItem>
+#include <QQuickItem>
 
 #include "panoramaconfig.h"
 
@@ -17,7 +17,7 @@ class PanoramaUIPrivate;
  * The base class for all PanoramaUI instances.
  * This class is extended from actual .qml files via the QtScript core
  */
-class PanoramaUI : public QDeclarativeItem
+class PanoramaUI : public QQuickItem
 {
     Q_OBJECT
     Q_PROPERTY(QString name        READ name        WRITE setName)
@@ -26,7 +26,7 @@ class PanoramaUI : public QDeclarativeItem
     PANORAMA_DECLARE_PRIVATE(PanoramaUI)
 public:
     /** Constructs a new PanoramaUI instance */
-    explicit PanoramaUI(QDeclarativeItem *parent = 0);
+    explicit PanoramaUI(QQuickItem* parent = 0);
     ~PanoramaUI();
 
     /** Gets the name */
@@ -49,6 +49,6 @@ public:
 };
 
 //Makes this type available in QML
-QML_DECLARE_TYPE(PanoramaUI);
+QML_DECLARE_TYPE(PanoramaUI)
 
 #endif // PANORAMASKIN_H

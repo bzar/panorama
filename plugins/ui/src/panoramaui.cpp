@@ -1,5 +1,4 @@
 #include "panoramaui.h"
-#include <qdeclarative.h>
 
 class PanoramaUIPrivate
 {
@@ -10,8 +9,8 @@ public:
     QString author;
 };
 
-PanoramaUI::PanoramaUI(QDeclarativeItem *parent) :
-    QDeclarativeItem(parent)
+PanoramaUI::PanoramaUI(QQuickItem *parent) :
+    QQuickItem(parent)
 {
     PANORAMA_INITIALIZE(PanoramaUI);
     setWidth(PANORAMA_UI_WIDTH);

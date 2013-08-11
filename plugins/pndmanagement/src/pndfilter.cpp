@@ -14,9 +14,9 @@ PNDFilter &PNDFilter::operator=(const PNDFilter &other)
   packages = other.packages;
 }
 
-QDeclarativeListProperty<Package> PNDFilter::getPackages()
+QQmlListProperty<Package> PNDFilter::getPackages()
 {
-  return QDeclarativeListProperty<Package>(this, packages);
+  return QQmlListProperty<Package>(this, packages);
 }
 
 QList<QObject*> PNDFilter::all()

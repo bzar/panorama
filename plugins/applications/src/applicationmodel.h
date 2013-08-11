@@ -6,7 +6,7 @@
 #include <QObject>
 #include <QString>
 #include <QAbstractItemModel>
-#include <qdeclarative.h>
+#include <QtQuick>
 #include "application.h"
 
 class ApplicationModelPrivate;

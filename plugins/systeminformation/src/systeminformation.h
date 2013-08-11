@@ -1,7 +1,7 @@
 #ifndef SYSTEMINFORMATION_H
 #define SYSTEMINFORMATION_H
 
-#include <qdeclarative.h>
+#include <QtQuick>
 
 #include "systeminformationattached.h"
 

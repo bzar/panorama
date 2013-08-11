@@ -1,12 +1,12 @@
 #ifndef UIPLUGIN_H
 #define UIPLUGIN_H
 
-#include <qdeclarative.h>
-#include <QDeclarativeExtensionPlugin>
+#include <QQmlExtensionPlugin>
 
-class UIPlugin : public QDeclarativeExtensionPlugin
+class UIPlugin : public QQmlExtensionPlugin
 {
     Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")
 public:
     void registerTypes(const char *uri);
 };

@@ -4,7 +4,7 @@
 #include "panoramainternal.h"
 
 #include <QSortFilterProxyModel>
-#include <qdeclarative.h>
+#include <QtQuick>
 
 class ApplicationFilterModelPrivate;
 

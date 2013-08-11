@@ -7,6 +7,7 @@
 
 void PNDManagementPlugin::registerTypes(const char *uri)
 {
+  // @uri Panorama.PNDManagement
   qmlRegisterType<PNDManager>(uri, 1, 0, "PNDManager");
   qmlRegisterType<PNDUtils>(uri, 1, 0, "PNDUtils");
   qmlRegisterType<Package>();
@@ -25,10 +26,11 @@ void PNDManagementPlugin::registerTypes(const char *uri)
   qmlRegisterType<QPndman::Comment>();
 }
 
-void PNDManagementPlugin::initializeEngine(QDeclarativeEngine *engine, const char *uri)
+void PNDManagementPlugin::initializeEngine(QQmlEngine* engine, const char *uri)
 {
   Q_UNUSED(uri)
   engine->addImageProvider("pnd", new PNDDeclarativeImageProvider);
 }
 
-Q_EXPORT_PLUGIN2(pndmanagement,PNDManagementPlugin)
+QML_DECLARE_TYPE(QPndman::Version)
+
