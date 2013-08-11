@@ -103,8 +103,7 @@ QString Package::getDescription() const
 QPndman::Package* Package::getUpgradeCandidate() const
 {
   if(localPackage
-     && localPackage->getUpgradeCandidate()
-     && localPackage->getUpgradeCandidate()->getVersion()->operator>(*localPackage->getVersion()))
+     && localPackage->getUpgradeCandidate())
     return localPackage->getUpgradeCandidate();
 
   return 0;
