@@ -198,14 +198,11 @@ void PNDManager::crawl()
 
 void PNDManager::crawl(QString packageId)
 {
-  crawl();
-  /* TODO: fix single package crawl
   qDebug() << "Crawling " << packageId;
   emit crawling();
   context->crawlPndmanPackageById(packageId);
   updatePackages();
   emit crawlDone();
-  */
 }
 
 void PNDManager::sync()
