@@ -55,7 +55,6 @@ Rectangle {
   AnimatedImage {
     id: reloadIcon
     property bool showingSuccess: false
-    property bool showingError: false
     signal finished();
 
     function getSource() {
