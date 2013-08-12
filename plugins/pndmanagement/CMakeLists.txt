@@ -10,7 +10,7 @@ QT4_WRAP_CPP(pndmanagement_HEADERS_MOC ${pndmanagement_HEADERS})
 INCLUDE(${QT_USE_FILE})
 ADD_DEFINITIONS(${QT_DEFINITIONS} -DQT_PLUGIN -DQT_SHARED)
 
-INCLUDE_DIRECTORIES(${QTPNDMAN_BINARY_DIR}/include/ ${PNDMAN_BINARY_DIR}/include/ ${PND_BINARY_DIR}/include/)
+INCLUDE_DIRECTORIES(${qtpndman_SOURCE_DIR}/include/ ${libpndman_SOURCE_DIR}/include/ ${PND_BINARY_DIR}/include/)
 
 ADD_LIBRARY(pndmanagement MODULE ${pndmanagement_SOURCES} ${pndmanagement_HEADERS_MOC})
 TARGET_LINK_LIBRARIES(pndmanagement qtpndman pnd)

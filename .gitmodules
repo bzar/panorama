@@ -5,6 +5,3 @@
 [submodule "deps/qtpndman/src"]
 	path = deps/qtpndman/src
 	url = git://github.com/bzar/qtpndman.git
-[submodule "deps/pndman/src"]
-	path = deps/pndman/src
-	url = git://github.com/Cloudef/libpndman.git
