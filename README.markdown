@@ -30,14 +30,7 @@ Panorama source code distribution, which you can do by going to the
 libraries that are used for PND software package integration. You can get
 them using the following commands:
 
-    git submodule init
-    git submodule update
-
-Then, do the following (needed for now until these are integrated into 
-the build system):
-
-    cd deps/jansson/src && autoreconf -i && ./configure && cd -
-    cd deps/pndman/src && make version && cd -
+    git submodule update --init --recursive
     mkdir build && cd build
     cmake ..
     make
