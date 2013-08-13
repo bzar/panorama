@@ -290,7 +290,7 @@ View {
           PackageInfoText {
             anchors.left: parent.left
             anchors.right: parent.right
-            label: "Author:"
+            label: "Maintainer:"
             text: pnd.author.name
           }
 
@@ -449,7 +449,7 @@ View {
       radius: 4
       color: "#B5B559"
       onClicked: showRatingDialog()
-      visible: loggedIn && !pnd.isForeign
+      visible: pnd.vendor !== usernameSetting.value && loggedIn && !pnd.isForeign
 
       Component.onCompleted: {
         pnd.reloadOwnRating();

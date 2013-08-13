@@ -8,7 +8,7 @@ Item {
   Text {
     id: label
     font.pixelSize: 14
-    width: 72
+    width: 90
   }
   Text {
     id: content

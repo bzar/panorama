@@ -338,7 +338,7 @@ View {
         color: "#ddd"
       }
       PackageInfoText {
-        label: "Author"
+        label: "Maintainer"
         text: info.pnd && info.pnd.author.name ? info.pnd.author.name : "-"
       }
       PackageInfoText {
@@ -346,15 +346,15 @@ View {
         text: pndUtils.createRatingString(info.pnd)
       }
       PackageInfoText {
-        label: "Size:"
+        label: "Size"
         text: info.pnd ? Utils.prettySize(info.pnd.size) : "-"
       }
       PackageInfoText {
-        label: "Version:"
+        label: "Version"
         text: info.pnd ? Utils.versionString(info.pnd.localVersion) : "-"
       }
       PackageInfoText {
-        label: "Location:"
+        label: "Location"
         text: info.pnd ? info.pnd.mount : "-"
       }
       Rectangle {
