@@ -17,6 +17,7 @@ Package::Package(PNDManager* manager, QPndman::Package* localPackage, QPndman::P
     connect(remotePackage, SIGNAL(deleteCommentDone()), this, SIGNAL(deleteCommentDone()));
     connect(remotePackage, SIGNAL(deleteCommentFail()), this, SIGNAL(deleteCommentFail()));
     connect(remotePackage, SIGNAL(rateDone()), this, SIGNAL(rateDone()));
+    connect(remotePackage, SIGNAL(rateFail()), this, SIGNAL(rateFail()));
     connect(remotePackage, SIGNAL(ratingChanged()), this, SIGNAL(ratingChanged()));
     connect(remotePackage, SIGNAL(ownRatingChanged()), this, SIGNAL(ownRatingChanged()));
   }
@@ -413,6 +414,7 @@ void Package::setRemotePackage(QPndman::Package* p)
     connect(remotePackage, SIGNAL(deleteCommentDone()), this, SIGNAL(deleteCommentDone()));
     connect(remotePackage, SIGNAL(deleteCommentFail()), this, SIGNAL(deleteCommentFail()));
     connect(remotePackage, SIGNAL(rateDone()), this, SIGNAL(rateDone()));
+    connect(remotePackage, SIGNAL(rateFail()), this, SIGNAL(rateFail()));
     connect(remotePackage, SIGNAL(ratingChanged()), this, SIGNAL(ratingChanged()));
     connect(remotePackage, SIGNAL(ownRatingChanged()), this, SIGNAL(ownRatingChanged()));
   }

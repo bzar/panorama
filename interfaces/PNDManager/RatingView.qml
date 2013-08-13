@@ -6,6 +6,7 @@ View {
 
   property QtObject pnd: pnd
   property int currentRating: pnd.ownRating
+  property int lastRating: pnd.ownRating
 
   function rate() {
     if(currentRating > 0) {
@@ -19,11 +20,41 @@ View {
   Keys.onLeftPressed: currentRating = currentRating > 1 ? currentRating - 1 : currentRating
   Keys.onRightPressed: currentRating = currentRating < 5 ? currentRating + 1 : currentRating
 
+  Keys.onPressed: {
+    event.accepted = true;
+    if(event.key === Qt.Key_1) {
+      currentRating = 1;
+    } else if(event.key === Qt.Key_2) {
+      currentRating = 2;
+    } else if(event.key === Qt.Key_3) {
+      currentRating = 3;
+    } else if(event.key === Qt.Key_4) {
+      currentRating = 4;
+    } else if(event.key === Qt.Key_5) {
+      currentRating = 5;
+    } else {
+      event.accepted = false;
+    }
+  }
+
+  Notification {
+    id: rateErrorNotification
+    text: "Error adding rating!"
+    anchors.centerIn: parent
+    z: 2
+  }
+
   Connections {
     target: pnd
     onRateDone: {
       spinner.hide();
       stack.pop();
+    }
+
+    onRateFail: {
+      spinner.hide();
+      currentRating = lastRating;
+      rateErrorNotification.show();
     }
   }
 

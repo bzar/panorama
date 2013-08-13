@@ -144,6 +144,7 @@ signals:
   void deleteCommentFail();
 
   void rateDone();
+  void rateFail();
   void ratingChanged();
   void ownRatingChanged();
 
