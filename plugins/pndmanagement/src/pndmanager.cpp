@@ -65,9 +65,9 @@ void PNDManager::addCustomDevicesString(const QString& value)
   }
 }
 
-QDeclarativeListProperty<QPndman::Device> PNDManager::getDevices()
+QQmlListProperty<QPndman::Device> PNDManager::getDevices()
 {
-  return QDeclarativeListProperty<QPndman::Device>(this, devices);
+  return QQmlListProperty<QPndman::Device>(this, devices);
 }
 
 int PNDManager::deviceCount() const

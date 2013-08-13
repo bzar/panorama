@@ -1,7 +1,10 @@
 PROJECT(SETTINGS)
 
-FIND_PACKAGE(Qt4 REQUIRED)
-SET(QT_USE_QTDECLARATIVE TRUE)
+FIND_PACKAGE(Qt5Qml REQUIRED)
+FIND_PACKAGE(Qt5Quick REQUIRED)
+
+SET(CMAKE_AUTOMOC ON)
+SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 SET(settings_SOURCES
     src/settingsplugin.cpp
@@ -17,10 +20,9 @@ SET(settings_HEADERS
     src/settingshive.h
     src/settingssource.h)
 
-QT4_WRAP_CPP(settings_HEADERS_MOC ${settings_HEADERS})
-
-INCLUDE(${QT_USE_FILE})
 ADD_DEFINITIONS(${QT_DEFINITIONS} -DQT_PLUGIN -DQT_SHARED)
-ADD_LIBRARY(settings MODULE ${settings_SOURCES} ${settings_HEADERS_MOC})
+ADD_LIBRARY(settings MODULE ${settings_SOURCES})
+qt5_use_modules(settings Qml Quick)
+
 INSTALL(TARGETS settings DESTINATION ${PLUGINDIR}/Panorama/Settings)
 

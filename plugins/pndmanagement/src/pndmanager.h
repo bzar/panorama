@@ -9,15 +9,14 @@
 #include "pndfilter.h"
 #include "downloadworker.h"
 #include "handleexecutionqueue.h"
-#include <QDeclarativeListProperty>
+#include <QQmlListProperty>
 
 class PNDManager : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(PNDFilter* packages READ getPackages NOTIFY packagesChanged)
-  Q_PROPERTY(QDeclarativeListProperty<QPndman::Device> devices READ getDevices NOTIFY devicesChanged)
+  Q_PROPERTY(QQmlListProperty<QPndman::Device> devices READ getDevices NOTIFY devicesChanged)
   Q_PROPERTY(QList<QString> customDevices READ getCustomDevices WRITE addCustomDevices)
-
   Q_PROPERTY(int verbosity READ getVerbosity WRITE setVerbosity NOTIFY verbosityChanged)
   Q_PROPERTY(bool applicationRunning READ getApplicationRunning NOTIFY applicationRunningChanged)
 
@@ -31,7 +30,7 @@ public:
   PNDManager(QObject* parent = 0);
   ~PNDManager();
 
-  QDeclarativeListProperty<QPndman::Device> getDevices();
+  QQmlListProperty<QPndman::Device> getDevices();
   int deviceCount() const;
   QPndman::Device* getDevice(int) const;
   Q_INVOKABLE QPndman::Device* getDeviceByMount(QString) const;

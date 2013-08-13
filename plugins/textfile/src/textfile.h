@@ -8,9 +8,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
-#include <qdeclarative.h>
-#include <QDeclarativeEngine>
-#include <QDeclarativeContext>
+#include <QtQuick>
 
 class TextFilePrivate;
 
@@ -34,6 +32,6 @@ signals:
     void dataChanged(const QString &value);
 };
 
-QML_DECLARE_TYPE(TextFile);
+QML_DECLARE_TYPE(TextFile)
 
 #endif // TEXTFILE_H

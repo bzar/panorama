@@ -1,12 +1,13 @@
 #ifndef SETTINGSPLUGIN_H
 #define SETTINGSPLUGIN_H
 
-#include <qdeclarative.h>
-#include <QDeclarativeExtensionPlugin>
+#include <QQmlExtensionPlugin>
+#include <QtQuick>
 
-class SettingsPlugin : public QDeclarativeExtensionPlugin
+class SettingsPlugin : public QQmlExtensionPlugin
 {
     Q_OBJECT
+    Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid)
 public:
     void registerTypes(const char *uri);
 };

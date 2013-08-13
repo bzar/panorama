@@ -1,4 +1,4 @@
-import QtQuick 1.1
+import QtQuick 2.0
 import "theme.js" as Theme
 import "util.js" as Utils
 

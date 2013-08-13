@@ -1,12 +1,12 @@
 #ifndef PNDDECLARATIVEIMAGEPROVIDER_H
 #define PNDDECLARATIVEIMAGEPROVIDER_H
 
-#include <QDeclarativeImageProvider>
+#include <QQuickImageProvider>
 #include <QList>
 #include <QPointer>
 #include "pndmanager.h"
 
-class PNDDeclarativeImageProvider : public QDeclarativeImageProvider
+class PNDDeclarativeImageProvider : public QQuickImageProvider
 {
 public:
   explicit PNDDeclarativeImageProvider();

@@ -154,40 +154,40 @@ QList<QPndman::Comment *> Package::getComments() const
   return commentList;
 }
 
-QDeclarativeListProperty<QPndman::Application> Package::getApplicationsProperty()
+QQmlListProperty<QPndman::Application> Package::getApplicationsProperty()
 {
   if(applicationList.isEmpty())
     applicationList = getApplications();
-  return QDeclarativeListProperty<QPndman::Application>(rPackage(), applicationList);
+  return QQmlListProperty<QPndman::Application>(rPackage(), applicationList);
 }
-QDeclarativeListProperty<QPndman::TranslatedString> Package::getTitlesProperty()
+QQmlListProperty<QPndman::TranslatedString> Package::getTitlesProperty()
 {
   if(titleList.isEmpty())
     titleList = getTitles();
-  return QDeclarativeListProperty<QPndman::TranslatedString>(rPackage(), titleList);
+  return QQmlListProperty<QPndman::TranslatedString>(rPackage(), titleList);
 }
-QDeclarativeListProperty<QPndman::TranslatedString> Package::getDescriptionsProperty()
+QQmlListProperty<QPndman::TranslatedString> Package::getDescriptionsProperty()
 {
   if(descriptionList.isEmpty())
     descriptionList = getDescriptions();
-  return QDeclarativeListProperty<QPndman::TranslatedString>(rPackage(), descriptionList);
+  return QQmlListProperty<QPndman::TranslatedString>(rPackage(), descriptionList);
 }
-QDeclarativeListProperty<QPndman::Category> Package::getCategoriesProperty()
+QQmlListProperty<QPndman::Category> Package::getCategoriesProperty()
 {
   if(categoryList.isEmpty())
     categoryList = getCategories();
-  return QDeclarativeListProperty<QPndman::Category>(rPackage(), categoryList);
+  return QQmlListProperty<QPndman::Category>(rPackage(), categoryList);
 }
-QDeclarativeListProperty<QPndman::PreviewPicture> Package::getPreviewPicturesProperty()
+QQmlListProperty<QPndman::PreviewPicture> Package::getPreviewPicturesProperty()
 {
   if(previewPictureList.isEmpty())
     previewPictureList = getPreviewPictures();
-  return QDeclarativeListProperty<QPndman::PreviewPicture>(rPackage(), previewPictureList);
+  return QQmlListProperty<QPndman::PreviewPicture>(rPackage(), previewPictureList);
 }
 
-QDeclarativeListProperty<QPndman::Comment> Package::getCommentsProperty()
+QQmlListProperty<QPndman::Comment> Package::getCommentsProperty()
 {
-  return QDeclarativeListProperty<QPndman::Comment>(rPackage(), commentList);
+  return QQmlListProperty<QPndman::Comment>(rPackage(), commentList);
 }
 
 int Package::applicationCount() const

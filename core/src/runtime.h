@@ -2,7 +2,6 @@
 #define RUNTIME_H
 
 #include <QObject>
-#include <QtDeclarative>
 
 class Runtime : public QObject
 {

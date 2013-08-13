@@ -1,4 +1,4 @@
-import QtQuick 1.1
+import QtQuick 2.0
 import Panorama.Settings 1.0
 import Panorama.UI 1.0
 import Panorama.PNDManagement 1.0
@@ -10,6 +10,11 @@ PanoramaUI {
   description: "PND Manager application"
   author: "B-ZaR"
   anchors.fill: parent
+
+  Rectangle {
+    anchors.fill: parent
+    color: "green"
+  }
 
   Setting {
     id: showSplashScreen

@@ -1,7 +1,7 @@
 //root.qml - The QML file that is responsible for containing PandoraUI instances
-import QtQuick 1.1
-import Panorama.Settings 1.0
+import QtQuick 2.0
 import Panorama.UI 1.0
+import Panorama.Settings 1.0
 
 Item {
     Setting {

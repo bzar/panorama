@@ -7,7 +7,7 @@
 QList< QPointer<PNDManager> > PNDDeclarativeImageProvider::managers;
 
 PNDDeclarativeImageProvider::PNDDeclarativeImageProvider() :
-  QDeclarativeImageProvider(QDeclarativeImageProvider::Image)
+  QQuickImageProvider(QQuickImageProvider::Image)
 {
 }
 

@@ -2,7 +2,7 @@
 #define PANDORA_H
 
 #include <QObject>
-#include <qdeclarative.h>
+#include <QtQuick>
 #include <QKeyEvent>
 #include "pandoraeventsource.h"
 #include "pandoraattached.h"

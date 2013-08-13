@@ -1,4 +1,4 @@
-import QtQuick 1.1
+import QtQuick 2.0
 
 Item {
   default property alias views: viewContainer.children
@@ -18,7 +18,7 @@ Item {
     property: "x"
     from: width
     to: 0
-    onCompleted: target.focus = true;
+    onStopped: target.focus = true;
   }
 
   NumberAnimation {
@@ -26,7 +26,7 @@ Item {
     property: "x"
     from: 0
     to: -width
-    onCompleted: target.visible = false
+    onStopped: target.visible = false
   }
 
   NumberAnimation {
@@ -35,7 +35,7 @@ Item {
     from: -width
     to: 0
     onStarted: target.visible = true
-    onCompleted: target.focus = true;
+    onStopped: target.focus = true;
   }
 
   NumberAnimation {
@@ -43,7 +43,7 @@ Item {
     property: "x"
     from: 0
     to: width
-    onCompleted: target.destroy()
+    onStopped: target.destroy()
   }
 
   function push(viewComponent, properties) {

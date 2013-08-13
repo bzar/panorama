@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include "applicationattached.h"
-#include "qdeclarative.h"
+#include <QtQuick>
 
 class Applications : public QObject
 {
