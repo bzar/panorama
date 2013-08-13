@@ -13,6 +13,9 @@ Package::Package(PNDManager* manager, QPndman::Package* localPackage, QPndman::P
     connect(remotePackage, SIGNAL(commentsChanged()), this, SLOT(handleCommentUpdate()));
     connect(remotePackage, SIGNAL(reloadCommentsDone()), this, SIGNAL(reloadCommentsDone()));
     connect(remotePackage, SIGNAL(addCommentDone()), this, SIGNAL(addCommentDone()));
+    connect(remotePackage, SIGNAL(addCommentFail()), this, SIGNAL(addCommentFail()));
+    connect(remotePackage, SIGNAL(deleteCommentDone()), this, SIGNAL(deleteCommentDone()));
+    connect(remotePackage, SIGNAL(deleteCommentFail()), this, SIGNAL(deleteCommentFail()));
     connect(remotePackage, SIGNAL(rateDone()), this, SIGNAL(rateDone()));
     connect(remotePackage, SIGNAL(ratingChanged()), this, SIGNAL(ratingChanged()));
     connect(remotePackage, SIGNAL(ownRatingChanged()), this, SIGNAL(ownRatingChanged()));
@@ -406,6 +409,9 @@ void Package::setRemotePackage(QPndman::Package* p)
     connect(remotePackage, SIGNAL(commentsChanged()), this, SLOT(handleCommentUpdate()));
     connect(remotePackage, SIGNAL(reloadCommentsDone()), this, SIGNAL(reloadCommentsDone()));
     connect(remotePackage, SIGNAL(addCommentDone()), this, SIGNAL(addCommentDone()));
+    connect(remotePackage, SIGNAL(addCommentFail()), this, SIGNAL(addCommentFail()));
+    connect(remotePackage, SIGNAL(deleteCommentDone()), this, SIGNAL(deleteCommentDone()));
+    connect(remotePackage, SIGNAL(deleteCommentFail()), this, SIGNAL(deleteCommentFail()));
     connect(remotePackage, SIGNAL(rateDone()), this, SIGNAL(rateDone()));
     connect(remotePackage, SIGNAL(ratingChanged()), this, SIGNAL(ratingChanged()));
     connect(remotePackage, SIGNAL(ownRatingChanged()), this, SIGNAL(ownRatingChanged()));
@@ -450,6 +456,14 @@ void Package::addComment(const QString comment)
   if(remotePackage)
   {
     remotePackage->addComment(comment);
+  }
+}
+
+void Package::deleteComment(QPndman::Comment* comment)
+{
+  if(remotePackage)
+  {
+    remotePackage->deleteComment(comment);
   }
 }
 

@@ -108,6 +108,7 @@ public:
   QImage getEmbeddedIcon() const;
 
   Q_INVOKABLE void addComment(QString const comment);
+  Q_INVOKABLE void deleteComment(QPndman::Comment* comment);
   Q_INVOKABLE void rate(int const rating);
 
 public slots:
@@ -138,6 +139,9 @@ signals:
   void commentsChanged();
   void reloadCommentsDone();
   void addCommentDone();
+  void addCommentFail();
+  void deleteCommentDone();
+  void deleteCommentFail();
 
   void rateDone();
   void ratingChanged();

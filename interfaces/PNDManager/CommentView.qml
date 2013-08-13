@@ -8,6 +8,20 @@ View {
 
   Keys.forwardTo: commentList
 
+  Notification {
+    id: commentErrorNotification
+    text: "Error adding comment!"
+    anchors.centerIn: parent
+    z: 2
+  }
+
+  Notification {
+    id: commentDeleteErrorNotification
+    text: "Error deleting comment!"
+    anchors.centerIn: parent
+    z: 2
+  }
+
   Rectangle {
     id: inputContainer
     visible: loggedIn
@@ -143,10 +157,32 @@ View {
           anchors.right: parent.right
           font.pixelSize: 14
         }
+
+        Image {
+          anchors.right: commentTimestamp.left
+          anchors.rightMargin: 8
+          visible: username === usernameSetting.value
+          source: "img/x_alt_32x32.png"
+          width: 16
+          height: 16
+          smooth: true
+          fillMode: Image.PreserveAspectFit
+
+          MouseArea {
+            anchors.fill: parent
+            enabled: !spinnerImage.visible
+            onClicked: {
+              spinnerImage.visible = true;
+              pnd.deleteComment(modelData);
+            }
+          }
+        }
+
         Text {
+          id: commentTimestamp
+          anchors.right: parent.right
           text: Utils.prettyLastUpdatedString(timestamp)
           font.italic: true
-          anchors.right: parent.right
           font.pixelSize: 14
         }
       }
@@ -174,7 +210,20 @@ View {
         onReloadCommentsDone: spinnerImage.visible = false
         onAddCommentDone: {
           input.text = "";
+          input.readOnly = false;
           pnd.reloadComments();
+        }
+        onAddCommentFail: {
+          commentErrorNotification.show();
+          input.readOnly = false;
+          spinnerImage.visible = false;
+        }
+        onDeleteCommentDone: {
+          pnd.reloadComments();
+        }
+        onDeleteCommentFail: {
+          commentDeleteErrorNotification.show();
+          spinnerImage.visible = false;
         }
       }
     }
