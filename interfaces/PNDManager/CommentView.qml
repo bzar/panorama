@@ -22,6 +22,16 @@ View {
     z: 2
   }
 
+  ConfirmationDialog {
+    property QtObject comment;
+    id: removeConfirmation
+    message: "Remove comment?"
+    onYes: {
+      spinnerImage.visible = true;
+      pnd.deleteComment(comment);
+    }
+    z: 2
+  }
   Rectangle {
     id: inputContainer
     visible: loggedIn
@@ -172,8 +182,8 @@ View {
             anchors.fill: parent
             enabled: !spinnerImage.visible
             onClicked: {
-              spinnerImage.visible = true;
-              pnd.deleteComment(modelData);
+              removeConfirmation.comment = modelData;
+              removeConfirmation.show();
             }
           }
         }
