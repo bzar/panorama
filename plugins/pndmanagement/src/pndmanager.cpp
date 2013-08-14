@@ -9,7 +9,8 @@ PNDManager::PNDManager(QObject* parent) : QObject(parent),
   repository(new QPndman::Repository(context, REPOSITORY_URL)),
   localRepository(new QPndman::LocalRepository(context)),
   packages(), packagesById(), devices(), commitableDevices(),
-  downloadWorker(context), runningApplication(), applicationRunning(false)
+  downloadWorker(context), handleExecutionQueue(),
+  runningApplication(), applicationRunning(false)
 {
   qDebug() << "PNDManager::PNDManager";
 
@@ -183,6 +184,16 @@ void PNDManager::setKey(const QString newKey)
     key = newKey;
     emit keyChanged();
   }
+}
+
+bool PNDManager::enqueueHandle(QPndman::Handle* handle)
+{
+  bool enqueued = handleExecutionQueue.enqueue(handle);
+  if(enqueued)
+  {
+    emit downloadEnqueued();
+  }
+  return enqueued;
 }
 
 

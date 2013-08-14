@@ -22,6 +22,9 @@ View {
     onDownloadStarted: {
       stack.pop();
     }
+    onDownloadEnqueued: {
+      stack.pop();
+    }
   }
 
   Component.onCompleted: {

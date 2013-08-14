@@ -29,7 +29,7 @@ View {
 
   function cancelDownload() {
     var pnd = getSelected();
-    if(pnd.isDownloading) {
+    if(pnd.isDownloading || pnd.isQueued) {
       pnd.cancelDownload();
       packages.createModel()
     }
@@ -96,18 +96,23 @@ View {
       id: packages
 
       property int sectionDownloading: 1
-      property int sectionUpgradable: 2
-      property int sectionInstalled: 3
+      property int sectionQueued: 2
+      property int sectionUpgradable: 3
+      property int sectionInstalled: 4
 
       function createModel() {
         clear();
         var downloading = sort(pndManager.packages.downloading()).titleContains(search.text).packages;
+        var queued = sort(pndManager.packages.queued()).titleContains(search.text).packages;
         var installed = sort(pndManager.packages.installed().notDownloading());
         var upgradable = installed.copy().upgradable().titleContains(search.text).packages;
         installed = installed.notUpgradable().titleContains(search.text).packages
 
         for(var i = 0; i < downloading.length; ++i) {
           append({sect: sectionDownloading, item: downloading[i]});
+        }
+        for(var i = 0; i < queued.length; ++i) {
+          append({sect: sectionQueued, item: queued[i]});
         }
         for(var i = 0; i < upgradable.length; ++i) {
           append({sect: sectionUpgradable, item: upgradable[i]});
@@ -122,6 +127,7 @@ View {
     Connections {
       target: pndManager
       onDownloadStarted: packages.createModel()
+      onDownloadEnqueued: packages.createModel()
       onPackagesChanged: packages.createModel()
     }
 
@@ -219,6 +225,11 @@ View {
         interval: 1000
         running: item.isDownloading
         onTriggered: {
+          if(prevBytesDownloaded === 0 && ListView.section === packages.sectionQueued)
+          {
+            ListView.view.createModel();
+          }
+
           prevBytesDownloaded = bytesDownloaded;
           bytesDownloaded = item.bytesDownloaded;
         }
@@ -259,6 +270,8 @@ View {
       function getText() {
         if(section == packages.sectionDownloading) {
           return "Downloading"
+        } else if(section == packages.sectionQueued) {
+          return "Queued"
         } else if(section == packages.sectionUpgradable) {
           return "Upgradable"
         } else if(section == packages.sectionInstalled) {
@@ -270,6 +283,8 @@ View {
       function getIcon() {
         if(section == packages.sectionDownloading) {
           return "img/cloud_download_32x32.png"
+        } else if(section == packages.sectionQueued) {
+          return "img/clock_32x32.png"
         } else if(section == packages.sectionUpgradable) {
           return "img/arrow_up_alt1_32x32.png"
         } else if(section == packages.sectionInstalled) {
@@ -383,7 +398,7 @@ View {
       Item {
         width: parent.width
         height: 16
-        visible: info.pnd !== null && info.pnd.isDownloading
+        visible: info.pnd !== null && (info.pnd.isDownloading || info.pnd.isQueued)
 
         Rectangle {
           id: progressBar

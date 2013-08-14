@@ -8,6 +8,13 @@ Package::Package(PNDManager* manager, QPndman::Package* localPackage, QPndman::P
   bytesDownloaded(localPackage ? 1 : 0), bytesToDownload(1),
   applicationList(), titleList(), descriptionList(), categoryList()
 {
+  connect(this, SIGNAL(downloadStarted()), this, SIGNAL(isDownloadingChanged()));
+  connect(this, SIGNAL(downloadCancelled()), this, SIGNAL(isDownloadingChanged()));
+  connect(this, SIGNAL(installedChanged(bool)), this, SIGNAL(isDownloadingChanged()));
+  connect(this, SIGNAL(downloadStarted()), this, SIGNAL(isQueuedChanged()));
+  connect(this, SIGNAL(downloadEnqueued()), this, SIGNAL(isQueuedChanged()));
+  connect(this, SIGNAL(downloadCancelled()), this, SIGNAL(isQueuedChanged()));
+
   if(remotePackage)
   {
     connect(remotePackage, SIGNAL(commentsChanged()), this, SLOT(handleCommentUpdate()));
@@ -242,12 +249,20 @@ bool Package::getHasUpgrade() const
 
 bool Package::getIsDownloading() const
 {
-  return bytesDownloaded > 0 && bytesDownloaded != bytesToDownload;
+  return operationHandle != 0
+      && operationHandle->getExecuted();
+}
+
+bool Package::getIsQueued() const
+{
+  return operationHandle != 0
+      && !operationHandle->getExecuted();
 }
 
 void Package::setInstalled()
 {
   setBytesDownloaded(bytesToDownload);
+  operationHandle = 0;
 }
 
 void Package::setBytesDownloaded(qint64 value)
@@ -296,15 +311,14 @@ void Package::install(QPndman::Device* device, QString location)
 
   connect(handle, SIGNAL(error(QString)), handle, SLOT(deleteLater()));
 
-  if(!handle->execute())
+  operationHandle = handle;
+
+  if(manager->enqueueHandle(handle))
   {
-    return;
+    emit downloadEnqueued();
   }
 
   manager->addCommitableDevice(device);
-
-
-  operationHandle = handle;
 }
 
 void Package::crawl()
@@ -354,13 +368,12 @@ void Package::upgrade()
 
   connect(handle, SIGNAL(error(QString)), handle, SLOT(deleteLater()));
 
-
-  if(!handle->execute())
-  {
-    return;
-  }
-
   operationHandle = handle;
+
+  if(manager->enqueueHandle(handle))
+  {
+    emit downloadEnqueued();
+  }
 }
 
 void Package::cancelDownload()
@@ -372,6 +385,7 @@ void Package::cancelDownload()
 
 void Package::handleDownloadCancelled()
 {
+  operationHandle = 0;
   setBytesDownloaded(0);
   emit downloadCancelled();
 }

@@ -40,7 +40,8 @@ class Package : public QObject
 
   Q_PROPERTY(bool installed READ getInstalled NOTIFY installedChanged)
   Q_PROPERTY(bool hasUpgrade READ getHasUpgrade NOTIFY hasUpgradeChanged)
-  Q_PROPERTY(bool isDownloading READ getIsDownloading NOTIFY bytesDownloadedChanged)
+  Q_PROPERTY(bool isDownloading READ getIsDownloading NOTIFY isDownloadingChanged)
+  Q_PROPERTY(bool isQueued READ getIsQueued NOTIFY isQueuedChanged)
   Q_PROPERTY(bool isForeign READ getIsForeign CONSTANT)
   Q_PROPERTY(qint64 bytesDownloaded READ getBytesDownloaded NOTIFY bytesDownloadedChanged)
   Q_PROPERTY(qint64 bytesToDownload READ getBytesToDownload NOTIFY bytesToDownloadChanged)
@@ -101,6 +102,7 @@ public:
   qint64 getBytesToDownload() const;
   bool getHasUpgrade() const;
   bool getIsDownloading() const;
+  bool getIsQueued() const;
   void setRemotePackage(QPndman::Package* p);
   void setLocalPackage(QPndman::Package* p);
   bool getIsForeign() const;
@@ -135,6 +137,9 @@ signals:
   void hasUpgradeChanged();
   void downloadCancelled();
   void downloadStarted();
+  void downloadEnqueued();
+  void isDownloadingChanged();
+  void isQueuedChanged();
 
   void commentsChanged();
   void reloadCommentsDone();

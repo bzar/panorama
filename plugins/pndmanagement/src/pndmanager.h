@@ -8,6 +8,7 @@
 #include "package.h"
 #include "pndfilter.h"
 #include "downloadworker.h"
+#include "handleexecutionqueue.h"
 #include <QDeclarativeListProperty>
 
 class PNDManager : public QObject
@@ -48,6 +49,8 @@ public:
   void setUsername(QString const newUsername);
   void setKey(QString const newKey);
 
+  bool enqueueHandle(QPndman::Handle* handle);
+
 public slots:
   void crawl();
   void crawl(QString packageId);
@@ -66,6 +69,7 @@ signals:
   void crawling();
   void crawlDone();
   void downloadStarted();
+  void downloadEnqueued();
 
   void verbosityChanged(int);
   void applicationRunningChanged(bool);
@@ -92,6 +96,7 @@ private:
   QList<QPndman::Device*> commitableDevices;
 
   DownloadWorker downloadWorker;
+  HandleExecutionQueue handleExecutionQueue;
   QProcess runningApplication;
   bool applicationRunning;
 

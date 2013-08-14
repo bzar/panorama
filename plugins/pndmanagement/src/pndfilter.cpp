@@ -116,6 +116,21 @@ PNDFilter* PNDFilter::notDownloading()
   return downloading(false);
 }
 
+PNDFilter* PNDFilter::queued(bool value)
+{
+  QList<Package*> result;
+  result.reserve(packages.size());
+  foreach(Package* p, packages)
+  {
+    if(p->getIsQueued() == value)
+    {
+      result << p;
+    }
+  }
+  result.swap(packages);
+  return this;
+}
+
 bool titleAlphabeticalSorter(Package const* a, Package const* b) {
   return a->getTitle().toLower() < b->getTitle().toLower();
 }

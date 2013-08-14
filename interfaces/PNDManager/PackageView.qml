@@ -35,7 +35,7 @@ View {
   onRemoveButton: {
     if(removeConfirmation.visible)
       removeConfirmation.no()
-    else if(pnd.isDownloading)
+    else if(pnd.isDownloading || pnd.isQueued)
       pnd.cancelDownload()
     else if(pnd.installed)
       removeConfirmation.show()
@@ -44,6 +44,7 @@ View {
   Connections {
     target: pnd
     onDownloadStarted: spinner.hide()
+    onDownloadEnqueued: spinner.hide()
   }
 
   ConfirmationDialog {
@@ -72,13 +73,13 @@ View {
   }
 
   function showInstallDialog() {
-    if(!pnd.installed && !pnd.isDownloading) {
+    if(!pnd.installed && !pnd.isDownloading && !pnd.isQueued) {
       stack.push(installDialog, {"pndManager": pndManager, "pnd": pnd});
     }
   }
 
   function upgrade() {
-    if(pnd.installed && pnd.hasUpgrade && !pnd.isDownloading) {
+    if(pnd.installed && pnd.hasUpgrade && !pnd.isDownloading && !pnd.isQueued) {
       spinner.show();
       pnd.upgrade();
     }
@@ -105,7 +106,7 @@ View {
     id: buttons
     anchors.top: titleText.bottom
     anchors.horizontalCenter: parent.horizontalCenter
-    spacing: pnd.installed && !pnd.isDownloading && pnd.hasUpgrade ? 8 : 16
+    spacing: pnd.installed && !pnd.isDownloading && !pnd.isQueued && pnd.hasUpgrade ? 8 : 16
     Button {
       label: "Install"
       sublabel: Utils.prettySize(pnd.size)
@@ -114,7 +115,7 @@ View {
       width: 256
       height: 64
       radius: 4
-      visible: !pnd.installed && !pnd.isDownloading && pnd.remoteVersion !== null
+      visible: !pnd.installed && !pnd.isDownloading && !pnd.isQueued && pnd.remoteVersion !== null
       onClicked: showInstallDialog()
     }
     Button {
@@ -125,7 +126,7 @@ View {
       width: 256
       height: 64
       radius: 4
-      visible: pnd.installed && !pnd.isDownloading
+      visible: pnd.installed && !pnd.isDownloading && !pnd.isQueued
       onClicked: removeConfirmation.show()
     }
     Button {
@@ -147,7 +148,7 @@ View {
       width: 256
       height: 64
       radius: 4
-      visible: pnd.installed && !pnd.isDownloading
+      visible: pnd.installed && !pnd.isDownloading && !pnd.isQueued
       onClicked: execute()
       enabled: !pndManager.applicationRunning
     }
@@ -155,9 +156,9 @@ View {
     Column {
       width: 256
       height: 64
-      visible: pnd.isDownloading
+      visible: pnd.isDownloading || pnd.isQueued
       Text {
-        text: "Installing..."
+        text: pnd.isQueued ? "Queued" : "Installing..."
         anchors.left: parent.left
         anchors.margins: 16
       }
@@ -203,6 +204,7 @@ View {
       }
 
       Item {
+        visible: pnd.isDownloading
         anchors.right: parent.right
         anchors.margins: 16
         property variant progress: Utils.prettyProgress(pnd.bytesDownloaded, pnd.bytesToDownload)

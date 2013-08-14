@@ -101,7 +101,7 @@ PanoramaUI {
   }
 
   property bool loggedIn: pndManager.username && pndManager.key
-
+  
   PNDUtils { id: pndUtils }
 
   Keys.onPressed: {
