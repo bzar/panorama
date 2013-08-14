@@ -59,6 +59,15 @@ PanoramaUI {
   }
 
   Setting {
+      id: maxDownloads
+      section: "PNDManager"
+      key: "maxDownloads"
+      defaultValue: 4
+      onValueChanged: pndManager.maxDownloads = value
+      Component.onCompleted: pndManager.maxDownloads = value
+  }
+
+  Setting {
     id: usernameSetting
     section: "PNDManager"
     key: "username"

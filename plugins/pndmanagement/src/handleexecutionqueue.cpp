@@ -29,7 +29,11 @@ int HandleExecutionQueue::getMaxExecuting() const
 
 void HandleExecutionQueue::setMaxExecuting(int value)
 {
-  maxExecuting = value;
+  if(maxExecuting != value)
+  {
+    maxExecuting = value;
+    emit maxExecutingChanged();
+  }
 }
 int HandleExecutionQueue::getCurrentlyExecuting() const
 {

@@ -22,6 +22,8 @@ class PNDManager : public QObject
   Q_PROPERTY(QString username READ getUsername WRITE setUsername NOTIFY usernameChanged)
   Q_PROPERTY(QString key READ getKey WRITE setKey NOTIFY keyChanged)
 
+  Q_PROPERTY(int maxDownloads READ getMaxDownloads WRITE setMaxDownloads NOTIFY maxDownloadsChanged)
+
   Q_ENUMS(QPndman::Enum::InstallLocation QPndman::Enum::Operation QPndman::Version::Type)
 public:
   PNDManager(QObject* parent = 0);
@@ -40,6 +42,9 @@ public:
 
   int getVerbosity() const;
   void setVerbosity(int level);
+
+  int getMaxDownloads() const;
+  void setMaxDownloads(int value);
 
   bool getApplicationRunning() const;
 
@@ -76,6 +81,7 @@ signals:
 
   void usernameChanged();
   void keyChanged();
+  void maxDownloadsChanged();
 
 private slots:
   void applicationStarted();
@@ -96,7 +102,7 @@ private:
   QList<QPndman::Device*> commitableDevices;
 
   DownloadWorker downloadWorker;
-  HandleExecutionQueue handleExecutionQueue;
+  HandleExecutionQueue downloadQueue;
   QProcess runningApplication;
   bool applicationRunning;
 

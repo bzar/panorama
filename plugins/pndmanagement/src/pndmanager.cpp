@@ -9,7 +9,7 @@ PNDManager::PNDManager(QObject* parent) : QObject(parent),
   repository(new QPndman::Repository(context, REPOSITORY_URL)),
   localRepository(new QPndman::LocalRepository(context)),
   packages(), packagesById(), devices(), commitableDevices(),
-  downloadWorker(context), handleExecutionQueue(),
+  downloadWorker(context), downloadQueue(),
   runningApplication(), applicationRunning(false)
 {
   qDebug() << "PNDManager::PNDManager";
@@ -153,6 +153,20 @@ void PNDManager::setVerbosity(int level)
   }
 }
 
+int PNDManager::getMaxDownloads() const
+{
+  return downloadQueue.getMaxExecuting();
+}
+
+void PNDManager::setMaxDownloads(int value)
+{
+  if(value != getMaxDownloads())
+  {
+    downloadQueue.setMaxExecuting(value);
+    emit maxDownloadsChanged();
+  }
+}
+
 bool PNDManager::getApplicationRunning() const
 {
   return applicationRunning;
@@ -188,7 +202,7 @@ void PNDManager::setKey(const QString newKey)
 
 bool PNDManager::enqueueHandle(QPndman::Handle* handle)
 {
-  bool enqueued = handleExecutionQueue.enqueue(handle);
+  bool enqueued = downloadQueue.enqueue(handle);
   if(enqueued)
   {
     emit downloadEnqueued();

@@ -7,6 +7,7 @@
 class HandleExecutionQueue : public QObject
 {
   Q_OBJECT
+
 public:
   HandleExecutionQueue(QObject* parent = 0);
   bool enqueue(QPndman::Handle* handle);
@@ -15,6 +16,9 @@ public:
   void setMaxExecuting(int value);
 
   int getCurrentlyExecuting() const;
+
+signals:
+  void maxExecutingChanged();
 
 private slots:
   void handleReady();
