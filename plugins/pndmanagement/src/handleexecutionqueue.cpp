@@ -41,7 +41,7 @@ void HandleExecutionQueue::handleReady()
   QPndman::Handle* queuedHandle = 0;
   foreach(QPndman::Handle* handle, handles)
   {
-    if(handle->getExecuted())
+    if(handle->getCancelled())
     {
       queuedHandle = handle;
       break;
