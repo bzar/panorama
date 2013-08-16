@@ -1,6 +1,5 @@
 #include "package.h"
 #include "pndmanager.h"
-#include <QDebug>
 
 Package::Package(PNDManager* manager, QPndman::Package* localPackage, QPndman::Package* remotePackage, QObject* parent):
   QObject(parent), manager(manager), localPackage(localPackage), remotePackage(remotePackage), operationHandle(0),
