@@ -11,9 +11,8 @@ void DownloadWorker::run()
   stopMutex.unlock();
   while(stopMutex.tryLock())
   {
-    int pending = context->processDownload();
+    context->processDownload();
     stopMutex.unlock();
-    msleep(pending ? 10 : 500);
   }
 }
 
