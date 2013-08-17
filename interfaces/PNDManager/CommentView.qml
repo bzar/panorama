@@ -22,6 +22,9 @@ View {
     z: 2
   }
 
+  onOkButton: if(removeConfirmation.visible) removeConfirmation.yes()
+  onRemoveButton: if(removeConfirmation.visible) removeConfirmation.no()
+
   ConfirmationDialog {
     property QtObject comment;
     id: removeConfirmation
