@@ -472,11 +472,13 @@ View {
       Component.onCompleted: {
         if(pnd.comments.length === 0)
           pnd.reloadComments();
+        else
+          numberOfComments = pnd.comments.length
       }
 
       Connections {
         target: pnd
-        onReloadCommentsDone: commentsButton.numberOfComments = pnd.comments.length
+        onCommentsChanged: commentsButton.numberOfComments = pnd.comments.length
       }
     }
   }
