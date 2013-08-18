@@ -59,6 +59,13 @@ View {
     showPackage(getSelected());
   }
 
+  Notification {
+    id: downloadErrorNotification
+    text: "Error downloading PND!"
+    anchors.centerIn: parent
+    z: 2
+  }
+
   Component { id: packageView; PackageView {} }
 
   Text {
@@ -128,6 +135,7 @@ View {
       target: pndManager
       onDownloadStarted: packages.createModel()
       onDownloadEnqueued: packages.createModel()
+      onDownloadError: downloadErrorNotification.show()
       onPackagesChanged: packages.createModel()
     }
 

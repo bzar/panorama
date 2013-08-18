@@ -17,6 +17,13 @@ View {
     pnd.install(deviceList.currentItem.device, location.selectedItem());
   }
 
+  Notification {
+    id: downloadErrorNotification
+    text: "Error downloading PND!"
+    anchors.centerIn: parent
+    z: 2
+  }
+
   Connections {
     target: pnd
     onDownloadStarted: {
@@ -24,6 +31,11 @@ View {
     }
     onDownloadEnqueued: {
       stack.pop();
+    }
+    onDownloadError: {
+      downloadErrorNotification.show();
+      spinner.hide();
+      installButton.enabled = true;
     }
   }
 

@@ -75,6 +75,7 @@ signals:
   void crawlDone();
   void downloadStarted();
   void downloadEnqueued();
+  void downloadError();
 
   void verbosityChanged(int);
   void applicationRunningChanged(bool);

@@ -308,6 +308,9 @@ void Package::install(QPndman::Device* device, QString location)
   connect(handle, SIGNAL(cancelled()), this, SLOT(handleDownloadCancelled()));
   connect(handle, SIGNAL(cancelled()), handle, SLOT(deleteLater()));
 
+  connect(handle, SIGNAL(error(QString)), this, SIGNAL(downloadError()));
+  connect(handle, SIGNAL(error(QString)), manager, SIGNAL(downloadError()));
+  connect(handle, SIGNAL(error(QString)), this, SLOT(handleDownloadCancelled()));
   connect(handle, SIGNAL(error(QString)), handle, SLOT(deleteLater()));
 
   operationHandle = handle;
@@ -365,6 +368,9 @@ void Package::upgrade()
   connect(handle, SIGNAL(cancelled()), this, SLOT(handleDownloadCancelled()));
   connect(handle, SIGNAL(cancelled()), handle, SLOT(deleteLater()));
 
+  connect(handle, SIGNAL(error(QString)), this, SIGNAL(downloadError()));
+  connect(handle, SIGNAL(error(QString)), manager, SIGNAL(downloadError()));
+  connect(handle, SIGNAL(error(QString)), this, SLOT(handleDownloadCancelled()));
   connect(handle, SIGNAL(error(QString)), handle, SLOT(deleteLater()));
 
   operationHandle = handle;

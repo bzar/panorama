@@ -135,6 +135,7 @@ signals:
   void bytesDownloadedChanged(qint64);
   void bytesToDownloadChanged(qint64);
   void hasUpgradeChanged();
+  void downloadError();
   void downloadCancelled();
   void downloadStarted();
   void downloadEnqueued();
