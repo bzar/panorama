@@ -224,12 +224,12 @@ View {
         property int bytesDownloaded: 0
         interval: 1000
         running: item.isDownloading
+        repeat: true
         onTriggered: {
           if(prevBytesDownloaded === 0 && ListView.section === packages.sectionQueued)
           {
             ListView.view.createModel();
           }
-
           prevBytesDownloaded = bytesDownloaded;
           bytesDownloaded = item.bytesDownloaded;
         }
