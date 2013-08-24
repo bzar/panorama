@@ -417,25 +417,28 @@ void Package::reloadOwnRating()
 
 void Package::setRemotePackage(QPndman::Package* p)
 {
-  applicationList.clear();
-  titleList.clear();
-  descriptionList.clear();
-  categoryList.clear();
-  previewPictureList.clear();
-
-  remotePackage = p;
-  if(remotePackage)
+  if(p != remotePackage)
   {
-    connect(remotePackage, SIGNAL(commentsChanged()), this, SLOT(handleCommentUpdate()));
-    connect(remotePackage, SIGNAL(reloadCommentsDone()), this, SIGNAL(reloadCommentsDone()));
-    connect(remotePackage, SIGNAL(addCommentDone()), this, SIGNAL(addCommentDone()));
-    connect(remotePackage, SIGNAL(addCommentFail()), this, SIGNAL(addCommentFail()));
-    connect(remotePackage, SIGNAL(deleteCommentDone()), this, SIGNAL(deleteCommentDone()));
-    connect(remotePackage, SIGNAL(deleteCommentFail()), this, SIGNAL(deleteCommentFail()));
-    connect(remotePackage, SIGNAL(rateDone()), this, SIGNAL(rateDone()));
-    connect(remotePackage, SIGNAL(rateFail()), this, SIGNAL(rateFail()));
-    connect(remotePackage, SIGNAL(ratingChanged()), this, SIGNAL(ratingChanged()));
-    connect(remotePackage, SIGNAL(ownRatingChanged()), this, SIGNAL(ownRatingChanged()));
+    applicationList.clear();
+    titleList.clear();
+    descriptionList.clear();
+    categoryList.clear();
+    previewPictureList.clear();
+
+    remotePackage = p;
+    if(remotePackage)
+    {
+      connect(remotePackage, SIGNAL(commentsChanged()), this, SLOT(handleCommentUpdate()));
+      connect(remotePackage, SIGNAL(reloadCommentsDone()), this, SIGNAL(reloadCommentsDone()));
+      connect(remotePackage, SIGNAL(addCommentDone()), this, SIGNAL(addCommentDone()));
+      connect(remotePackage, SIGNAL(addCommentFail()), this, SIGNAL(addCommentFail()));
+      connect(remotePackage, SIGNAL(deleteCommentDone()), this, SIGNAL(deleteCommentDone()));
+      connect(remotePackage, SIGNAL(deleteCommentFail()), this, SIGNAL(deleteCommentFail()));
+      connect(remotePackage, SIGNAL(rateDone()), this, SIGNAL(rateDone()));
+      connect(remotePackage, SIGNAL(rateFail()), this, SIGNAL(rateFail()));
+      connect(remotePackage, SIGNAL(ratingChanged()), this, SIGNAL(ratingChanged()));
+      connect(remotePackage, SIGNAL(ownRatingChanged()), this, SIGNAL(ownRatingChanged()));
+    }
   }
 }
 
