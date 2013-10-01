@@ -140,7 +140,7 @@ View {
 
     Keys.onDownPressed: {
       if(contentHeight > height) {
-        scrollAnimation.to = Math.min(contentHeight - height, contentY + height/2);
+        scrollAnimation.to = Math.min(contentHeight, contentY + height/2);
         scrollAnimation.start();
       }
       event.accepted = true;
