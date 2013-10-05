@@ -444,20 +444,28 @@ void Package::setRemotePackage(QPndman::Package* p)
 
 void Package::setLocalPackage(QPndman::Package* p)
 {
-  applicationList.clear();
-  titleList.clear();
-  descriptionList.clear();
-  categoryList.clear();
-  previewPictureList.clear();
+  if(p != localPackage)
+  {
+    applicationList.clear();
+    titleList.clear();
+    descriptionList.clear();
+    categoryList.clear();
+    previewPictureList.clear();
 
-  QPndman::Package* old = localPackage;
-  localPackage = p;
+    QPndman::Package* old = localPackage;
+    localPackage = p;
 
-  if((localPackage != 0) != (old != 0) || (localPackage && old && (old->getUpgradeCandidate() != 0) != (localPackage->getUpgradeCandidate() != 0)))
-    emit hasUpgradeChanged();
+    if((localPackage != 0) != (old != 0) || (localPackage && old && (old->getUpgradeCandidate() != 0) != (localPackage->getUpgradeCandidate() != 0)))
+      emit hasUpgradeChanged();
 
-  if((localPackage && !old) || (!localPackage && old))
-    emit installedChanged(localPackage != 0);
+    // Installed or removed
+    if((localPackage && !old) || (!localPackage && old))
+      emit installedChanged(localPackage != 0);
+
+    // Upgraded
+    if(localPackage && old)
+      emit installedChanged(true);
+  }
 }
 
 bool Package::getIsForeign() const

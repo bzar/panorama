@@ -43,6 +43,12 @@ PNDManager::~PNDManager()
 {
   downloadWorker.stop();
   saveRepositories();
+  foreach(Package* p, packages)
+  {
+    delete p;
+  }
+  packages.clear();
+
   delete context;
 }
 
