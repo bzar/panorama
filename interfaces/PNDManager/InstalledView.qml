@@ -95,9 +95,20 @@ View {
     anchors.right: info.left
     anchors.top: parent.top
     anchors.bottom: parent.bottom
-
     Keys.priority: Keys.AfterItem
-    Keys.forwardTo: [ui, search]
+    Keys.forwardTo: [keyHandler, ui, search]
+
+    Item {
+      id: keyHandler
+      Keys.onLeftPressed: {
+        content.currentIndex = Math.max(0, content.currentIndex - 5)
+        event.accepted = true;
+      }
+      Keys.onRightPressed: {
+        content.currentIndex = Math.min(content.count  - 1, content.currentIndex + 5)
+        event.accepted = true;
+      }
+    }
 
     model: ListModel {
       id: packages
