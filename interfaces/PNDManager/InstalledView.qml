@@ -59,6 +59,12 @@ View {
     showPackage(getSelected());
   }
 
+  function executeSelected() {
+    if(getSelected() !== null && !pndManager.applicationRunning) {
+      pndManager.execute(getSelected().id)
+    }
+  }
+
   Notification {
     id: downloadErrorNotification
     text: "Error downloading PND!"
@@ -108,6 +114,7 @@ View {
         content.currentIndex = Math.min(content.count  - 1, content.currentIndex + 5)
         event.accepted = true;
       }
+      Keys.onReturnPressed: executeSelected()
     }
 
     model: ListModel {
