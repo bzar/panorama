@@ -16,7 +16,7 @@ class PNDManager : public QObject
   Q_OBJECT
   Q_PROPERTY(PNDFilter* packages READ getPackages NOTIFY packagesChanged)
   Q_PROPERTY(QDeclarativeListProperty<QPndman::Device> devices READ getDevices NOTIFY devicesChanged)
-  Q_PROPERTY(QList<QString> customDevices READ getCustomDevices WRITE setCustomDevices)
+  Q_PROPERTY(QList<QString> customDevices READ getCustomDevices WRITE addCustomDevices)
 
   Q_PROPERTY(int verbosity READ getVerbosity WRITE setVerbosity NOTIFY verbosityChanged)
   Q_PROPERTY(bool applicationRunning READ getApplicationRunning NOTIFY applicationRunningChanged)
@@ -59,7 +59,7 @@ public:
   bool enqueueHandle(QPndman::Handle* handle);
 
   QList<QString> getCustomDevices() const;
-  void setCustomDevices(const QList<QString>& value);
+  void addCustomDevices(const QList<QString>& value);
 
 
 public slots:
@@ -69,7 +69,7 @@ public slots:
   void updatePackages();
   void saveRepositories();
   void execute(QString const& pndId);
-  void setCustomDevicesString(QString const& value);
+  void addCustomDevicesString(QString const& value);
 
 signals:
   void packagesChanged();

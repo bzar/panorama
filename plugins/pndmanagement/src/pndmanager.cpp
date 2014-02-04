@@ -20,6 +20,8 @@ PNDManager::PNDManager(QObject* parent) : QObject(parent),
   connect(this, SIGNAL(usernameChanged()), this, SLOT(login()));
   connect(this, SIGNAL(keyChanged()), this, SLOT(login()));
 
+  devices.append(QPndman::Device::detectDevices(context));
+
   updateDevices();
   repository->update();
 
@@ -45,19 +47,22 @@ QList<QString> PNDManager::getCustomDevices() const
   return customDevices;
 }
 
-void PNDManager::setCustomDevices(const QList<QString>& value)
+void PNDManager::addCustomDevices(const QList<QString>& value)
 {
-  if(value != customDevices)
-  {
-    customDevices = value;
-    updateDevices();
-  }
-
+  customDevices = value;
+  updateDevices();
 }
 
-void PNDManager::setCustomDevicesString(const QString& value)
+void PNDManager::addCustomDevicesString(const QString& value)
 {
-  setCustomDevices(value.split(","));
+  if(value.isEmpty())
+  {
+    addCustomDevices(QList<QString>());
+  }
+  else
+  {
+    addCustomDevices(value.split(","));
+  }
 }
 
 QDeclarativeListProperty<QPndman::Device> PNDManager::getDevices()
@@ -381,10 +386,8 @@ void PNDManager::login()
 
 void PNDManager::updateDevices()
 {
+  qDebug() << "updateDevices()";
   commitableDevices.clear();
-  devices.clear();
-
-  devices.append(QPndman::Device::detectDevices(context));
 
   foreach(QString customDevice, customDevices)
   {
@@ -404,7 +407,9 @@ void PNDManager::updateDevices()
     }
   }
 
-  localRepository->update();
+
+  repository->update();
+  crawl();
 }
 
 

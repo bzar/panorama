@@ -148,7 +148,7 @@ View {
           append({sect: sectionInstalled, item: installed[i]});
         }
 
-        content.currentIndex = previousIndex;
+        content.currentIndex = Math.min(count - 1, previousIndex);
       }
 
     }
