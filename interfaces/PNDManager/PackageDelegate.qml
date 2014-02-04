@@ -8,34 +8,43 @@ Item {
 
   signal clicked()
 
+  height: childrenRect.height
+
   Image {
     id: icon
     source: pnd.installed ? "image://pnd/" + pnd.id : pnd.icon
     asynchronous: true
     anchors.leftMargin: (48/2 - width/2) + 4
     anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
     sourceSize.width: 48
+    sourceSize.height: 48
   }
 
-  Text {
-    id: title
-    text: pnd.title
+  Column {
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.leftMargin: 56
-    anchors.rightMargin: 8
-    elide: Text.ElideRight
-    font.pixelSize: 16
-    font.underline: true
-  }
+    anchors.verticalCenter: parent.verticalCenter
+    Text {
+      id: title
+      text: pnd.title
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.leftMargin: 64
+      anchors.rightMargin: 8
+      verticalAlignment: Text.Bottom
+      elide: Text.ElideRight
+      font.pixelSize: 14
+      font.bold: true
+    }
 
-  Item {
-    id: content
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: title.bottom
-    anchors.bottom: parent.bottom
-    anchors.leftMargin: 56
+    Item {
+      id: content
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.leftMargin: 64
+      height: childrenRect.height
+    }
   }
 
   MouseArea {

@@ -112,6 +112,8 @@ View {
         Text {
           text: Utils.prettyLastUpdatedString(modelData.modified)
           font.pixelSize: 14
+          color: "#666"
+          verticalAlignment: Text.Top
         }
       }
     }
@@ -197,6 +199,8 @@ View {
         Text {
           text: pndUtils.createRatingString(pnd)
           font.pixelSize: 14
+          color: "#666"
+          verticalAlignment: Text.Top
         }
       }
     }

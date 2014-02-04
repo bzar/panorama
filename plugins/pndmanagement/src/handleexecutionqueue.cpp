@@ -10,7 +10,7 @@ bool HandleExecutionQueue::enqueue(QPndman::Handle* handle)
 {
   connect(handle, SIGNAL(done()), this, SLOT(handleReady()));
   connect(handle, SIGNAL(cancelled()), this, SLOT(handleReady()));
-  connect(handle, SIGNAL(error(QString)), this, SLOT(handleReady());
+  connect(handle, SIGNAL(error(QString)), this, SLOT(handleReady()));
 
   if(currentlyExecuting < maxExecuting)
   {
