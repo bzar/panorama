@@ -108,6 +108,8 @@ View {
       property int sectionInstalled: 4
 
       function createModel() {
+        var previousIndex = content.currentIndex;
+
         clear();
         var downloading = sort(pndManager.packages.downloading()).titleContains(search.text).packages;
         var queued = sort(pndManager.packages.queued()).titleContains(search.text).packages;
@@ -127,6 +129,8 @@ View {
         for(var i = 0; i < installed.length; ++i) {
           append({sect: sectionInstalled, item: installed[i]});
         }
+
+        content.currentIndex = previousIndex;
       }
 
     }
