@@ -17,24 +17,12 @@ PNDManager::PNDManager(QObject* parent) : QObject(parent),
   connect(&runningApplication, SIGNAL(started()), this, SLOT(applicationStarted()));
   connect(&runningApplication, SIGNAL(finished(int)), this, SLOT(applicationFinished()));
 
-  devices.append(QPndman::Device::detectDevices(context));
-  foreach(QPndman::Device* device, devices)
-  {
-    qDebug() << " * Reading from" << device->getMount();
-    bool canRead = false;
-    canRead |= repository->loadFrom(device, false);
-    canRead |= localRepository->loadFrom(device, false);
-    if(canRead)
-    {
-      commitableDevices << device;
-    }
-  }
-
   connect(this, SIGNAL(usernameChanged()), this, SLOT(login()));
   connect(this, SIGNAL(keyChanged()), this, SLOT(login()));
 
+  updateDevices();
   repository->update();
-  localRepository->update();
+
   downloadWorker.start(QThread::LowPriority);
   PNDDeclarativeImageProvider::registerPNDManager(this);
 }
@@ -50,6 +38,26 @@ PNDManager::~PNDManager()
   packages.clear();
 
   delete context;
+}
+
+QList<QString> PNDManager::getCustomDevices() const
+{
+  return customDevices;
+}
+
+void PNDManager::setCustomDevices(const QList<QString>& value)
+{
+  if(value != customDevices)
+  {
+    customDevices = value;
+    updateDevices();
+  }
+
+}
+
+void PNDManager::setCustomDevicesString(const QString& value)
+{
+  setCustomDevices(value.split(","));
 }
 
 QDeclarativeListProperty<QPndman::Device> PNDManager::getDevices()
@@ -370,6 +378,35 @@ void PNDManager::login()
     repository->setCredentials(username, key);
   }
 }
+
+void PNDManager::updateDevices()
+{
+  commitableDevices.clear();
+  devices.clear();
+
+  devices.append(QPndman::Device::detectDevices(context));
+
+  foreach(QString customDevice, customDevices)
+  {
+    QPndman::Device* device = new QPndman::Device(context, customDevice, this);
+    devices.append(device);
+  }
+
+  foreach(QPndman::Device* device, devices)
+  {
+    qDebug() << " * Reading from" << device->getMount();
+    bool canRead = false;
+    canRead |= repository->loadFrom(device, false);
+    canRead |= localRepository->loadFrom(device, false);
+    if(canRead)
+    {
+      commitableDevices << device;
+    }
+  }
+
+  localRepository->update();
+}
+
 
 void PNDManager::applicationStarted()
 {

@@ -81,6 +81,15 @@ PanoramaUI {
     defaultValue: ""
   }
 
+  Setting {
+    id: customDevices
+    section: "PNDManager"
+    key: "customDevices"
+    defaultValue: ""
+    onValueChanged: pndManager.setCustomDevicesString(value)
+    Component.onCompleted: pndManager.setCustomDevicesString(value)
+  }
+
   function init() {
     pndManager.crawl();
   }
