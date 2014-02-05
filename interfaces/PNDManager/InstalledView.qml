@@ -129,10 +129,10 @@ View {
         var previousIndex = content.currentIndex;
 
         clear();
-        var downloading = sort(pndManager.packages.downloading()).titleContains(search.text).packages;
+        var downloading = sort(pndManager.packages.downloading().notQueued()).titleContains(search.text).packages;
         var queued = sort(pndManager.packages.queued()).titleContains(search.text).packages;
         var installed = sort(pndManager.packages.installed().notDownloading());
-        var upgradable = installed.copy().upgradable().titleContains(search.text).packages;
+        var upgradable = installed.copy().upgradable().notQueued().titleContains(search.text).packages;
         installed = installed.notUpgradable().titleContains(search.text).packages
 
         for(var i = 0; i < downloading.length; ++i) {

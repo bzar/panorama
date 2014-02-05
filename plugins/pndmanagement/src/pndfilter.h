@@ -28,6 +28,7 @@ public:
   Q_INVOKABLE PNDFilter* downloading(bool value = true);
   Q_INVOKABLE PNDFilter* notDownloading();
   Q_INVOKABLE PNDFilter* queued(bool value = true);
+  Q_INVOKABLE PNDFilter* notQueued();
 
   Q_INVOKABLE PNDFilter* sortedByTitle();
   Q_INVOKABLE PNDFilter* sortedByLastUpdated();

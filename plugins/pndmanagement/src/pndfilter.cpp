@@ -131,6 +131,11 @@ PNDFilter* PNDFilter::queued(bool value)
   return this;
 }
 
+PNDFilter* PNDFilter::notQueued()
+{
+  return queued(false);
+}
+
 bool titleAlphabeticalSorter(Package const* a, Package const* b) {
   return a->getTitle().toLower() < b->getTitle().toLower();
 }
