@@ -204,7 +204,7 @@ View {
       }
 
       Item {
-        visible: pnd.isDownloading
+        visible: pnd.isDownloading  && !pnd.isQueued
         anchors.right: parent.right
         anchors.margins: 16
         property variant progress: Utils.prettyProgress(pnd.bytesDownloaded, pnd.bytesToDownload)

@@ -486,7 +486,7 @@ View {
 
       Item {
         id: progressText
-        visible: info.pnd !== null && info.pnd.isDownloading
+        visible: info.pnd !== null && info.pnd.isDownloading && !info.pnd.isQueued
         property variant progress: !visible ? null : Utils.prettyProgress(info.pnd.bytesDownloaded, info.pnd.bytesToDownload)
         width: parent.width
         height: 16
