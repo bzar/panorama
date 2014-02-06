@@ -8,6 +8,11 @@ View {
 
   Keys.forwardTo: commentList
 
+  Connections {
+    target: pndManager
+    onPackagesChanged: pnd.reloadComments()
+  }
+
   Notification {
     id: commentErrorNotification
     text: "Error adding comment!"
