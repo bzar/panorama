@@ -243,6 +243,7 @@ View {
 
       Connections {
         target: content
+        onContentHeightChanged:  y = content.currentItem ? content.currentItem.y : 0
         onCurrentIndexChanged: y = content.currentItem ? content.currentItem.y : 0
       }
     }
