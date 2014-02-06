@@ -330,7 +330,7 @@ void Package::crawl()
 
 void Package::remove()
 {
-  if(!localPackage)
+  if(!localPackage || operationHandle)
     return;
 
   for(int i = 0; i < manager->deviceCount(); ++i)
@@ -351,7 +351,7 @@ void Package::remove()
 
 void Package::upgrade()
 {
-  if(!localPackage)
+  if(!localPackage || operationHandle)
     return;
 
   QPndman::UpgradeHandle* handle = new QPndman::UpgradeHandle(manager->getContext(), localPackage->getUpgradeCandidate(), false, this);

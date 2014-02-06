@@ -29,7 +29,7 @@ View {
 
   function cancelDownload() {
     var pnd = getSelected();
-    if(pnd.isDownloading || pnd.isQueued) {
+    if(pnd && (pnd.isDownloading || pnd.isQueued)) {
       pnd.cancelDownload();
       packages.createModel()
     }
@@ -42,7 +42,7 @@ View {
   function upgradeAll() {
     for(var i = 0; i < packages.count; ++i) {
       var pnd = packages.get(i).item;
-      if(pnd.hasUpgrade) {
+      if(pnd.hasUpgrade && !pnd.isDownloading && !pnd.isQueued) {
         pnd.upgrade();
       }
     }
