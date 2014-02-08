@@ -17,6 +17,13 @@ PanoramaUI {
   Text {
     anchors.centerIn: parent
     color: "#fff"
-    text: net.networkingEnabled + ' ' + net.wirelessEnabled + ' ' + net.activeConnections
+    text: net.networkingEnabled + ' ' + net.wirelessEnabled
+  }
+
+  ListView {
+    model: net.networkInterfaces
+    delegate: Text {
+      text: index
+    }
   }
 }

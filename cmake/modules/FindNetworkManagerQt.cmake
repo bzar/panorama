@@ -33,11 +33,15 @@ if (NetworkManagerQt_LIBRARY)
     )
 endif (NetworkManagerQt_LIBRARY)
 
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(NetworkManagerQt DEFAULT_MSG
-    NetworkManagerQt_LIBRARIES NetworkManagerQt_INCLUDE_DIRS)
+if (NetworkManagerQt_LIBRARIES AND NetworkManagerQt_INCLUDE_DIRS)
+  set(NetworkManagerQt_FOUND TRUE)
+endif ()
 
-  # show the NetworkManagerQt_INCLUDE_DIRS and NetworkManagerQt_LIBRARIES variables only in the advanced view
-  mark_as_advanced(NetworkManagerQt_INCLUDE_DIRS NetworkManagerQt_LIBRARIES)
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(NetworkManagerQt DEFAULT_MSG
+NetworkManagerQt_LIBRARIES NetworkManagerQt_INCLUDE_DIRS)
+
+# show the NetworkManagerQt_INCLUDE_DIRS and NetworkManagerQt_LIBRARIES variables only in the advanced view
+mark_as_advanced(NetworkManagerQt_INCLUDE_DIRS NetworkManagerQt_LIBRARIES)
 
 endif (NetworkManagerQt_LIBRARIES AND NetworkManagerQt_INCLUDE_DIRS)

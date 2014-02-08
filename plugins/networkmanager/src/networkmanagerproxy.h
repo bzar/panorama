@@ -21,8 +21,8 @@ class NetworkManagerProxy : public QObject
   typedef NetworkManager::Status Status;
   Q_ENUMS(Status)
   Q_PROPERTY(Status status READ status NOTIFY statusChanged)
-  Q_PROPERTY(NetworkManager::Device::List networkInterfaces READ networkInterfaces NOTIFY devicesChanged)
-  Q_PROPERTY(NetworkManager::ActiveConnection::List activeConnections READ activeConnections NOTIFY activeConnectionsChanged)
+  Q_PROPERTY(QDeclarativeListProperty<NetworkManager::Device> networkInterfaces READ networkInterfaces NOTIFY devicesChanged)
+  Q_PROPERTY(QDeclarativeListProperty<NetworkManager::ActiveConnection> activeConnections READ activeConnections NOTIFY activeConnectionsChanged)
   Q_PROPERTY(QStringList activeConnectionsPaths READ activeConnectionsPaths NOTIFY activeConnectionsChanged)
 
   Q_PROPERTY(bool networkingEnabled READ isNetworkingEnabled WRITE setNetworkingEnabled NOTIFY networkingEnabledChanged)
@@ -38,8 +38,8 @@ public:
   ~NetworkManagerProxy();
 
   NetworkManager::Status status();
-  NetworkManager::Device::List networkInterfaces();
-  NetworkManager::ActiveConnection::List activeConnections();
+  QDeclarativeListProperty<NetworkManager::Device> networkInterfaces();
+  QDeclarativeListProperty<NetworkManager::ActiveConnection> activeConnections();
   QStringList activeConnectionsPaths();
 
   bool isNetworkingEnabled();
@@ -83,7 +83,5 @@ signals:
   void serviceDisappeared();
   void serviceAppeared();
 };
-
-QML_DECLARE_TYPE(NetworkManagerProxy)
 
 #endif // NETWORKMANAGERPROXY_H
