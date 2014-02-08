@@ -42,6 +42,8 @@ OPTION(OPENGL "Enable OpenGL rendering")
 # emulate them somehow.
 OPTION(POLTERGEIST "Test the event system with a poltergeist")
 
+LIST(APPEND CMAKE_MODULE_PATH ${PANORAMA_SOURCE_DIR}/cmake/modules)
+
 CONFIGURE_FILE(
     include/panoramaconfig.h.in
     include/panoramaconfig.h)
