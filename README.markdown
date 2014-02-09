@@ -35,6 +35,15 @@ them using the following commands:
     cmake ..
     make
 
+To create a monolithic (everything in one directory) build for testing or packaging, do
+
+    git submodule update --init --recursive
+    mkdir build && cd build
+    cmake -DPANDORA=ON -DCMAKE_INSTALL_PREFIX=install ..
+    make install
+    
+to install a properly configured version to build/install.
+
 Further documentation
 ---------------------
 If you want to find out more about Panorama, please visit the project's
