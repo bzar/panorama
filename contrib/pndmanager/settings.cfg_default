@@ -1,0 +1,9 @@
+[panorama]
+dataDirectory=/media/mmcblk1p1/panorama
+uiDirectory=interfaces
+ui=PNDManager
+fullscreen=true
+
+[PNDManager]
+showSplashScreen=true
+showHints=true
