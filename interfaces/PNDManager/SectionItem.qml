@@ -2,7 +2,7 @@ import QtQuick 1.1
 
 Item {
   id: item
-  height: 48
+  height: 54
 
   property alias title: title.text
   property alias icon: icon.source
@@ -27,7 +27,7 @@ Item {
     verticalAlignment: Text.AlignVCenter
     anchors.left: parent.left
     anchors.right: progress.left
-    anchors.leftMargin: 52
+    anchors.leftMargin: 64
     elide: Text.ElideRight
   }
 

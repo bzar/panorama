@@ -109,7 +109,7 @@ View {
     spacing: pnd.installed && !pnd.isDownloading && !pnd.isQueued && pnd.hasUpgrade ? 8 : 16
     Button {
       label: "Install"
-      sublabel: Utils.prettySize(pnd.size)
+      sublabel: "Requires " + Utils.prettySize(pnd.size)
       control: "game-y"
       color: Theme.colors.install
       width: 256
@@ -120,7 +120,7 @@ View {
     }
     Button {
       label: "Remove"
-      sublabel: Utils.prettySize(pnd.size)
+      sublabel: "Frees " + Utils.prettySize(pnd.size)
       control: "game-a"
       color: Theme.colors.remove
       width: 256
@@ -130,8 +130,18 @@ View {
       onClicked: removeConfirmation.show()
     }
     Button {
+      function sizeDelta() {
+        var delta = pnd.upgradeCandidate.size - pnd.size;
+        console.log(pnd.upgradeCandidate.size, pnd.size, delta);
+        if(delta < 0) {
+          return "Frees " + Utils.prettySize(-delta);
+        } else {
+          return "Requires " + Utils.prettySize(delta);
+        }
+      }
+
       label: "Upgrade"
-      sublabel: pnd.hasUpgrade ? Utils.versionString(pnd.localVersion) + " → " + Utils.versionString(pnd.remoteVersion) + " (" + Utils.prettySize(pnd.upgradeCandidate.size) + ")" : ""
+      sublabel: pnd.hasUpgrade ? sizeDelta() : ""
       control: "game-y"
       color: Theme.colors.upgrade
       width: 256
@@ -142,7 +152,6 @@ View {
     }
     Button {
       label: "Launch"
-      sublabel: Utils.prettySize(pnd.size)
       control: "keyboard-enter"
       color: Theme.colors.install
       width: 256

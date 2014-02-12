@@ -5,11 +5,11 @@ function prettySizeValue(size) {
   if(size < K) {
     return size;
   } else if(size < K*K) {
-    return (size/K).toFixed(2);
+    return (size/K).toFixed();
   } else if(size < K*K*K) {
-    return (size/(K*K)).toFixed(2);
+    return (size/(K*K)).toFixed();
   } else {
-    return (size/(K*K*K)).toFixed(2);
+    return (size/(K*K*K)).toFixed();
   }
 }
 

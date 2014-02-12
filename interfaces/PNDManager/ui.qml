@@ -299,8 +299,8 @@ PanoramaUI {
       id: installedIcon
       rightHintVisible: searchIcon.highlight
       leftHintVisible: homeIcon.highlight
-      normalImage: "img/bottombar/pndme-0.6.1.0-cat-installed-flimsy.png"
-      highlightImage: "img/bottombar/pndme-0.6.1.0-cat-installed-flimsy_active.png"
+      normalImage: "img/bottombar/pndme-0.6.1.0-cat-installed-thick.png"
+      highlightImage: "img/bottombar/pndme-0.6.1.0-cat-installed-thick_active.png"
       highlight: installedStack.active
       height: parent.height
       onClicked: installedStack.activate()
@@ -309,8 +309,8 @@ PanoramaUI {
       id: homeIcon
       rightHintVisible: installedIcon.highlight
       leftHintVisible: categoriesIcon.highlight
-      normalImage: "img/bottombar/pndme-0.6.1.0-cat-home-flimsy.png"
-      highlightImage: "img/bottombar/pndme-0.6.1.0-cat-home-flimsy_active.png"
+      normalImage: "img/bottombar/pndme-0.6.1.0-cat-home-thick.png"
+      highlightImage: "img/bottombar/pndme-0.6.1.0-cat-home-thick_active.png"
       highlight: homeStack.active
       height: parent.height
       onClicked: homeStack.activate()
@@ -319,8 +319,8 @@ PanoramaUI {
       id: categoriesIcon
       rightHintVisible: homeIcon.highlight
       leftHintVisible: searchIcon.highlight
-      normalImage: "img/bottombar/pndme-0.6.1.0-cat-online-flimsy.png"
-      highlightImage: "img/bottombar/pndme-0.6.1.0-cat-online-flimsy_active.png"
+      normalImage: "img/bottombar/pndme-0.6.1.0-cat-online-thick.png"
+      highlightImage: "img/bottombar/pndme-0.6.1.0-cat-online-thick_active.png"
       highlight: categoriesStack.active
       height: parent.height
       onClicked: categoriesStack.activate()
@@ -329,8 +329,8 @@ PanoramaUI {
       id: searchIcon
       rightHintVisible: categoriesIcon.highlight
       leftHintVisible: installedIcon.highlight
-      normalImage: "img/bottombar/pndme-0.6.1.0-cat-search-flimsy.png"
-      highlightImage: "img/bottombar/pndme-0.6.1.0-cat-search-flimsy_active.png"
+      normalImage: "img/bottombar/pndme-0.6.1.0-cat-search-thick.png"
+      highlightImage: "img/bottombar/pndme-0.6.1.0-cat-search-thick_active.png"
       highlight: searchStack.active
       height: parent.height
       onClicked: searchStack.activate()
