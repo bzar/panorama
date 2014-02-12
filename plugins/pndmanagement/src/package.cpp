@@ -93,7 +93,15 @@ QPndman::Version* Package::getRemoteVersion() const
 }
 QString Package::getTitle() const
 {
-  return lPackage() ? lPackage()->getTitle() : 0;
+  QString title =  lPackage() ? lPackage()->getTitle() : 0;
+  if(title.isNull() || title.isEmpty() || title.at(0).isUpper())
+  {
+    return title;
+  }
+  else
+  {
+    return title.replace(0, 1, title.at(0).toUpper());
+  }
 }
 
 QString Package::getDescription() const
