@@ -141,7 +141,7 @@ View {
       }
 
       label: "Upgrade"
-      sublabel: pnd.hasUpgrade ? sizeDelta() : ""
+      sublabel: pnd.hasUpgrade ? (Utils.versionString(info.pnd.remoteVersion) + " | " + sizeDelta()) : ""
       control: "game-y"
       color: Theme.colors.upgrade
       width: 256

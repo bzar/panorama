@@ -1,15 +1,23 @@
 .pragma library
 
+function log10(x) {
+    return Math.log(x) / Math.log(10);
+}
+
 function prettySizeValue(size) {
   var K = 1024;
+  function precision(value, multiplier, digits) {
+    return Math.max(0, Math.floor(digits - log10(value/multiplier)))
+  }
+
   if(size < K) {
     return size;
   } else if(size < K*K) {
-    return (size/K).toFixed();
+    return (size/K).toFixed(precision(size, K, 3));
   } else if(size < K*K*K) {
-    return (size/(K*K)).toFixed();
+    return (size/(K*K)).toFixed(precision(size, K*K, 3));
   } else {
-    return (size/(K*K*K)).toFixed();
+    return (size/(K*K*K)).toFixed(precision(size, K*K*K, 3));
   }
 }
 
