@@ -1,5 +1,6 @@
 import QtQuick 1.1
 import "theme.js" as Theme
+import "util.js" as Utils
 
 View {
   viewTitle: "Select install location"
@@ -90,18 +91,34 @@ View {
 
       anchors.horizontalCenter: parent.horizontalCenter
       width: deviceList.maxTextWidth + 32
-      height: deviceText.paintedHeight + 16
+      height: textContainer.height + 16
       radius: 8
       color: hover ? "#ccc" : "transparent"
 
-      Text {
-        id: deviceText
-        text: mount
-        color: selected ? "white" : "black"
-        font.pixelSize: 20
+      Item {
+        id: textContainer
         anchors.centerIn: parent
-        Component.onCompleted: deviceList.maxTextWidth = Math.max(paintedWidth, deviceList.maxTextWidth)
+        width: Math.max(deviceText.paintedWidth, freeSpaceText.paintedWidth)
+        height: childrenRect.height
+        Component.onCompleted: deviceList.maxTextWidth = Math.max(width, deviceList.maxTextWidth)
+        Text {
+          id: deviceText
+          text: mount
+          color: selected ? "white" : "black"
+          font.pixelSize: 20
+          anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        Text {
+          id: freeSpaceText
+          text: Utils.prettySize(free) + " available"
+          color: selected ? "white" : "black"
+          font.pixelSize: 12
+          anchors.horizontalCenter: parent.horizontalCenter
+          anchors.top: deviceText.bottom
+        }
       }
+
 
       MouseArea {
         id: deviceMouseArea
@@ -172,7 +189,9 @@ View {
     height: 64
     anchors.margins: 16
     radius: 4
+    enabled: pnd.size <= deviceList.currentItem.device.free
     label: "Install"
+    sublabel: "Requires " + Utils.prettySize(pnd.size)
     color: Theme.colors.install
     control: "game-b"
     onClicked: install()

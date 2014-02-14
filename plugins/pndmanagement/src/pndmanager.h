@@ -34,6 +34,7 @@ public:
   QDeclarativeListProperty<QPndman::Device> getDevices();
   int deviceCount() const;
   QPndman::Device* getDevice(int) const;
+  Q_INVOKABLE QPndman::Device* getDeviceByMount(QString) const;
 
   PNDFilter* getPackages();
   Package* getPackageById(QString const& id);

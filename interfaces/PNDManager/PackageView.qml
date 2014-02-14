@@ -131,7 +131,15 @@ View {
     }
     Button {
       function sizeDelta() {
-        var delta = pnd.upgradeCandidate.size - pnd.size;
+        if(pnd && pnd.upgradeCandidate) {
+          return pnd.upgradeCandidate.size - pnd.size;
+        } else {
+          return 0;
+        }
+      }
+
+      function sizeDeltaText() {
+        var delta = sizeDelta();
         console.log(pnd.upgradeCandidate.size, pnd.size, delta);
         if(delta < 0) {
           return "Frees " + Utils.prettySize(-delta);
@@ -141,12 +149,13 @@ View {
       }
 
       label: "Upgrade"
-      sublabel: pnd.hasUpgrade ? (Utils.versionString(info.pnd.remoteVersion) + " | " + sizeDelta()) : ""
+      sublabel: pnd.hasUpgrade ? (Utils.versionString(pnd.remoteVersion) + " | " + sizeDeltaText()) : ""
       control: "game-y"
       color: Theme.colors.upgrade
       width: 256
       height: 64
       radius: 4
+      enabled: sizeDelta() <= pndManager.getDeviceByMount(pnd.mount).free
       visible: pnd.installed && pnd.hasUpgrade && !pnd.isDownloading
       onClicked: upgrade()
     }

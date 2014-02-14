@@ -80,6 +80,19 @@ QPndman::Device *PNDManager::getDevice(int i) const
   return devices.at(i);
 }
 
+QPndman::Device* PNDManager::getDeviceByMount(QString mount) const
+{
+  foreach(QPndman::Device* device, devices)
+  {
+    if(device->getMount() == mount)
+    {
+      return device;
+    }
+  }
+
+  return 0;
+}
+
 PNDFilter* PNDManager::getPackages()
 {
   return new PNDFilter(packages);
@@ -391,8 +404,17 @@ void PNDManager::updateDevices()
 
   foreach(QString customDevice, customDevices)
   {
+    qDebug() << "Adding custom device" << customDevice;
     QPndman::Device* device = new QPndman::Device(context, customDevice, this);
-    devices.append(device);
+    if(device->isNull())
+    {
+      qDebug() << "Invalid custom device" << customDevice;
+      delete device;
+    }
+    else
+    {
+      devices.append(device);
+    }
   }
 
   foreach(QPndman::Device* device, devices)
