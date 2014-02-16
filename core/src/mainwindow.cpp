@@ -1,12 +1,10 @@
 #include "mainwindow.h"
-#include <QQmlContext>
 #include <QQmlEngine>
-
-#ifdef ENABLE_OPENGL
-#include <QGLWidget>
-#endif
+#include <QQmlContext>
 #include <QGuiApplication>
 #include <QDir>
+#include <QDebug>
+
 
 MainWindow::MainWindow(QWindow *parent) :
         QQuickView(parent), _runtimeObject(this)
@@ -19,30 +17,7 @@ MainWindow::MainWindow(QWindow *parent) :
 
     connect(&_runtimeObject, SIGNAL(mouseCursorVisibleChanged(bool)),
             this, SLOT(showMouseCursor(bool)));
-/*
-#ifdef ENABLE_OPENGL
-    setViewport(new QGLWidget());
-#endif
-    viewport()->setAttribute(Qt::WA_OpaquePaintEvent);
-    viewport()->setAttribute(Qt::WA_NoSystemBackground);
-    viewport()->setAttribute(Qt::WA_PaintUnclipped);
-    viewport()->setAttribute(Qt::WA_TranslucentBackground, false);
 
-    setOptimizationFlag(QGraphicsView::DontAdjustForAntialiasing);
-    setOptimizationFlag(QGraphicsView::DontSavePainterState);
-    */
-/*
-    setFocusPolicy(Qt::StrongFocus);
-    setResizeMode(QQuickView::SizeRootObjectToView);
-    setStyleSheet("border-style: none;");
-    setFrameStyle(0);
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-*/
-    //Set up UI loading and channel quit() events from QML
-    //connect(engine(), SIGNAL(quit()), this, SLOT(close()));
-
-    setResizeMode(QQuickView::SizeViewToRootObject);
     //Make plugins available
     engine()->addImportPath(QGuiApplication::applicationDirPath() + "/plugins");
     engine()->addImportPath(PANORAMA_PREFIX "/lib/panorama/plugins");
@@ -52,24 +27,32 @@ MainWindow::MainWindow(QWindow *parent) :
     setSource(QUrl("qrc:/root.qml"));
 
     //Resize to default size
+    setResizeMode(QQuickView::SizeRootObjectToView);
     resize(PANORAMA_UI_WIDTH, PANORAMA_UI_HEIGHT);
 }
 
-void MainWindow::changeEvent(QEvent *e)
+void MainWindow::focusInEvent(QFocusEvent* ev)
 {
-    if(e->type() == QEvent::ActivationChange)
-    {
-        //_runtimeObject.setIsActiveWindow(isActiveWindow());
-    }
-    //QDeclarativeView::changeEvent(e);
+  _runtimeObject.setIsActiveWindow(ev->gotFocus());
+  QQuickView::focusInEvent(ev);
+}
+
+void MainWindow::focusOutEvent(QFocusEvent* ev)
+{
+  _runtimeObject.setIsActiveWindow(ev->gotFocus());
+  QQuickView::focusOutEvent(ev);
 }
 
 void MainWindow::setFullscreen(bool fullscreen)
 {
-    /*if(fullscreen)
-        setWindowState(windowState() | Qt::WindowFullScreen);
+    if(fullscreen)
+    {
+      showFullScreen();
+    }
     else
-      setWindowState(windowState() & ~Qt::WindowFullScreen);*/
+    {
+      showNormal();
+    }
 }
 
 void MainWindow::showMouseCursor(bool value)

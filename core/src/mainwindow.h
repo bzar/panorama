@@ -21,7 +21,8 @@ public:
     MainWindow(QWindow* parent = 0);
 
 protected:
-    void changeEvent(QEvent* e);
+    void focusInEvent(QFocusEvent * ev);
+    void focusOutEvent(QFocusEvent * ev);
 
 private slots:
     void setFullscreen(bool fullscreen);
