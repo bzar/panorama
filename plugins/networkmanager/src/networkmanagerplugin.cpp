@@ -9,4 +9,3 @@ void NetworkManagerPlugin::registerTypes(const char *uri)
     qmlRegisterType<NetworkManager::Device>();
 }
 
-Q_EXPORT_PLUGIN2(networkmanager,NetworkManagerPlugin)

@@ -6,9 +6,7 @@
 #include <QObject>
 #include <QString>
 #include <QDebug>
-#include <qdeclarative.h>
-#include <QDeclarativeEngine>
-#include <QDeclarativeContext>
+#include <QQmlListProperty>
 #include <NetworkManagerQt/Manager>
 #include <NetworkManagerQt/Device>
 #include <NetworkManagerQt/Connection>
@@ -21,8 +19,8 @@ class NetworkManagerProxy : public QObject
   typedef NetworkManager::Status Status;
   Q_ENUMS(Status)
   Q_PROPERTY(Status status READ status NOTIFY statusChanged)
-  Q_PROPERTY(QDeclarativeListProperty<NetworkManager::Device> networkInterfaces READ networkInterfaces NOTIFY devicesChanged)
-  Q_PROPERTY(QDeclarativeListProperty<NetworkManager::ActiveConnection> activeConnections READ activeConnections NOTIFY activeConnectionsChanged)
+  Q_PROPERTY(QQmlListProperty<NetworkManager::Device> networkInterfaces READ networkInterfaces NOTIFY devicesChanged)
+  Q_PROPERTY(QQmlListProperty<NetworkManager::ActiveConnection> activeConnections READ activeConnections NOTIFY activeConnectionsChanged)
   Q_PROPERTY(QStringList activeConnectionsPaths READ activeConnectionsPaths NOTIFY activeConnectionsChanged)
 
   Q_PROPERTY(bool networkingEnabled READ isNetworkingEnabled WRITE setNetworkingEnabled NOTIFY networkingEnabledChanged)
@@ -38,8 +36,8 @@ public:
   ~NetworkManagerProxy();
 
   NetworkManager::Status status();
-  QDeclarativeListProperty<NetworkManager::Device> networkInterfaces();
-  QDeclarativeListProperty<NetworkManager::ActiveConnection> activeConnections();
+  QQmlListProperty<NetworkManager::Device> networkInterfaces();
+  QQmlListProperty<NetworkManager::ActiveConnection> activeConnections();
   QStringList activeConnectionsPaths();
 
   bool isNetworkingEnabled();

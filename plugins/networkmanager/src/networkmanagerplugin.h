@@ -1,12 +1,13 @@
 #ifndef NETWORKMANAGERPLUGIN_H
 #define NETWORKMANAGERPLUGIN_H
 
-#include <qdeclarative.h>
-#include <QDeclarativeExtensionPlugin>
+#include <QtQuick>
+#include <QQmlExtensionPlugin>
 
-class NetworkManagerPlugin : public QDeclarativeExtensionPlugin
+class NetworkManagerPlugin : public QQmlExtensionPlugin
 {
     Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")
 public:
     void registerTypes(const char *uri);
 };

@@ -2,36 +2,36 @@
 
 namespace
 {
-  void activeConnectionAppendFunc(QDeclarativeListProperty<NetworkManager::ActiveConnection>* property, NetworkManager::ActiveConnection* value)
+  void activeConnectionAppendFunc(QQmlListProperty<NetworkManager::ActiveConnection>* property, NetworkManager::ActiveConnection* value)
   {
 
   }
-  NetworkManager::ActiveConnection* activeConnectionAtFunc(QDeclarativeListProperty<NetworkManager::ActiveConnection>* property, int index)
+  NetworkManager::ActiveConnection* activeConnectionAtFunc(QQmlListProperty<NetworkManager::ActiveConnection>* property, int index)
   {
     return NetworkManager::activeConnections().at(index).data();
   }
-  void activeConnectionClearFunc(QDeclarativeListProperty<NetworkManager::ActiveConnection>* property)
+  void activeConnectionClearFunc(QQmlListProperty<NetworkManager::ActiveConnection>* property)
   {
 
   }
-  int activeConnectionCountFunc(QDeclarativeListProperty<NetworkManager::ActiveConnection>* property)
+  int activeConnectionCountFunc(QQmlListProperty<NetworkManager::ActiveConnection>* property)
   {
     return NetworkManager::activeConnections().size();
   }
 
-  void deviceAppendFunc(QDeclarativeListProperty<NetworkManager::Device>* property, NetworkManager::Device* value)
+  void deviceAppendFunc(QQmlListProperty<NetworkManager::Device>* property, NetworkManager::Device* value)
   {
 
   }
-  NetworkManager::Device* deviceAtFunc(QDeclarativeListProperty<NetworkManager::Device>* property, int index)
+  NetworkManager::Device* deviceAtFunc(QQmlListProperty<NetworkManager::Device>* property, int index)
   {
     return NetworkManager::networkInterfaces().at(index).data();
   }
-  void deviceClearFunc(QDeclarativeListProperty<NetworkManager::Device>* property)
+  void deviceClearFunc(QQmlListProperty<NetworkManager::Device>* property)
   {
 
   }
-  int deviceCountFunc(QDeclarativeListProperty<NetworkManager::Device>* property)
+  int deviceCountFunc(QQmlListProperty<NetworkManager::Device>* property)
   {
     return NetworkManager::networkInterfaces().size();
   }
@@ -68,9 +68,9 @@ NetworkManager::Status NetworkManagerProxy::status()
   return NetworkManager::status();
 }
 
-QDeclarativeListProperty<NetworkManager::Device> NetworkManagerProxy::networkInterfaces()
+QQmlListProperty<NetworkManager::Device> NetworkManagerProxy::networkInterfaces()
 {
-  return QDeclarativeListProperty<NetworkManager::Device>(this, 0,
+  return QQmlListProperty<NetworkManager::Device>(this, 0,
                                                           deviceAppendFunc,
                                                           deviceCountFunc,
                                                           deviceAtFunc,
@@ -137,9 +137,9 @@ void NetworkManagerProxy::deactivateConnection(const QString& activeConnection)
   NetworkManager::deactivateConnection(activeConnection);
 }
 
-QDeclarativeListProperty<NetworkManager::ActiveConnection> NetworkManagerProxy::activeConnections()
+QQmlListProperty<NetworkManager::ActiveConnection> NetworkManagerProxy::activeConnections()
 {
-  return QDeclarativeListProperty<NetworkManager::ActiveConnection>(this, 0,
+  return QQmlListProperty<NetworkManager::ActiveConnection>(this, 0,
                                                                     activeConnectionAppendFunc,
                                                                     activeConnectionCountFunc,
                                                                     activeConnectionAtFunc,
