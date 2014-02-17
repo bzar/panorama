@@ -18,7 +18,7 @@ class MainWindow : public QQuickView
 
 public:
     /** Constructs a new MainWindow instance */
-    MainWindow(QWindow* parent = 0);
+    MainWindow(QString const uiPath, QWindow* parent = 0);
 
 protected:
     void focusInEvent(QFocusEvent * ev);

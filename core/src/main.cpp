@@ -1,19 +1,32 @@
 #include <QGuiApplication>
+#include <QCommandLineParser>
 #include "mainwindow.h"
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
-    //QGuiApplication::setGraphicsSystem("raster");
-
-
-    //We don't have any args, but pass them on anyways for standard X.Org args
-    //handling
     const QGuiApplication a(argc, argv);
+    QCommandLineParser parser;
+
+    // Define command line arguments
+    parser.setApplicationDescription("A QtQuick based application runtime");
+    parser.addHelpOption();
+
+    parser.addPositionalArgument("ui", "User interface to run");
+
+    // Process command line arguments
+    parser.process(a);
+
+    if(parser.positionalArguments().size() == 0)
+    {
+      parser.showHelp(1);
+    }
 
     //Show the main window
-    MainWindow w;
+    MainWindow w(parser.positionalArguments().at(0));
     w.show();
 
     //Run the event loop
     return a.exec();
+
 }

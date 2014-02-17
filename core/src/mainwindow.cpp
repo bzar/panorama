@@ -6,10 +6,14 @@
 #include <QDebug>
 
 
-MainWindow::MainWindow(QWindow *parent) :
+MainWindow::MainWindow(const QString uiPath, QWindow *parent) :
         QQuickView(parent), _runtimeObject(this)
 {
-    //Set the runtime object context property
+    // Set uiPath context property
+    QDir uiDir(uiPath);
+    rootContext()->setContextProperty("uiPath", QVariant(uiDir.absolutePath()));
+
+    // Set the runtime object context property
     rootContext()->setContextProperty("runtime", &_runtimeObject);
     connect(&_runtimeObject, SIGNAL(fullscreenRequested(bool)),
             this, SLOT(setFullscreen(bool)));
