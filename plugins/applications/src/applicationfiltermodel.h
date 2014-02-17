@@ -53,6 +53,8 @@ public:
     Q_INVOKABLE QVariant drop(int count);
 
     Q_INVOKABLE QVariant take(int count);
+
+    QHash<int, QByteArray> roleNames() const;
 };
 
 #endif // CATEGORYFILTERMODEL_H

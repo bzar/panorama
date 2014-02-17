@@ -29,7 +29,6 @@ ApplicationFilterModel::ApplicationFilterModel(QAbstractItemModel *sourceModel,
 {
     PANORAMA_INITIALIZE(ApplicationFilterModel);
     setSourceModel(sourceModel);
-    setRoleNames(sourceModel->roleNames());
 }
 
 bool ApplicationFilterModel::filterAcceptsRow(int sourceRow,
@@ -87,7 +86,12 @@ QVariant ApplicationFilterModel::drop(int count)
 
 QVariant ApplicationFilterModel::take(int count)
 {
-    return ApplicationFilterMethods::take(this, count);
+  return ApplicationFilterMethods::take(this, count);
+}
+
+QHash<int, QByteArray> ApplicationFilterModel::roleNames() const
+{
+  return sourceModel()->roleNames();
 }
 
 void ApplicationFilterModel::setDrop(int value)

@@ -23,7 +23,6 @@ ApplicationModel::ApplicationModel(QObject *parent) :
     priv->roles[ApplicationModel::Categories]  = QString("categories").toLocal8Bit();
     priv->roles[ApplicationModel::PandoraId]  = QString("pandoraId").toLocal8Bit();
 
-    setRoleNames(priv->roles);
 }
 
 ApplicationModel::~ApplicationModel()
@@ -138,7 +137,6 @@ QVariant ApplicationModel::headerData(int, Qt::Orientation, int role) const
     }
 }
 
-
 QVariant ApplicationModel::inCategory(const QString &category)
 {
     return ApplicationFilterMethods::inCategory(this, category);
@@ -166,5 +164,11 @@ QVariant ApplicationModel::drop(int count)
 
 QVariant ApplicationModel::take(int count)
 {
-    return ApplicationFilterMethods::take(this, count);
+  return ApplicationFilterMethods::take(this, count);
+}
+
+QHash<int, QByteArray> ApplicationModel::roleNames() const
+{
+  PANORAMA_PRIVATE(const ApplicationModel);
+  return priv->roles;
 }

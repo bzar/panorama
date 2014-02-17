@@ -63,6 +63,8 @@ public:
 
     Q_INVOKABLE QVariant take(int count);
 
+    QHash<int, QByteArray> roleNames() const;
+
 public slots:
     /** An Application should be added */
     void addApp(const Application &app, bool signalChange = true);
