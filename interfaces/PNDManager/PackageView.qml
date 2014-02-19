@@ -26,7 +26,7 @@ View {
   onInstallUpgradeButton: {
     if(removeConfirmation.visible)
       return
-    else if(pnd.hasUpgrade)
+    else if(pnd.hasUpgrade && pnd.upgradeCandidate.size - pnd.size <= pndManager.getDeviceByMount(pnd.mount).free)
       upgrade()
     else if(!pnd.installed)
       showInstallDialog()

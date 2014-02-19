@@ -11,11 +11,14 @@ View {
   Keys.forwardTo: [deviceList, location]
 
   function install() {
-    installButton.enabled = false;
-    spinner.show();
-    lastInstallDevice.value = deviceList.currentItem.device.mount;
-    lastInstallLocation.value = location.options[location.selected];
-    pnd.install(deviceList.currentItem.device, location.selectedItem());
+    if(pnd.size <= deviceList.currentItem.device.free)
+    {
+      installButton.enabled = false;
+      spinner.show();
+      lastInstallDevice.value = deviceList.currentItem.device.mount;
+      lastInstallLocation.value = location.options[location.selected];
+      pnd.install(deviceList.currentItem.device, location.selectedItem());
+    }
   }
 
   Notification {
