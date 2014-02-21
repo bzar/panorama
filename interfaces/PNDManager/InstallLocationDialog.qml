@@ -11,7 +11,7 @@ View {
   Keys.forwardTo: [deviceList, location]
 
   function install() {
-    if(pnd.size <= deviceList.currentItem.device.free)
+    if(pnd.size <= deviceList.currentItem.device.available)
     {
       installButton.enabled = false;
       spinner.show();
@@ -114,7 +114,7 @@ View {
 
         Text {
           id: freeSpaceText
-          text: Utils.prettySize(free) + " available"
+          text: Utils.prettySize(available) + " available"
           color: selected ? "white" : "black"
           font.pixelSize: 12
           anchors.horizontalCenter: parent.horizontalCenter
@@ -192,7 +192,7 @@ View {
     height: 64
     anchors.margins: 16
     radius: 4
-    enabled: pnd.size <= deviceList.currentItem.device.free
+    enabled: pnd.size <= deviceList.currentItem.device.available
     label: "Install"
     sublabel: "Requires " + Utils.prettySize(pnd.size)
     color: Theme.colors.install

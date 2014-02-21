@@ -26,7 +26,7 @@ View {
   onInstallUpgradeButton: {
     if(removeConfirmation.visible)
       return
-    else if(pnd.hasUpgrade && pnd.upgradeCandidate.size - pnd.size <= pndManager.getDeviceByMount(pnd.mount).free)
+    else if(pnd.hasUpgrade && pnd.upgradeCandidate.size - pnd.size <= pndManager.getDeviceByMount(pnd.mount).available)
       upgrade()
     else if(!pnd.installed)
       showInstallDialog()
@@ -155,7 +155,7 @@ View {
       width: 256
       height: 64
       radius: 4
-      enabled: sizeDelta() <= pndManager.getDeviceByMount(pnd.mount).free
+      enabled: sizeDelta() <= pndManager.getDeviceByMount(pnd.mount).available
       visible: pnd.installed && pnd.hasUpgrade && !pnd.isDownloading
       onClicked: upgrade()
     }
