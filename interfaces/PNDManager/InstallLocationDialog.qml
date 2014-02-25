@@ -98,6 +98,10 @@ View {
       radius: 8
       color: hover ? "#ccc" : "transparent"
 
+      Component.onCompleted: {
+        update();
+      }
+
       Item {
         id: textContainer
         anchors.centerIn: parent
@@ -106,7 +110,7 @@ View {
         Component.onCompleted: deviceList.maxTextWidth = Math.max(width, deviceList.maxTextWidth)
         Text {
           id: deviceText
-          text: mount
+          text: mount.length > 0 ? mount : "/"
           color: selected ? "white" : "black"
           font.pixelSize: 20
           anchors.horizontalCenter: parent.horizontalCenter

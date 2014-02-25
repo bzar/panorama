@@ -155,9 +155,16 @@ View {
       width: 256
       height: 64
       radius: 4
-      enabled: sizeDelta() <= pndManager.getDeviceByMount(pnd.mount).available
+      enabled: pnd.hasUpgrade && sizeDelta() <= pndManager.getDeviceByMount(pnd.mount).available
       visible: pnd.installed && pnd.hasUpgrade && !pnd.isDownloading
       onClicked: upgrade()
+
+      Component.onCompleted: {
+        if(pnd.hasUpgrade)
+        {
+          pndManager.getDeviceByMount(pnd.mount).update();
+        }
+      }
     }
     Button {
       label: "Launch"

@@ -401,7 +401,7 @@ View {
       }
       PackageInfoText {
         label: "Location"
-        text: info.pnd ? info.pnd.mount : "-"
+        text: info.pnd ? info.pnd.mount.length > 0 ? info.pnd.mount : "/" : "-"
       }
       Rectangle {
         width: parent.width
