@@ -392,7 +392,6 @@ void PNDManager::login()
 {
   if(!username.isEmpty() && !key.isEmpty())
   {
-    qDebug() << "setting credentials to" << username << key;
     repository->setCredentials(username, key);
   }
 }
