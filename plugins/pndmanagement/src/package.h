@@ -22,7 +22,7 @@ class Package : public QObject
   Q_PROPERTY(QString url READ getUrl CONSTANT)
   Q_PROPERTY(QString vendor READ getVendor CONSTANT)
   Q_PROPERTY(QString mount READ getMount CONSTANT)
-  Q_PROPERTY(qint64 size READ getSize CONSTANT)
+  Q_PROPERTY(quint64 size READ getSize CONSTANT)
   Q_PROPERTY(QDateTime modified READ getModified CONSTANT)
   Q_PROPERTY(int rating READ getRating NOTIFY ratingChanged)
   Q_PROPERTY(int ownRating READ getOwnRating NOTIFY ownRatingChanged)
@@ -43,8 +43,8 @@ class Package : public QObject
   Q_PROPERTY(bool isDownloading READ getIsDownloading NOTIFY isDownloadingChanged)
   Q_PROPERTY(bool isQueued READ getIsQueued NOTIFY isQueuedChanged)
   Q_PROPERTY(bool isForeign READ getIsForeign CONSTANT)
-  Q_PROPERTY(qint64 bytesDownloaded READ getBytesDownloaded NOTIFY bytesDownloadedChanged)
-  Q_PROPERTY(qint64 bytesToDownload READ getBytesToDownload NOTIFY bytesToDownloadChanged)
+  Q_PROPERTY(quint64 bytesDownloaded READ getBytesDownloaded NOTIFY bytesDownloadedChanged)
+  Q_PROPERTY(quint64 bytesToDownload READ getBytesToDownload NOTIFY bytesToDownloadChanged)
 
   Q_PROPERTY(QDeclarativeListProperty<QPndman::Comment> comments READ getCommentsProperty NOTIFY commentsChanged)
 
@@ -59,7 +59,7 @@ public:
   QString getUrl() const;
   QString getVendor() const;
   QString getMount() const;
-  qint64 getSize() const;
+  quint64 getSize() const;
   QDateTime getModified() const;
   int getRating() const;
   int getOwnRating() const;
@@ -98,8 +98,8 @@ public:
   QPndman::PreviewPicture* getPreviewPicture(int i) const;
 
   bool getInstalled() const;
-  qint64 getBytesDownloaded() const;
-  qint64 getBytesToDownload() const;
+  quint64 getBytesDownloaded() const;
+  quint64 getBytesToDownload() const;
   bool getHasUpgrade() const;
   bool getIsDownloading() const;
   bool getIsQueued() const;
@@ -115,8 +115,8 @@ public:
 
 public slots:
   void setInstalled();
-  void setBytesDownloaded(qint64);
-  void setBytesToDownload(qint64);
+  void setBytesDownloaded(quint64);
+  void setBytesToDownload(quint64);
 
   // TODO: ugly QString, Qt 4.7 doesn't allow enums in slot parameters yet :(
   void install(QPndman::Device* device, QString installLocation);
@@ -132,8 +132,8 @@ public slots:
 
 signals:
   void installedChanged(bool);
-  void bytesDownloadedChanged(qint64);
-  void bytesToDownloadChanged(qint64);
+  void bytesDownloadedChanged(quint64);
+  void bytesToDownloadChanged(quint64);
   void hasUpgradeChanged();
   void downloadError();
   void downloadCancelled();
@@ -165,8 +165,8 @@ private:
 
   QString id;
 
-  qint64 bytesDownloaded;
-  qint64 bytesToDownload;
+  quint64 bytesDownloaded;
+  quint64 bytesToDownload;
 
   QList<QPndman::Application*> applicationList;
   QList<QPndman::TranslatedString*> titleList;

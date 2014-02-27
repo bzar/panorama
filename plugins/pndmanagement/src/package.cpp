@@ -61,7 +61,7 @@ QString Package::getMount() const
 {
   return !localPackage ? "" : localPackage->getMount();
 }
-qint64 Package::getSize() const
+quint64 Package::getSize() const
 {
   return lPackage() ? lPackage()->getSize() : 0;
 }
@@ -239,12 +239,12 @@ bool Package::getInstalled() const
   return localPackage != 0;
 }
 
-qint64 Package::getBytesDownloaded() const
+quint64 Package::getBytesDownloaded() const
 {
   return bytesDownloaded;
 }
 
-qint64 Package::getBytesToDownload() const
+quint64 Package::getBytesToDownload() const
 {
   return bytesToDownload;
 }
@@ -272,7 +272,7 @@ void Package::setInstalled()
   operationHandle = 0;
 }
 
-void Package::setBytesDownloaded(qint64 value)
+void Package::setBytesDownloaded(quint64 value)
 {
   if(bytesDownloaded != value)
   {
@@ -281,7 +281,7 @@ void Package::setBytesDownloaded(qint64 value)
   }
 }
 
-void Package::setBytesToDownload(qint64 value)
+void Package::setBytesToDownload(quint64 value)
 {
   if(bytesToDownload != value)
   {
@@ -306,8 +306,8 @@ void Package::install(QPndman::Device* device, QString location)
 
   connect(handle, SIGNAL(downloadStarted()), this, SIGNAL(downloadStarted()));
   connect(handle, SIGNAL(downloadStarted()), manager, SIGNAL(downloadStarted()));
-  connect(handle, SIGNAL(bytesDownloadedChanged(qint64)), this, SLOT(setBytesDownloaded(qint64)));
-  connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), this, SLOT(setBytesToDownload(qint64)));
+  connect(handle, SIGNAL(bytesDownloadedChanged(quint64)), this, SLOT(setBytesDownloaded(quint64)));
+  connect(handle, SIGNAL(bytesToDownloadChanged(quint64)), this, SLOT(setBytesToDownload(quint64)));
 
   connect(handle, SIGNAL(done()), this, SLOT(setInstalled()));
   connect(handle, SIGNAL(done()), this, SLOT(crawl()));
@@ -366,8 +366,8 @@ void Package::upgrade()
 
   connect(handle, SIGNAL(downloadStarted()), this, SIGNAL(downloadStarted()));
   connect(handle, SIGNAL(downloadStarted()), manager, SIGNAL(downloadStarted()));
-  connect(handle, SIGNAL(bytesDownloadedChanged(qint64)), this, SLOT(setBytesDownloaded(qint64)));
-  connect(handle, SIGNAL(bytesToDownloadChanged(qint64)), this, SLOT(setBytesToDownload(qint64)));
+  connect(handle, SIGNAL(bytesDownloadedChanged(quint64)), this, SLOT(setBytesDownloaded(quint64)));
+  connect(handle, SIGNAL(bytesToDownloadChanged(quint64)), this, SLOT(setBytesToDownload(quint64)));
 
   connect(handle, SIGNAL(done()), this, SLOT(setInstalled()));
   connect(handle, SIGNAL(done()), manager, SLOT(crawl()));
