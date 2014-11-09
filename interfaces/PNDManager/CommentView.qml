@@ -273,7 +273,7 @@ View {
           }
           GuiHint {
             control: "game-b"
-            show: index === commentList.currentIndex
+            show: index === commentList.currentIndex && removeMode
             anchors.right: parent.left
             width: parent.width
             height: parent.height
