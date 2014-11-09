@@ -1,10 +1,12 @@
 import QtQuick 1.1
 import "util.js" as Utils
+import "theme.js" as Theme
 
 View {
   viewTitle: "Comments"
 
   property QtObject pnd: pnd
+  property bool removeMode: false
 
   Keys.forwardTo: commentList
 
@@ -27,8 +29,29 @@ View {
     z: 2
   }
 
-  onOkButton: if(removeConfirmation.visible) removeConfirmation.yes()
-  onRemoveButton: if(removeConfirmation.visible) removeConfirmation.no()
+  onOkButton: {
+    if(removeConfirmation.visible) {
+      removeConfirmation.yes()
+      removeMode = false;
+    } else if(removeMode && commentList.currentIndex >= 0) {
+      removeConfirmation.comment = commentList.model[commentList.currentIndex];
+      removeConfirmation.visible = true;
+    }
+  }
+
+  onRemoveButton: {
+    if(removeConfirmation.visible) {
+      removeConfirmation.no();
+    } else if (removeMode) {
+      removeMode = false;
+    } else {
+      commentList.selectClosestRemovable();
+      if(commentList.currentIndex >= 0) {
+        removeMode = true;
+      }
+    }
+  }
+
 
   ConfirmationDialog {
     property QtObject comment;
@@ -143,21 +166,75 @@ View {
       easing.type: Easing.InOutQuad
     }
 
+    function selectClosestRemovable() {
+      var start = indexAt(width/2, contentY);
+      for(var i = start; i < model.length; ++i) {
+        if(model[i].username === usernameSetting.value) {
+          currentIndex = i;
+          return;
+        }
+      }
+      currentIndex = -1;
+    }
+
+    function selectNextRemovable() {
+      for(var i = currentIndex + 1; i < model.length; ++i) {
+        if(model[i].username === usernameSetting.value) {
+          currentIndex = i;
+          break;
+        }
+      }
+    }
+
+    function selectPrevRemovable() {
+      for(var i = currentIndex - 1; i >= 0; --i) {
+        if(model[i].username === usernameSetting.value) {
+          currentIndex = i;
+          break;
+        }
+      }
+    }
+
     Keys.onDownPressed: {
-      if(contentHeight > height) {
-        scrollAnimation.to = Math.min(contentHeight, contentY + height/2);
-        scrollAnimation.start();
+      if(removeMode) {
+        selectNextRemovable();
+      } else {
+        if(contentHeight > height) {
+          scrollAnimation.to = Math.min(contentHeight, contentY + height/2);
+          scrollAnimation.start();
+        }
       }
       event.accepted = true;
     }
 
     Keys.onUpPressed: {
-      if(contentHeight > height) {
-        scrollAnimation.to = Math.max(0, contentY - height/2);
-        scrollAnimation.start();
+      if(removeMode) {
+        selectPrevRemovable();
+      } else {
+        if(contentHeight > height) {
+          scrollAnimation.to = Math.max(0, contentY - height/2);
+          scrollAnimation.start();
+        }
       }
       event.accepted = true;
     }
+
+
+
+    highlight: Rectangle {
+      visible: removeMode
+      width: commentList.width
+      height: commentList.currentItem.height
+      Behavior on height {
+        NumberAnimation { duration: 500 }
+      }
+
+      border.color: Theme.colors.remove
+      border.width: 2
+    }
+    highlightFollowsCurrentItem: removeMode
+    highlightMoveDuration: 200
+
 
     delegate: Column {
       anchors.left: parent.left
@@ -193,6 +270,13 @@ View {
               removeConfirmation.comment = modelData;
               removeConfirmation.show();
             }
+          }
+          GuiHint {
+            control: "game-b"
+            show: index === commentList.currentIndex
+            anchors.right: parent.left
+            width: parent.width
+            height: parent.height
           }
         }
 

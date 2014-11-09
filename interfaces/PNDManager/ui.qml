@@ -173,8 +173,9 @@ PanoramaUI {
     }
 
     event.accepted = true;
-    if(event.key === Pandora.ButtonX)           views.current.pop();
-    else if(event.key === Pandora.ButtonB) {
+    if(event.key === Pandora.ButtonX) {
+      views.current.pop();
+    } else if(event.key === Pandora.ButtonB) {
       if(splashScreen.visible) {
         splashScreen.hide();
       } else {
