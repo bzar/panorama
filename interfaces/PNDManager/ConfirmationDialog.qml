@@ -57,7 +57,7 @@ Rectangle {
         Button {
           label: "Yes"
           color: Theme.colors.yes
-          control: "game-b"
+          control: okButtonGuiHintControl
           onClicked: dialog.yes()
           width: 256
           height: 64

@@ -89,6 +89,15 @@ PanoramaUI {
     Component.onCompleted: pndManager.addCustomDevicesString(value)
   }
 
+  Setting {
+    id: flipBX
+    section: "PNDManager"
+    key: "flipBX"
+    defaultValue: false
+  }
+
+  property string okButtonGuiHintControl: flipBX.value ? "game-x" : "game-b"
+
   function init() {
     pndManager.crawl();
   }
@@ -121,6 +130,50 @@ PanoramaUI {
   
   PNDUtils { id: pndUtils }
 
+  signal buttonA;
+  signal buttonB;
+  signal buttonX;
+  signal buttonY;
+  signal buttonL;
+  signal buttonR;
+  signal button1;
+  signal button2;
+  signal button3;
+  signal button4;
+  signal buttonStart;
+  signal buttonSelect;
+  signal buttonF1;
+  signal buttonEsc;
+
+  onButtonA: {
+    if(splashScreen.visible) {
+      splashScreen.dontShowAgain();
+    } else {
+      views.current.current.removeButton();
+    }
+  }
+
+  onButtonB: {
+    if(splashScreen.visible) {
+      splashScreen.hide();
+    } else {
+      views.current.current.okButton();
+    }
+  }
+
+  onButtonX: views.current.pop()
+  onButtonY: views.current.current.installUpgradeButton()
+  onButtonL: views.prev()
+  onButtonR: views.next()
+  onButtonStart: bottomBar.reload()
+  onButtonSelect: views.current.current.selectButton()
+  onButton1: installedStack.activate()
+  onButton2: homeStack.activate()
+  onButton3: categoriesStack.activate()
+  onButton4: searchStack.activate()
+  onButtonF1: showHints.value = !showHints.value
+  onButtonEsc: runtime.quit()
+
   Keys.onPressed: {
     if(!runtime.isActiveWindow || pndManager.applicationRunning) {
       event.accepted = true;
@@ -130,39 +183,31 @@ PanoramaUI {
     if(!Pandora.controlsActive && !spinner.visible) {
       event.accepted = true;
       if(event.key === Qt.Key_PageDown) {
-        views.current.pop();
+        flipBX.value ? buttonB() : buttonX();
       } else if(event.key === Qt.Key_End) {
-        if(splashScreen.visible) {
-          splashScreen.hide();
-        } else {
-          views.current.current.okButton();
-        }
+        flipBX.value ? buttonX() : buttonB();
       } else if(event.key === Qt.Key_Home) {
-        if(splashScreen.visible) {
-          splashScreen.dontShowAgain();
-        } else {
-          views.current.current.removeButton();
-        }
+        buttonA();
       } else if(event.key === Qt.Key_PageUp) {
-        views.current.current.installUpgradeButton();
+        buttonY();
       } else if(event.key === Qt.Key_1) {
-        installedStack.activate();
+        button1();
       } else if(event.key === Qt.Key_2) {
-        homeStack.activate();
+        button2();
       } else if(event.key === Qt.Key_3) {
-        categoriesStack.activate();
+        button3();
       } else if(event.key === Qt.Key_4) {
-        searchStack.activate();
+        button4();
       } else {
         event.accepted = false;
       }
     }
 
     if(event.key === Qt.Key_F1) {
-      showHints.value = !showHints.value
+      buttonF1();
       event.accepted = true;
     } else if(event.key === Qt.Key_Escape) {
-      runtime.quit()
+      buttonEsc();
     }
   }
 
@@ -174,26 +219,22 @@ PanoramaUI {
 
     event.accepted = true;
     if(event.key === Pandora.ButtonX) {
-      views.current.pop();
+      flipBX.value ? buttonB() : buttonX();
     } else if(event.key === Pandora.ButtonB) {
-      if(splashScreen.visible) {
-        splashScreen.hide();
-      } else {
-        views.current.current.okButton();
-      }
+      flipBX.value ? buttonX() : buttonB();
+    } else if(event.key === Pandora.ButtonA) {
+      buttonA();
+    } else if(event.key === Pandora.ButtonY) {
+      buttonY();
+    } else if(event.key === Pandora.TriggerL) {
+      buttonL();
+    } else if(event.key === Pandora.TriggerR) {
+      buttonR();
+    } else if(event.key === Pandora.ButtonStart) {
+      buttonStart();
+    } else if(event.key === Pandora.ButtonSelect) {
+      buttonSelect();
     }
-    else if(event.key === Pandora.ButtonA) {
-      if(splashScreen.visible) {
-        splashScreen.dontShowAgain();
-      } else {
-        views.current.current.removeButton();
-      }
-    }
-    else if(event.key === Pandora.ButtonY)      views.current.current.installUpgradeButton();
-    else if(event.key === Pandora.TriggerL)     views.prev();
-    else if(event.key === Pandora.TriggerR)     views.next();
-    else if(event.key === Pandora.ButtonStart)  bottomBar.reload();
-    else if(event.key === Pandora.ButtonSelect)  views.current.current.selectButton();
   }
 
 

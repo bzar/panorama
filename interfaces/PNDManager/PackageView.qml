@@ -444,7 +444,7 @@ View {
         }
         GuiHint {
           id: showPreviewPicturesIcon
-          control: "game-b"
+          control: okButtonGuiHintControl
           anchors.verticalCenter: parent.verticalCenter
         }
       }

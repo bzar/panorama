@@ -88,7 +88,7 @@ View {
         y: lastUpdated.currentItem.y
 
         GuiHint {
-          control: "game-b"
+          control: okButtonGuiHintControl
           anchors.right: parent.right
           anchors.top: parent.top
           anchors.margins: 4
@@ -175,7 +175,7 @@ View {
         y: highestRated.currentItem.y
 
         GuiHint {
-          control: "game-b"
+          control: okButtonGuiHintControl
           anchors.right: parent.right
           anchors.top: parent.top
           anchors.margins: 4

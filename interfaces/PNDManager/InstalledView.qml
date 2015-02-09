@@ -521,7 +521,7 @@ View {
     Button {
       id: showButton
       label: "Show"
-      control: "game-b"
+      control: okButtonGuiHintControl
       color: "#555"
       anchors.left: parent.left
       anchors.right: parent.right

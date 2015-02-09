@@ -98,7 +98,7 @@ View {
     anchors.margins: 16
     radius: 4
     color: "#B5B559"
-    control: "game-b"
+    control: okButtonGuiHintControl
     onClicked: rate()
   }
 }

@@ -30,7 +30,7 @@ GridView {
     visible: packageList.currentItem !== null
 
     GuiHint {
-      control: "game-b"
+      control: okButtonGuiHintControl
       anchors.right: parent.right
       anchors.top: parent.top
       anchors.margins: 4

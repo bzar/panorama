@@ -47,7 +47,7 @@ Rectangle {
       Column {
         spacing: 4
         ControlHelp { control: "use-dpad"; label: "Move cursor" }
-        ControlHelp { control: "game-b"; label: "Yes, more information, next" }
+        ControlHelp { control: okButtonGuiHintControl; label: "Yes, more information, next" }
         ControlHelp { control: "game-a"; label: "No, remove, cancel" }
         ControlHelp { control: "shoulder-l"; label: "Change mode left" }
         ControlHelp { control: "keyboardfnlayer-f1"; label: "Show/hide control hints" }
@@ -57,7 +57,7 @@ Rectangle {
       Column {
         spacing: 4
         ControlHelp { control: "start"; label: "Synchronize with server" }
-        ControlHelp { control: "game-x"; label: "Back" }
+        ControlHelp { control: okButtonGuiHintControl; label: "Back" }
         ControlHelp { control: "game-y"; label: "Install/upgrade" }
         ControlHelp { control: "shoulder-r"; label: "Change mode right" }
         ControlHelp { control: "select"; label: "Change package sorting" }
@@ -90,7 +90,7 @@ Rectangle {
       radius: 8
       onClicked: dialog.hide()
       color: Theme.colors.yes
-      control: "game-b"
+      control: okButtonGuiHintControl
     }
   }
 }

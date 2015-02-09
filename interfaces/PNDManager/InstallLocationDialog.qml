@@ -200,7 +200,7 @@ View {
     label: "Install"
     sublabel: "Requires " + Utils.prettySize(pnd.size)
     color: Theme.colors.install
-    control: "game-b"
+    control: okButtonGuiHintControl
     onClicked: install()
   }
 }
