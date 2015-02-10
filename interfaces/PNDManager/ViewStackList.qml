@@ -17,6 +17,7 @@ Item {
 
   function show(index) {
     current.active = false
+    current.current.focus = false;
     currentIndex = index;
     updateVisibility();
     viewStacks[index].current.focus = true;

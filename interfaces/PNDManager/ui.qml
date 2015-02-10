@@ -190,6 +190,10 @@ PanoramaUI {
         buttonA();
       } else if(event.key === Qt.Key_PageUp) {
         buttonY();
+      } else if(event.key === Qt.Key_Insert) {
+        buttonL();
+      } else if(event.key === Qt.Key_Delete) {
+        buttonR();
       } else if(event.key === Qt.Key_1) {
         button1();
       } else if(event.key === Qt.Key_2) {
@@ -325,6 +329,13 @@ PanoramaUI {
         pndManager: pndManager
       }
     }
+
+    ViewStack {
+      id: settingsStack
+      onActivate: views.activate(settingsStack)
+      SettingsView {
+      }
+    }
   }
 
   BottomBar {
@@ -339,7 +350,7 @@ PanoramaUI {
 
     IconButton {
       id: installedIcon
-      rightHintVisible: searchIcon.highlight
+      rightHintVisible: settingsIcon.highlight
       leftHintVisible: homeIcon.highlight
       normalImage: "img/bottombar/pndme-0.6.1.0-cat-installed-flimsy.png"
       highlightImage: "img/bottombar/pndme-0.6.1.0-cat-installed-flimsy_active.png"
@@ -370,12 +381,22 @@ PanoramaUI {
     IconButton {
       id: searchIcon
       rightHintVisible: categoriesIcon.highlight
-      leftHintVisible: installedIcon.highlight
+      leftHintVisible: settingsIcon.highlight
       normalImage: "img/bottombar/pndme-0.6.1.0-cat-search-flimsy.png"
       highlightImage: "img/bottombar/pndme-0.6.1.0-cat-search-flimsy_active.png"
       highlight: searchStack.active
       height: parent.height
       onClicked: searchStack.activate()
+    }
+    IconButton {
+      id: settingsIcon
+      rightHintVisible: searchIcon.highlight
+      leftHintVisible: installedIcon.highlight
+      normalImage: "img/bottombar/pndme-0.6.1.0-cat-home-flimsy.png"
+      highlightImage: "img/bottombar/pndme-0.6.1.0-cat-home-flimsy_active.png"
+      highlight: settingsStack.active
+      height: parent.height
+      onClicked: settingsStack.activate()
     }
 
     onBack: views.current.pop()

@@ -6,16 +6,18 @@ GridView {
   property variant packages
   property int columns
   boundsBehavior: GridView.DragOverBounds
+  model: []
 
   Component { id: packageView; PackageView {} }
 
   function openCurrent() {
-    if(currentIndex < model.length)
-    var view = stack.push(packageView, {
-                            "pnd": model[currentIndex],
-                            "viewTitle": model[currentIndex].title,
-                            "pndManager": pndManager
-                          });
+    if(model && currentIndex < model.length) {
+      var view = stack.push(packageView, {
+                              "pnd": model[currentIndex],
+                              "viewTitle": model[currentIndex].title,
+                              "pndManager": pndManager
+                            });
+    }
   }
 
   cellWidth: width / columns - width%columns
