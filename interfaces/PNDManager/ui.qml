@@ -16,6 +16,7 @@ PanoramaUI {
     defaultValue: true
     key: "showSplashScreen"
     section: "PNDManager"
+    Component.onCompleted: splashScreen.visible = value
   }
 
   Setting {
@@ -143,6 +144,7 @@ PanoramaUI {
   signal buttonStart;
   signal buttonSelect;
   signal buttonF1;
+  signal buttonF10;
   signal buttonEsc;
 
   onButtonA: {
@@ -172,6 +174,7 @@ PanoramaUI {
   onButton3: categoriesStack.activate()
   onButton4: searchStack.activate()
   onButtonF1: showHints.value = !showHints.value
+  onButtonF10: topBar.settingsButtonClicked()
   onButtonEsc: runtime.quit()
 
   Keys.onPressed: {
@@ -209,6 +212,9 @@ PanoramaUI {
 
     if(event.key === Qt.Key_F1) {
       buttonF1();
+      event.accepted = true;
+    } else if(event.key === Qt.Key_F10) {
+      buttonF10();
       event.accepted = true;
     } else if(event.key === Qt.Key_Escape) {
       buttonEsc();
@@ -273,7 +279,7 @@ PanoramaUI {
     id: splashScreen
     anchors.fill: parent
     z: 2
-    visible: showSplashScreen.value
+    visible: false
     onHide: visible = false
     onDontShowAgain: showSplashScreen.value = false
   }
@@ -288,6 +294,7 @@ PanoramaUI {
     z: 1
     showCloseButton: fullscreen.value
     onCloseButtonClicked: runtime.quit()
+    onSettingsButtonClicked: settingsStack.active ? views.undo() : settingsStack.activate()
   }
 
   ViewStackList {
@@ -346,11 +353,12 @@ PanoramaUI {
     height: 64
     z: 1
 
+    enabled: !settingsStack.active
     backArrowVisible: !views.current.atRootView
 
     IconButton {
       id: installedIcon
-      rightHintVisible: settingsIcon.highlight
+      rightHintVisible: searchIcon.highlight
       leftHintVisible: homeIcon.highlight
       normalImage: "img/bottombar/pndme-0.6.1.0-cat-installed-flimsy.png"
       highlightImage: "img/bottombar/pndme-0.6.1.0-cat-installed-flimsy_active.png"
@@ -381,22 +389,12 @@ PanoramaUI {
     IconButton {
       id: searchIcon
       rightHintVisible: categoriesIcon.highlight
-      leftHintVisible: settingsIcon.highlight
+      leftHintVisible: installedIcon.highlight
       normalImage: "img/bottombar/pndme-0.6.1.0-cat-search-flimsy.png"
       highlightImage: "img/bottombar/pndme-0.6.1.0-cat-search-flimsy_active.png"
       highlight: searchStack.active
       height: parent.height
       onClicked: searchStack.activate()
-    }
-    IconButton {
-      id: settingsIcon
-      rightHintVisible: searchIcon.highlight
-      leftHintVisible: installedIcon.highlight
-      normalImage: "img/bottombar/pndme-0.6.1.0-cat-home-flimsy.png"
-      highlightImage: "img/bottombar/pndme-0.6.1.0-cat-home-flimsy_active.png"
-      highlight: settingsStack.active
-      height: parent.height
-      onClicked: settingsStack.activate()
     }
 
     onBack: views.current.pop()

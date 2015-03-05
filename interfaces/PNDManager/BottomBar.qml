@@ -4,9 +4,11 @@ Rectangle {
   id: bar
 
   default property alias icons: iconRow.children
-  property alias backArrowVisible: backArrow.visible
+  property bool backArrowVisible: false
   property bool syncing: false
   property bool syncError: false
+  property bool enabled: true
+
   color: "#111"
 
   signal back()
@@ -21,7 +23,7 @@ Rectangle {
     anchors.topMargin: 2
     height: 32
     spacing: 3
-
+    visible: bar.enabled
   }
 
   Image {
@@ -29,6 +31,7 @@ Rectangle {
     anchors.right: iconRow.left
     anchors.rightMargin: 3
     anchors.top: iconRow.top
+    visible: bar.enabled
   }
 
   Image {
@@ -36,6 +39,7 @@ Rectangle {
     anchors.left: iconRow.right
     anchors.leftMargin: 3
     anchors.top: iconRow.top
+    visible: bar.enabled
   }
 
   Image {
@@ -44,6 +48,7 @@ Rectangle {
     anchors.right: iconRow.left
     anchors.rightMargin: 3
     anchors.top: parent.top
+    visible: bar.enabled && backArrowVisible
 
     MouseArea {
       id: mouseArea
@@ -56,6 +61,7 @@ Rectangle {
     id: reloadIcon
     property bool showingSuccess: false
     signal finished();
+    visible: bar.enabled
 
     function getSource() {
       if(syncing) {

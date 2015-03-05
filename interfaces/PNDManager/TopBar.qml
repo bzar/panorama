@@ -6,6 +6,7 @@ Rectangle {
   property bool showCloseButton
 
   signal closeButtonClicked()
+  signal settingsButtonClicked()
 
   MouseArea { anchors.fill: parent; onPressed: mouse.accepted = true; }
 
@@ -23,22 +24,47 @@ Rectangle {
     anchors.margins: 8
   }
 
-  Image {
-    source: "img/x_28x28.png"
-    smooth: true
+  Row {
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.right: parent.right
-    anchors.margins: 4
-    fillMode: Image.PreserveAspectFit
-    visible: bar.showCloseButton
-    MouseArea { anchors.fill: parent; onClicked: bar.closeButtonClicked() }
+    spacing: 4
+    GuiHint {
+      control: "keyboardfnlayer-f10"
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      width: height
+    }
+    Image {
+      source: "img/settings_gear.png"
+      smooth: true
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      width: height
+      anchors.margins: 4
+      fillMode: Image.PreserveAspectFit
+      MouseArea { anchors.fill: parent; onClicked: bar.settingsButtonClicked() }
+    }
     GuiHint {
       control: "keyboardfnlayer-f12"
-      height: parent.height
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
       width: height
-      anchors.right: parent.left
+      show: closeButton.visible
+    }
+    Image {
+      id: closeButton
+      source: "img/x_28x28.png"
+      smooth: true
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      width: height
       anchors.margins: 4
+      fillMode: Image.PreserveAspectFit
+      visible: bar.showCloseButton
+      MouseArea { anchors.fill: parent; onClicked: bar.closeButtonClicked() }
     }
   }
+
+
 }

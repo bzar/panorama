@@ -2,6 +2,7 @@ import QtQuick 1.1
 
 Item {
   default property alias viewStacks: viewStackContainer.children
+  property int fromIndex: 0
   property int currentIndex: 0
   property QtObject current: viewStacks[currentIndex]
 
@@ -16,6 +17,7 @@ Item {
   }
 
   function show(index) {
+    fromIndex = currentIndex;
     current.active = false
     current.current.focus = false;
     currentIndex = index;
@@ -39,6 +41,10 @@ Item {
 
   function prev() {
     show((viewStacks.length + currentIndex - 1) % viewStacks.length);
+  }
+
+  function undo() {
+    show(fromIndex);
   }
 
   Component.onCompleted: show(currentIndex)
