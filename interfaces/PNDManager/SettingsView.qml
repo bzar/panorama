@@ -95,7 +95,7 @@ View {
             Keys.onReturnPressed: toggleIfActive()
             Connections { target: view; onOkButton: toggleIfActive() }
             setting: flipBX
-            enabledText: "(X) Confirm\n(B) Return"
+            enabledText: "(B) Return\n(X) Confirm"
             disabledText: "(B) Confirm\n(X) Return"
             focus: true
           }
