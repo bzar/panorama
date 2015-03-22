@@ -144,6 +144,7 @@ PanoramaUI {
   signal buttonStart;
   signal buttonSelect;
   signal buttonF1;
+  signal buttonF9;
   signal buttonF10;
   signal buttonEsc;
 
@@ -174,7 +175,8 @@ PanoramaUI {
   onButton3: categoriesStack.activate()
   onButton4: searchStack.activate()
   onButtonF1: showHints.value = !showHints.value
-  onButtonF10: topBar.settingsButtonClicked()
+  onButtonF9: topBar.settingsButtonClicked()
+  onButtonF10: runtime.quit()
   onButtonEsc: runtime.quit()
 
   Keys.onPressed: {
@@ -212,6 +214,9 @@ PanoramaUI {
 
     if(event.key === Qt.Key_F1) {
       buttonF1();
+      event.accepted = true;
+    } else if(event.key === Qt.Key_F9) {
+      buttonF9();
       event.accepted = true;
     } else if(event.key === Qt.Key_F10) {
       buttonF10();
@@ -293,6 +298,7 @@ PanoramaUI {
     title: views.getViewTitle()
     z: 1
     showCloseButton: fullscreen.value
+    showSettingsButton: !settingsStack.active
     onCloseButtonClicked: runtime.quit()
     onSettingsButtonClicked: settingsStack.active ? views.undo() : settingsStack.activate()
   }
@@ -341,6 +347,7 @@ PanoramaUI {
       id: settingsStack
       onActivate: views.activate(settingsStack)
       SettingsView {
+        onExit: views.undo()
       }
     }
   }

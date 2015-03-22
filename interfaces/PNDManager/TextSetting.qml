@@ -5,10 +5,10 @@ FocusScope {
   property QtObject setting
   Rectangle {
     id: rect
-    radius: height / 8
-    color: "#fff"
-    border.color: "#111"
-    border.width: height / 32
+    radius: height / 4
+    color: "#ddd"
+    border.color: "#555"
+    border.width: height / 64.0
     anchors.fill: parent
 
     TextInput {
@@ -16,7 +16,7 @@ FocusScope {
       text: setting.value
       onTextChanged: setting.value = text
       selectByMouse: true
-      selectedTextColor: "#fff"
+      selectedTextColor: "#ddd"
       selectionColor: "#88f"
       Connections {
         target: setting
@@ -28,8 +28,8 @@ FocusScope {
       anchors.fill: parent
       anchors.topMargin: parent.height / 32
       anchors.bottomMargin: parent.height / 32
-      anchors.leftMargin: parent.height / 8
-      anchors.rightMargin: parent.height / 8
+      anchors.leftMargin: rect.radius
+      anchors.rightMargin: rect.radius
     }
   }
 }

@@ -1,7 +1,10 @@
 import QtQuick 1.1
+import "theme.js" as Theme
+
 View {
   id: view
   viewTitle: "Settings"
+  signal exit()
 
   Image {
     anchors.fill: parent
@@ -77,13 +80,14 @@ View {
 
         SettingsItem {
           id: flipBXSetting
-          title: "Menu navigation"
+          title: "Menu navigation:"
           focus: true
           anchors.left: parent.left
           anchors.right: parent.right
           KeyNavigation.down: showSplashScreenSetting
           onFocusChanged: if(focus) settings.ensureVisible(flipBXSetting)
           BooleanSetting {
+            swap: true
             anchors.left: parent.left
             anchors.right: parent.right
             Keys.onRightPressed: toggleIfActive()
@@ -98,7 +102,7 @@ View {
         }
         SettingsItem {
           id: showSplashScreenSetting
-          title: "Welcome screen"
+          title: "Welcome screen:"
           anchors.left: parent.left
           anchors.right: parent.right
           KeyNavigation.up: flipBXSetting
@@ -119,7 +123,7 @@ View {
         }
         SettingsItem {
           id: showHintsSetting
-          title: "Guihints"
+          title: "Guihints:"
           anchors.left: parent.left
           anchors.right: parent.right
           KeyNavigation.up: showSplashScreenSetting
@@ -137,6 +141,12 @@ View {
             disabledText: "Disabled"
             focus: true
           }
+        }
+
+        Item {
+          height: 8
+          anchors.left: parent.left
+          anchors.right: parent.right
         }
 
         Column {
@@ -185,7 +195,7 @@ View {
         }
         SettingsItem {
           id: usernameSettingSetting
-          title: "User name"
+          title: "Username:"
           anchors.left: parent.left
           anchors.right: parent.right
           KeyNavigation.up: showHintsSetting
@@ -194,25 +204,36 @@ View {
           TextSetting {
             anchors.left: parent.left
             anchors.right: parent.right
-            height: 24
+            height: 32
             setting: usernameSetting
             focus: true
           }
         }
         SettingsItem {
           id: apiKeySettingSetting
-          title: "API key"
+          title: "API key (NOT password!):"
           anchors.left: parent.left
           anchors.right: parent.right
           KeyNavigation.up: usernameSettingSetting
-          onFocusChanged: if(focus) settings.ensureVisible(apiKeySettingSetting)
+          onFocusChanged: if(focus) settings.ensureVisible(exitButton)
           TextSetting {
             anchors.left: parent.left
             anchors.right: parent.right
-            height: 24
+            height: 32
             setting: apiKeySetting
             focus: true
           }
+        }
+        Button {
+          id: exitButton
+          label: "Exit settings"
+          height: 64
+          width: 256
+          radius: 4
+          anchors.right: parent.right
+          onClicked: exit()
+          color: Theme.colors.yes
+          control: "keyboardfnlayer-f9"
         }
       }
     }

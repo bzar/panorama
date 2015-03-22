@@ -3,7 +3,8 @@ import QtQuick 1.1
 Rectangle {
   id: bar
   property string title
-  property bool showCloseButton
+  property bool showCloseButton: true
+  property bool showSettingsButton: true
 
   signal closeButtonClicked()
   signal settingsButtonClicked()
@@ -30,13 +31,16 @@ Rectangle {
     anchors.right: parent.right
     spacing: 4
     GuiHint {
-      control: "keyboardfnlayer-f10"
+      control: "keyboardfnlayer-f9"
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       width: height
+      show: settingsButton.visible
     }
     Image {
+      id: settingsButton
       source: "img/settings_gear.png"
+      visible: showSettingsButton
       smooth: true
       anchors.top: parent.top
       anchors.bottom: parent.bottom
@@ -46,7 +50,7 @@ Rectangle {
       MouseArea { anchors.fill: parent; onClicked: bar.settingsButtonClicked() }
     }
     GuiHint {
-      control: "keyboardfnlayer-f12"
+      control: "keyboardfnlayer-f10"
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       width: height

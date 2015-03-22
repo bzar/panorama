@@ -4,6 +4,7 @@ import "theme.js" as Theme
 FocusScope {
   id: scope
   property QtObject setting
+  property bool swap: false
   property string enabledText: "On"
   property string disabledText: "Off"
   signal toggled(bool value)
@@ -24,10 +25,10 @@ FocusScope {
   Text {
     id: enabled
     text: enabledText
-    anchors.left: parent.left
-    anchors.right: parent.horizontalCenter
-    anchors.rightMargin: 16
-    anchors.leftMargin: 8
+    anchors.left: swap ? parent.horizontalCenter : parent.left
+    anchors.right: swap ? parent.right : parent.horizontalCenter
+    anchors.rightMargin: swap ? 8 : 16
+    anchors.leftMargin: swap ? 16 : 8
     font.pixelSize: 20
     font.letterSpacing: 2
     color: setting.value ? "#fff" : "#999"
@@ -51,10 +52,10 @@ FocusScope {
   Text {
     id: disabled
     text: disabledText
-    anchors.left: parent.horizontalCenter
-    anchors.right: parent.right
-    anchors.leftMargin: 16
-    anchors.rightMargin: 8
+    anchors.left: swap ? parent.left : parent.horizontalCenter
+    anchors.right: swap ? parent.horizontalCenter : parent.right
+    anchors.leftMargin: swap ? 8 : 16
+    anchors.rightMargin: swap ? 16 : 8
     font.pixelSize: 20
     font.letterSpacing: 2
     color: !setting.value ? "#fff" : "#999"
