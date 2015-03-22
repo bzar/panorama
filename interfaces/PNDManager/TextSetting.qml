@@ -16,6 +16,7 @@ FocusScope {
       text: setting.value
       onTextChanged: setting.value = text
       selectByMouse: true
+      color: "#1f1f1f"
       selectedTextColor: "#ddd"
       selectionColor: "#88f"
       Connections {

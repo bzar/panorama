@@ -27,8 +27,8 @@ FocusScope {
     text: enabledText
     anchors.left: swap ? parent.horizontalCenter : parent.left
     anchors.right: swap ? parent.right : parent.horizontalCenter
-    anchors.rightMargin: swap ? 8 : 16
-    anchors.leftMargin: swap ? 16 : 8
+    anchors.rightMargin: swap ? 18 : 16
+    anchors.leftMargin: swap ? 16 : 0
     font.pixelSize: 20
     font.letterSpacing: 2
     color: setting.value ? "#fff" : "#999"
@@ -43,7 +43,7 @@ FocusScope {
       anchors.rightMargin: -8
       anchors.topMargin: -4
       anchors.bottomMargin: -4
-      color: Qt.rgba(0.2, 0.2, 0.2, scope.activeFocus ? 0.7 : 0.2)
+      color: Qt.rgba(0, 0, 0, scope.activeFocus ? 0.4 : 0.1)
       radius: height / 8
       visible: setting.value
       z: -1
@@ -54,8 +54,8 @@ FocusScope {
     text: disabledText
     anchors.left: swap ? parent.left : parent.horizontalCenter
     anchors.right: swap ? parent.horizontalCenter : parent.right
-    anchors.leftMargin: swap ? 8 : 16
-    anchors.rightMargin: swap ? 16 : 8
+    anchors.leftMargin: swap ? 0 : 16
+    anchors.rightMargin: swap ? 16 : 18
     font.pixelSize: 20
     font.letterSpacing: 2
     color: !setting.value ? "#fff" : "#999"

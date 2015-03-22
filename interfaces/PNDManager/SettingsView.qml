@@ -18,8 +18,8 @@ View {
     anchors.fill: parent
     anchors.topMargin: 16
     anchors.bottomMargin: 16
-    anchors.leftMargin: 16
-    anchors.rightMargin: 16
+    anchors.leftMargin: 24
+    anchors.rightMargin: 24
 
     function ensureVisible(item) {
       var absy = item.y + settingsColumn.y;
@@ -50,7 +50,7 @@ View {
           Text {
             text: "Settings"
             font.pixelSize: settingsLogo.height * 0.80
-            color: "#fff"
+            color: "#e4e4e4"
             verticalAlignment: Text.AlignVCenter
             anchors.verticalCenter: parent.verticalCenter
             height: parent.height
@@ -71,11 +71,11 @@ View {
       }
       Column {
         id: settingsColumn
-        spacing: 24
+        spacing: 16
         anchors.top: separator.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.topMargin: 32
+        anchors.topMargin: 42
         anchors.rightMargin: 16
 
         SettingsItem {
@@ -123,7 +123,7 @@ View {
         }
         SettingsItem {
           id: showHintsSetting
-          title: "Guihints:"
+          image: "img/guihints_banner.png"
           anchors.left: parent.left
           anchors.right: parent.right
           KeyNavigation.up: showSplashScreenSetting
@@ -144,7 +144,7 @@ View {
         }
 
         Item {
-          height: 8
+          height: 28
           anchors.left: parent.left
           anchors.right: parent.right
         }
@@ -155,25 +155,25 @@ View {
           spacing: 8
           Rectangle {
             id: banner
-            color: Qt.rgba(0.1,0.1,0.1,0.8)
+            color: Qt.rgba(0,0,0,0.7)
             height: 48
             width: parent.width
 
             Text {
               text: "Enabling rating and commenting"
-              color: "#fff"
+              color: Qt.rgba(1,1,1,0.88)
               font.pixelSize: 32
               font.letterSpacing: 2
               anchors.verticalCenter: parent.verticalCenter
               anchors.left: parent.left
-              anchors.leftMargin: 64
+              anchors.leftMargin: 54
             }
           }
           Text {
             text: "1. Log into repo.openpandora.org, open the \"My account\" page and from there \"Account details\". Have an API key generated."
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.leftMargin: 32
+            anchors.leftMargin: 43
             wrapMode: Text.WordWrap
             font.pixelSize: 20
             font.letterSpacing: 2
@@ -184,13 +184,13 @@ View {
             text: "2. Enter your repo.openpandora.org user name and the API key (NOT your password) below."
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.leftMargin: 32
+            anchors.leftMargin: 43
             wrapMode: Text.WordWrap
             font.pixelSize: 20
             font.letterSpacing: 2
             color: "#eee"
             font.italic: true
-            height: paintedHeight + 16
+            height: paintedHeight + 12
           }
         }
         SettingsItem {
@@ -224,16 +224,24 @@ View {
             focus: true
           }
         }
-        Button {
+        Item {
           id: exitButton
-          label: "Exit settings"
-          height: 64
-          width: 256
-          radius: 4
+          anchors.left: parent.left
           anchors.right: parent.right
-          onClicked: exit()
-          color: Theme.colors.yes
-          control: "keyboardfnlayer-f9"
+          anchors.rightMargin: -32
+          height: childrenRect.height + 16
+          Button {
+            label: "Exit settings"
+            height: 64
+            width: 256
+            radius: 4
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.topMargin: 16
+            onClicked: exit()
+            color: Theme.colors.yes
+            control: "keyboardfnlayer-f9"
+          }
         }
       }
     }
