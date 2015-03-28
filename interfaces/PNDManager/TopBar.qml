@@ -27,44 +27,30 @@ Rectangle {
 
   Row {
     anchors.top: parent.top
-    anchors.bottom: parent.bottom
     anchors.right: parent.right
     spacing: 4
     GuiHint {
       control: "keyboardfnlayer-f9"
       anchors.top: parent.top
-      anchors.bottom: parent.bottom
-      width: height
+      anchors.topMargin: -8
       show: settingsButton.visible
     }
     Image {
       id: settingsButton
-      source: "img/settings_gear.png"
+      source: "img/settings_gear_topbar.png"
       visible: showSettingsButton
-      smooth: true
-      anchors.top: parent.top
-      anchors.bottom: parent.bottom
-      width: height
-      anchors.margins: 4
-      fillMode: Image.PreserveAspectFit
       MouseArea { anchors.fill: parent; onClicked: bar.settingsButtonClicked() }
     }
     GuiHint {
       control: "keyboardfnlayer-f10"
       anchors.top: parent.top
-      anchors.bottom: parent.bottom
-      width: height
+      anchors.topMargin: -8
       show: closeButton.visible
     }
     Image {
       id: closeButton
-      source: "img/x_28x28.png"
+      source: "img/close_x_topbar.png"
       smooth: true
-      anchors.top: parent.top
-      anchors.bottom: parent.bottom
-      width: height
-      anchors.margins: 4
-      fillMode: Image.PreserveAspectFit
       visible: bar.showCloseButton
       MouseArea { anchors.fill: parent; onClicked: bar.closeButtonClicked() }
     }

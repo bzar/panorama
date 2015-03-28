@@ -298,7 +298,6 @@ PanoramaUI {
     title: views.getViewTitle()
     z: 1
     showCloseButton: fullscreen.value
-    showSettingsButton: !settingsStack.active
     onCloseButtonClicked: runtime.quit()
     onSettingsButtonClicked: settingsStack.active ? views.undo() : settingsStack.activate()
   }
