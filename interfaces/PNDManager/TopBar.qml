@@ -31,8 +31,8 @@ Rectangle {
     spacing: 4
     GuiHint {
       control: "keyboardfnlayer-f9"
-      anchors.top: parent.top
-      anchors.topMargin: -8
+      opacity: 0.72
+      anchors.verticalCenter: settingsButton.verticalCenter
       show: settingsButton.visible
     }
     Image {
@@ -43,8 +43,8 @@ Rectangle {
     }
     GuiHint {
       control: "keyboardfnlayer-f10"
-      anchors.top: parent.top
-      anchors.topMargin: -8
+      opacity: 0.72
+      anchors.verticalCenter: closeButton.verticalCenter
       show: closeButton.visible
     }
     Image {

@@ -144,7 +144,7 @@ View {
         }
 
         Item {
-          height: 28
+          height: 24
           anchors.left: parent.left
           anchors.right: parent.right
         }
