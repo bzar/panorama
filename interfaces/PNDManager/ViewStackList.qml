@@ -36,11 +36,19 @@ Item {
   }
 
   function next() {
-    show((currentIndex + 1) % viewStacks.length);
+    var nextIndex = (currentIndex + 1) % viewStacks.length;
+    while(!viewStacks[nextIndex].browsable) {
+      nextIndex = (nextIndex + 1) % viewStacks.length;
+    }
+    show(nextIndex);
   }
 
   function prev() {
-    show((viewStacks.length + currentIndex - 1) % viewStacks.length);
+    var prevIndex = (viewStacks.length + currentIndex - 1) % viewStacks.length;
+    while(!viewStacks[prevIndex].browsable) {
+      prevIndex = (viewStacks.length + prevIndex - 1) % viewStacks.length;
+    }
+    show(prevIndex);
   }
 
   function undo() {

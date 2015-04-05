@@ -8,6 +8,8 @@ Item {
   property bool active: false
   property bool atRootView: currentIndex == 0
   property bool isAnimating: pushMoveIn.running || pushMoveOut.running || popMoveIn.running || popMoveOut.running
+  property bool browsable: true
+
   visible: false
   anchors.fill: parent
 

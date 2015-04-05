@@ -345,6 +345,7 @@ PanoramaUI {
     ViewStack {
       id: settingsStack
       onActivate: views.activate(settingsStack)
+      browsable: false
       SettingsView {
         onExit: views.undo()
       }
