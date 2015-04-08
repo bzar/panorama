@@ -3,7 +3,7 @@ import "theme.js" as Theme
 
 View {
   id: view
-  viewTitle: "Settings"
+  viewTitle: "PNDManager " + pndManager.versionString
   signal exit()
 
   Image {
@@ -16,7 +16,7 @@ View {
     id: settings
     contentHeight: settingsContent.height
     anchors.fill: parent
-    anchors.topMargin: 16
+    anchors.topMargin: 0
     anchors.bottomMargin: 16
     anchors.leftMargin: 24
     anchors.rightMargin: 24
@@ -39,7 +39,7 @@ View {
         id: header
         anchors.left: parent.left
         anchors.right: parent.right
-        height: 96
+        height: 100
         Row {
           anchors.centerIn: parent
           spacing: 24
@@ -65,8 +65,7 @@ View {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: header.bottom
-        anchors.topMargin: 8
-        color: Qt.rgba(1,1,1,0.2)
+        color: Qt.rgba(0.87,0.87,0.87,0.11)
         height: 1
       }
       Column {
@@ -75,7 +74,7 @@ View {
         anchors.top: separator.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.topMargin: 42
+        anchors.topMargin: 32
         anchors.rightMargin: 16
 
         SettingsItem {
@@ -84,7 +83,7 @@ View {
           focus: true
           anchors.left: parent.left
           anchors.right: parent.right
-          KeyNavigation.down: showSplashScreenSetting
+          KeyNavigation.down: mouseCursorVisibleSetting
           onFocusChanged: if(focus) settings.ensureVisible(flipBXSetting)
           BooleanSetting {
             swap: true
@@ -101,11 +100,32 @@ View {
           }
         }
         SettingsItem {
+          id: mouseCursorVisibleSetting
+          title: "Mouse cursor:"
+          anchors.left: parent.left
+          anchors.right: parent.right
+          KeyNavigation.up: flipBXSetting
+          KeyNavigation.down: showSplashScreenSetting
+          onFocusChanged: if(focus) settings.ensureVisible(mouseCursorVisibleSetting)
+          BooleanSetting {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            Keys.onRightPressed: toggleIfActive()
+            Keys.onLeftPressed: toggleIfActive()
+            Keys.onReturnPressed: toggleIfActive()
+            Connections { target: view; onOkButton: toggleIfActive() }
+            setting: mouseCursorVisible
+            enabledText: "Enabled"
+            disabledText: "Disabled"
+            focus: true
+          }
+        }
+        SettingsItem {
           id: showSplashScreenSetting
           title: "Welcome screen:"
           anchors.left: parent.left
           anchors.right: parent.right
-          KeyNavigation.up: flipBXSetting
+          KeyNavigation.up: mouseCursorVisibleSetting
           KeyNavigation.down: showHintsSetting
           onFocusChanged: if(focus) settings.ensureVisible(showSplashScreenSetting)
           BooleanSetting {
@@ -144,7 +164,7 @@ View {
         }
 
         Item {
-          height: 24
+          height: 12
           anchors.left: parent.left
           anchors.right: parent.right
         }

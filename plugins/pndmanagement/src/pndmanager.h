@@ -26,6 +26,8 @@ class PNDManager : public QObject
 
   Q_PROPERTY(int maxDownloads READ getMaxDownloads WRITE setMaxDownloads NOTIFY maxDownloadsChanged)
 
+  Q_PROPERTY(QString versionString READ getVersionString)
+
   Q_ENUMS(QPndman::Enum::InstallLocation QPndman::Enum::Operation QPndman::Version::Type)
 public:
   PNDManager(QObject* parent = 0);
@@ -62,6 +64,7 @@ public:
   QList<QString> getCustomDevices() const;
   void addCustomDevices(const QList<QString>& value);
 
+  QString getVersionString() const;
 
 public slots:
   void crawl();

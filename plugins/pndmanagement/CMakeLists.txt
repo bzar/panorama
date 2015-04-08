@@ -1,5 +1,8 @@
 PROJECT(pndmanagement)
 
+set(PNDMANAGER_VERSION "Undefined version" CACHE STRING "Version string PNDManagement plugin reports")
+add_definitions(-DPNDMANAGER_VERSION="\""${PNDMANAGER_VERSION}"\"")
+
 FIND_PACKAGE(Qt4 REQUIRED)
 SET(QT_USE_QTDECLARATIVE TRUE)
 

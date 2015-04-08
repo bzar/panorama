@@ -53,6 +53,15 @@ void PNDManager::addCustomDevices(const QList<QString>& value)
   updateDevices();
 }
 
+QString PNDManager::getVersionString() const
+{
+#ifdef PNDMANAGER_VERSION
+  return PNDMANAGER_VERSION;
+#else
+  return "Undefined version";
+#endif
+}
+
 void PNDManager::addCustomDevicesString(const QString& value)
 {
   if(value.isEmpty())

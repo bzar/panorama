@@ -166,9 +166,9 @@ PanoramaUI {
 
   onButtonX: views.current.pop()
   onButtonY: views.current.current.installUpgradeButton()
-  onButtonL: views.prev()
-  onButtonR: views.next()
-  onButtonStart: bottomBar.reload()
+  onButtonL: if(!settingsStack.active) views.prev()
+  onButtonR: if(!settingsStack.active) views.next()
+  onButtonStart: if(!settingsStack.active) bottomBar.reload()
   onButtonSelect: views.current.current.selectButton()
   onButton1: installedStack.activate()
   onButton2: homeStack.activate()
